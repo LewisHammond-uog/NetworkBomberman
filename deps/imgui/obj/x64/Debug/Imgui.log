@@ -1,0 +1,52 @@
+﻿  imgui.cpp
+  imgui_demo.cpp
+  imgui_draw.cpp
+  imgui_fileDialog.cpp
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(44,28): warning C4267:  'initializing': conversion from 'size_t' to 'int', possible loss of data
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(50,40): warning C4267:  '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2308,23): warning C4244:  'argument': conversion from 'wchar_t' to 'const _Elem', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2308,23): warning C4244:         with
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2308,23): warning C4244:         [
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2308,23): warning C4244:             _Elem=char
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2308,23): warning C4244:         ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2319): message :  see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(_Iter,const _Iter,std::input_iterator_tag)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2319): message :         with
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2319): message :         [
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2319): message :             _Iter=wchar_t *
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2319): message :         ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2319): message :  see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(_Iter,const _Iter,std::input_iterator_tag)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2319): message :         with
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2319): message :         [
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2319): message :             _Iter=wchar_t *
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2319): message :         ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2299): message :  see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(const _Iter,const _Iter,std::forward_iterator_tag)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2299): message :         with
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2299): message :         [
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2299): message :             _Iter=wchar_t *
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2299): message :         ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2299): message :  see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(const _Iter,const _Iter,std::forward_iterator_tag)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2299): message :         with
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2299): message :         [
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2299): message :             _Iter=wchar_t *
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.21.27702\include\xstring(2299): message :         ]
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :  see reference to function template instantiation 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,void>(_Iter,_Iter,const _Alloc &)' being compiled
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :         with
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :         [
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :             _Elem=wchar_t,
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :             _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :             _Alloc=std::allocator<char>
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :         ]
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :  see reference to function template instantiation 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,void>(_Iter,_Iter,const _Alloc &)' being compiled
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :         with
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :         [
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :             _Elem=wchar_t,
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :             _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :             _Alloc=std::allocator<char>
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\source\imgui_fileDialog.cpp(112): message :         ]
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\dirent\dirent.h(458,1): warning C4505:  '_wreaddir': unreferenced local function has been removed
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\dirent\dirent.h(726,1): warning C4505:  'readdir': unreferenced local function has been removed
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\dirent\dirent.h(864,1): warning C4505:  'rewinddir': unreferenced local function has been removed
+  imgui_widgets.cpp
+  Generating Code...
+N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\dirent\dirent.h(1021,1): warning C4505:  'versionsort': unreferenced local function has been removed
+  Imgui.vcxproj -> N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\imgui\lib\Imgui_Debug_x64.lib

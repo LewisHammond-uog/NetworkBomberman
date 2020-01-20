@@ -1,6 +1,6 @@
 #include <stdafx.h>
 #include "TestProject.h"
-
+#include "RakPeerInterface.h"
 
 
 TestProject::TestProject()
@@ -61,6 +61,7 @@ void TestProject::Update(float a_deltaTime)
 	}
 	//show application log window
 	if (glfwGetKey(m_window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS && glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS) {
+		//Comment to remove demo window
 		show_demo_window = !show_demo_window;
 	}
 	// quit our application when escape is pressed

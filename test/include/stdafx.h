@@ -1,4 +1,5 @@
 #pragma once
+#include <winsock2.h>
 #include <Windows.h>
 #include <glm/glm.hpp>
 #include "Gizmos.h"

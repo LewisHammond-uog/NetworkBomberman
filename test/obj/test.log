@@ -1,2 +1,12 @@
-﻿     Creating library N:\GitHub\ct5052-assignment-LewisHammond-uog\test\/bin\test.lib and object N:\GitHub\ct5052-assignment-LewisHammond-uog\test\/bin\test.exp
+﻿  cl : Command line warning D9035 : option 'Gm' has been deprecated and will be removed in a future release
+  stdafx.cpp
+  cl : Command line warning D9035 : option 'Gm' has been deprecated and will be removed in a future release
+  TestProject.cpp
+  main.cpp
+N:\GitHub\ct5052-assignment-LewisHammond-uog\test\src\main.cpp(7,86): warning C4100:  'nCmdShow': unreferenced formal parameter
+N:\GitHub\ct5052-assignment-LewisHammond-uog\test\src\main.cpp(7,71): warning C4100:  'lpCmdLine': unreferenced formal parameter
+N:\GitHub\ct5052-assignment-LewisHammond-uog\test\src\main.cpp(7,51): warning C4100:  'hPrevInstance': unreferenced formal parameter
+  Generating Code...
+N:\GitHub\ct5052-assignment-LewisHammond-uog\test\src\main.cpp(7,30): warning C4100:  'hInstance': unreferenced formal parameter
+     Creating library N:\GitHub\ct5052-assignment-LewisHammond-uog\test\/bin\test.lib and object N:\GitHub\ct5052-assignment-LewisHammond-uog\test\/bin\test.exp
   test.vcxproj -> N:\GitHub\ct5052-assignment-LewisHammond-uog\test\/bin\test.exe

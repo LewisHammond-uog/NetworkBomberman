@@ -39,18 +39,14 @@ void TestProject::Update(float a_deltaTime)
 	Application_Log* log = Application_Log::Get();
 
 	char str[512];
-	bool isServer = false;
+	bool static isServer = false;
 	RakNet::Packet* packet;
 
 	//Singleton for the Network manager
 	RakNet::RakPeerInterface* peer = RakNet::RakPeerInterface::GetInstance();
 
-	//Buttons
-	bool clientSelected = ImGui::Button("Client");
-	bool serverSelected = ImGui::Button("Server");
-
 	/* SETUP SERVER/CLIENT */
-	if (clientSelected) {
+	if (ImGui::Button("Client")) {
 		RakNet::SocketDescriptor sd;
 		peer->Startup(1, &sd, 1);
 		isServer = false;
@@ -59,7 +55,7 @@ void TestProject::Update(float a_deltaTime)
 		peer->Connect("127.0.0.1", SERVER_PORT, 0, 0);
 
 	}
-	else if (serverSelected) {
+	else if (ImGui::Button("Server")) {
 		RakNet::SocketDescriptor sd(SERVER_PORT, 0);
 		peer->Startup(MAX_CLIENTS, &sd, 1);
 		isServer = true;
@@ -68,7 +64,7 @@ void TestProject::Update(float a_deltaTime)
 		peer->SetMaximumIncomingConnections(MAX_CLIENTS);
 	}
 
-	while (1) {
+
 		for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive()) {
 
 			//Get the message type and deal with it
@@ -113,7 +109,7 @@ void TestProject::Update(float a_deltaTime)
 				break;
 			}
 
-		}
+		
 	}
 
 

@@ -13,4 +13,4 @@
   wgl_context.c
   egl_context.c
   Generating Code...
-  glfw.vcxproj -> N:\GitHub\ct5052-assignment-LewisHammond-uog\deps\glfw\proj\vs2015\../../lib-vc2015\x64\Debug\glfw3.lib
+  glfw.vcxproj -> E:\Uni\Github\ct5052-assignment-LewisHammond-uog\deps\glfw\proj\vs2015\../../lib-vc2015\x64\Debug\glfw3.lib

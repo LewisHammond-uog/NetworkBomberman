@@ -1,6 +1,5 @@
 #include <stdafx.h>
 #include "TestProject.h"
-#include "RakPeerInterface.h"
 
 
 TestProject::TestProject()

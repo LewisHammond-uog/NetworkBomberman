@@ -1,12 +1,1 @@
-﻿  glad.c
-  imgui_impl_glfw.cpp
-  imgui_impl_opengl3.cpp
-  Application.cpp
-N:\GitHub\ct5052-assignment-LewisHammond-uog\framework\src\Application.cpp(25,134): warning C4100:  'data': unreferenced formal parameter
-N:\GitHub\ct5052-assignment-LewisHammond-uog\framework\src\Application.cpp(25,95): warning C4100:  'length': unreferenced formal parameter
-  Application_Log.cpp
-  Gizmos.cpp
-  Utilities.cpp
-  Generating Code...
-N:\GitHub\ct5052-assignment-LewisHammond-uog\framework\src\Application.cpp(25,66): warning C4100:  'id': unreferenced formal parameter
-  framework.vcxproj -> N:\GitHub\ct5052-assignment-LewisHammond-uog\framework\../lib\framework.lib
+﻿  framework.vcxproj -> E:\Uni\Github\ct5052-assignment-LewisHammond-uog\framework\../lib\framework.lib

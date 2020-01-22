@@ -65,49 +65,49 @@ void TestProject::Update(float a_deltaTime)
 	}
 
 
-		for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive()) {
+	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive()) {
 
-			//Get the message type and deal with it
-			switch (packet->data[0])
-			{
-			case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-				log->addLog(LOG_INFO, "Another client has disconnected.\n");
-				break;
-			case ID_REMOTE_CONNECTION_LOST:
-				log->addLog(LOG_INFO, "Another client has lost the connection.\n");
-				break;
-			case ID_REMOTE_NEW_INCOMING_CONNECTION:
-				log->addLog(LOG_INFO, "Another client has connected.\n");
-				break;
-			case ID_CONNECTION_REQUEST_ACCEPTED:
-				log->addLog(LOG_INFO, "Our connection request has been accepted.\n");
-				break;
-			case ID_NEW_INCOMING_CONNECTION:
-				log->addLog(LOG_INFO, "A connection is incoming.\n");
-				break;
-			case ID_NO_FREE_INCOMING_CONNECTIONS:
-				log->addLog(LOG_INFO, "The server is full.\n");
-				break;
-			case ID_DISCONNECTION_NOTIFICATION:
-				if (isServer) {
-					log->addLog(LOG_INFO, "A client has disconnected.\n");
-				}
-				else {
-					log->addLog(LOG_INFO, "We have been disconnected.\n");
-				}
-				break;
-			case ID_CONNECTION_LOST:
-				if (isServer) {
-					log->addLog(LOG_INFO, "A client lost the connection.\n");
-				}
-				else {
-					log->addLog(LOG_INFO, "Connection lost.\n");
-				}
-				break;
-			default:
-				log->addLog(LOG_INFO, "Message with identifier %i has arrived.\n", packet->data[0]);
-				break;
+		//Get the message type and deal with it
+		switch (packet->data[0])
+		{
+		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
+			log->addLog(LOG_INFO, "Another client has disconnected.\n");
+			break;
+		case ID_REMOTE_CONNECTION_LOST:
+			log->addLog(LOG_INFO, "Another client has lost the connection.\n");
+			break;
+		case ID_REMOTE_NEW_INCOMING_CONNECTION:
+			log->addLog(LOG_INFO, "Another client has connected.\n");
+			break;
+		case ID_CONNECTION_REQUEST_ACCEPTED:
+			log->addLog(LOG_INFO, "Our connection request has been accepted.\n");
+			break;
+		case ID_NEW_INCOMING_CONNECTION:
+			log->addLog(LOG_INFO, "A connection is incoming.\n");
+			break;
+		case ID_NO_FREE_INCOMING_CONNECTIONS:
+			log->addLog(LOG_INFO, "The server is full.\n");
+			break;
+		case ID_DISCONNECTION_NOTIFICATION:
+			if (isServer) {
+				log->addLog(LOG_INFO, "A client has disconnected.\n");
 			}
+			else {
+				log->addLog(LOG_INFO, "We have been disconnected.\n");
+			}
+			break;
+		case ID_CONNECTION_LOST:
+			if (isServer) {
+				log->addLog(LOG_INFO, "A client lost the connection.\n");
+			}
+			else {
+				log->addLog(LOG_INFO, "Connection lost.\n");
+			}
+			break;
+		default:
+			log->addLog(LOG_INFO, "Message with identifier %i has arrived.\n", packet->data[0]);
+			break;
+		}
 
 		
 	}

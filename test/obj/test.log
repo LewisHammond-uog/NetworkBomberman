@@ -1,1 +1,4 @@
-﻿  test.vcxproj -> E:\Uni\Github\ct5052-assignment-LewisHammond-uog\test\/bin\test.exe
+﻿cl : command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
+  TestProject.cpp
+E:\Uni\Github\ct5052-assignment-LewisHammond-uog\test\src\TestProject.cpp(41,7): warning C4101: 'str': unreferenced local variable
+  test.vcxproj -> E:\Uni\Github\ct5052-assignment-LewisHammond-uog\test\/bin\test.exe

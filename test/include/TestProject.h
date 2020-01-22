@@ -22,6 +22,8 @@ protected:
 	glm::mat4	m_cameraMatrix;
 	glm::mat4	m_projectionMatrix;
 
+	bool initalized = false;
+
 };
 
 #endif // __MY_APPLICATION_H__

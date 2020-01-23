@@ -2,9 +2,15 @@
 #include "TestProject.h"
 #include "MessageIdentifiers.h"
 #include "RakPeerInterface.h"
+#include "BitStream.h"
+#include "RakNetTypes.h"
 
 #define MAX_CLIENTS 10
 #define SERVER_PORT 60000
+
+enum GameMessages {
+	ID_GAME_MESSAGE_1 = ID_USER_PACKET_ENUM + 1
+};
 
 TestProject::TestProject()
 {
@@ -43,7 +49,7 @@ void TestProject::Update(float a_deltaTime)
 	RakNet::Packet* packet;
 
 	//Singleton for the Network manager
-	RakNet::RakPeerInterface* peer = RakNet::RakPeerInterface::GetInstance();
+	static RakNet::RakPeerInterface* peer = RakNet::RakPeerInterface::GetInstance();
 
 	/* SETUP SERVER/CLIENT */
 	if (ImGui::Button("Client")) {
@@ -52,7 +58,7 @@ void TestProject::Update(float a_deltaTime)
 		isServer = false;
 
 		log->addLog(LOG_INFO, "Starting the Client");
-		peer->Connect("10.59.255.254", SERVER_PORT, 0, 0);
+		peer->Connect("127.0.0.1", SERVER_PORT, 0, 0);
 
 	}
 	else if (ImGui::Button("Server")) {
@@ -80,8 +86,17 @@ void TestProject::Update(float a_deltaTime)
 			log->addLog(LOG_INFO, "Another client has connected.\n");
 			break;
 		case ID_CONNECTION_REQUEST_ACCEPTED:
+		{
 			log->addLog(LOG_INFO, "Our connection request has been accepted.\n");
-			break;
+
+			// Use a BitStream to write a custom user message
+			// Bitstreams are easier to use than sending casted structures, and handle endian swapping automatically
+			RakNet::BitStream bsOut;
+			bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
+			bsOut.Write("Hello world");
+			peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+		}
+		break;
 		case ID_NEW_INCOMING_CONNECTION:
 			log->addLog(LOG_INFO, "A connection is incoming.\n");
 			break;
@@ -104,20 +119,30 @@ void TestProject::Update(float a_deltaTime)
 				log->addLog(LOG_INFO, "Connection lost.\n");
 			}
 			break;
+		case ID_GAME_MESSAGE_1:
+		{
+			RakNet::RakString rs;
+			RakNet::BitStream bsIn(packet->data, packet->length, false);
+			bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+			bsIn.Read(rs);
+			log->addLog(LOG_INFO, rs);
+			break;
+		}
+
 		default:
 			log->addLog(LOG_INFO, "Message with identifier %i has arrived.\n", packet->data[0]);
 			break;
 		}
 
-		
+
 	}
 
 
 	//RakNet::RakPeerInterface::DestroyInstance(peer);
 
-	#pragma region Rendering
+#pragma region Rendering
 
-	// update our camera matrix using the keyboard/mouse
+// update our camera matrix using the keyboard/mouse
 	Utility::freeMovement(m_cameraMatrix, a_deltaTime, 10);
 
 	// clear all gizmos from last frame
@@ -150,7 +175,7 @@ void TestProject::Update(float a_deltaTime)
 	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		quit();
 
-	#pragma endregion
+#pragma endregion
 
 }
 

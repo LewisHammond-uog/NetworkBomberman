@@ -52,7 +52,7 @@ void TestProject::Update(float a_deltaTime)
 		isServer = false;
 
 		log->addLog(LOG_INFO, "Starting the Client");
-		peer->Connect("127.0.0.1", SERVER_PORT, 0, 0);
+		peer->Connect("10.59.255.254", SERVER_PORT, 0, 0);
 
 	}
 	else if (ImGui::Button("Server")) {

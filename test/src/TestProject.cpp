@@ -1,9 +1,8 @@
 #include <stdafx.h>
 #include "TestProject.h"
-#include "MessageIdentifiers.h"
-#include "RakPeerInterface.h"
-#include "BitStream.h"
-#include "RakNetTypes.h"
+
+#include <RakPeerInterface.h>
+#include<BitStream.h>
 
 #define MAX_CLIENTS 10
 #define SERVER_PORT 60000
@@ -24,6 +23,18 @@ TestProject::~TestProject()
 
 bool TestProject::onCreate()
 {
+
+	// initialise the Gizmos helper class
+	Gizmos::create();
+
+	//Get instance of rakPeerInterface and set state
+	m_pRakPeer = RakNet::RakPeerInterface::GetInstance();
+	m_currentState = ConnectionState::CLIENT_SERVER_DECISION;
+
+
+	#pragma region Render
+
+
 	// initialise the Gizmos helper class
 	Gizmos::create();
 	// create a world-space matrix for a camera
@@ -37,6 +48,8 @@ bool TestProject::onCreate()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 
+	#pragma endregion
+
 	return true;
 }
 
@@ -44,105 +57,11 @@ void TestProject::Update(float a_deltaTime)
 {
 	Application_Log* log = Application_Log::Get();
 
-	char str[512];
-	bool static isServer = false;
-	RakNet::Packet* packet;
+	
 
-	//Singleton for the Network manager
-	static RakNet::RakPeerInterface* peer = RakNet::RakPeerInterface::GetInstance();
+	#pragma region Rendering
 
-	/* SETUP SERVER/CLIENT */
-	if (ImGui::Button("Client")) {
-		RakNet::SocketDescriptor sd;
-		peer->Startup(1, &sd, 1);
-		isServer = false;
-
-		log->addLog(LOG_INFO, "Starting the Client");
-		peer->Connect("127.0.0.1", SERVER_PORT, 0, 0);
-
-	}
-	else if (ImGui::Button("Server")) {
-		RakNet::SocketDescriptor sd(SERVER_PORT, 0);
-		peer->Startup(MAX_CLIENTS, &sd, 1);
-		isServer = true;
-
-		log->addLog(LOG_INFO, "Starting the Server");
-		peer->SetMaximumIncomingConnections(MAX_CLIENTS);
-	}
-
-
-	for (packet = peer->Receive(); packet; peer->DeallocatePacket(packet), packet = peer->Receive()) {
-
-		//Get the message type and deal with it
-		switch (packet->data[0])
-		{
-		case ID_REMOTE_DISCONNECTION_NOTIFICATION:
-			log->addLog(LOG_INFO, "Another client has disconnected.\n");
-			break;
-		case ID_REMOTE_CONNECTION_LOST:
-			log->addLog(LOG_INFO, "Another client has lost the connection.\n");
-			break;
-		case ID_REMOTE_NEW_INCOMING_CONNECTION:
-			log->addLog(LOG_INFO, "Another client has connected.\n");
-			break;
-		case ID_CONNECTION_REQUEST_ACCEPTED:
-		{
-			log->addLog(LOG_INFO, "Our connection request has been accepted.\n");
-
-			// Use a BitStream to write a custom user message
-			// Bitstreams are easier to use than sending casted structures, and handle endian swapping automatically
-			RakNet::BitStream bsOut;
-			bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
-			bsOut.Write("Hello world");
-			peer->Send(&bsOut, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-		}
-		break;
-		case ID_NEW_INCOMING_CONNECTION:
-			log->addLog(LOG_INFO, "A connection is incoming.\n");
-			break;
-		case ID_NO_FREE_INCOMING_CONNECTIONS:
-			log->addLog(LOG_INFO, "The server is full.\n");
-			break;
-		case ID_DISCONNECTION_NOTIFICATION:
-			if (isServer) {
-				log->addLog(LOG_INFO, "A client has disconnected.\n");
-			}
-			else {
-				log->addLog(LOG_INFO, "We have been disconnected.\n");
-			}
-			break;
-		case ID_CONNECTION_LOST:
-			if (isServer) {
-				log->addLog(LOG_INFO, "A client lost the connection.\n");
-			}
-			else {
-				log->addLog(LOG_INFO, "Connection lost.\n");
-			}
-			break;
-		case ID_GAME_MESSAGE_1:
-		{
-			RakNet::RakString rs;
-			RakNet::BitStream bsIn(packet->data, packet->length, false);
-			bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
-			bsIn.Read(rs);
-			log->addLog(LOG_INFO, rs);
-			break;
-		}
-
-		default:
-			log->addLog(LOG_INFO, "Message with identifier %i has arrived.\n", packet->data[0]);
-			break;
-		}
-
-
-	}
-
-
-	//RakNet::RakPeerInterface::DestroyInstance(peer);
-
-#pragma region Rendering
-
-// update our camera matrix using the keyboard/mouse
+	// update our camera matrix using the keyboard/mouse
 	Utility::freeMovement(m_cameraMatrix, a_deltaTime, 10);
 
 	// clear all gizmos from last frame
@@ -158,6 +77,51 @@ void TestProject::Update(float a_deltaTime)
 
 		Gizmos::addLine(glm::vec3(10, 0, -10 + i), glm::vec3(-10, 0, -10 + i),
 			i == 10 ? glm::vec4(1, 1, 1, 1) : glm::vec4(0, 0, 0, 1));
+	}
+	#pragma endregion
+
+
+	static bool showConnectionWindow = true;
+
+	switch (m_currentState) {
+		case(ConnectionState::CLIENT_SERVER_DECISION): 
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			ImVec2 windowSize = ImVec2(400.f, 250.f);
+			ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
+
+			ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
+			ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+			ImGui::Begin("Establish Connection", &showConnectionWindow);
+
+			if (ImGui::Button("Client")) {
+				m_currentState = ConnectionState::CLIENT_CONNECTION;
+				RakNet::SocketDescriptor sd;
+				m_pRakPeer->Startup(1, &sd, 1);
+
+				if (log != nullptr) {
+					log->addLog(LOG_LEVEL::LOG_INFO, "Client Startup");
+				}
+			}
+
+			if (ImGui::Button("Server")) {
+				m_currentState = ConnectionState::SERVER_PROCESSING_EVENTS;
+				RakNet::SocketDescriptor sd(SERVER_PORT, 0);
+				m_pRakPeer->Startup(MAX_CLIENTS, &sd, 1);
+
+				if (log != nullptr) {
+					log->addLog(LOG_LEVEL::LOG_INFO, "Server Startup");
+				}
+
+				m_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
+			}
+
+			ImGui::End();
+
+			break;
+		}
+		default:
+			break;
 	}
 
 
@@ -175,7 +139,7 @@ void TestProject::Update(float a_deltaTime)
 	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		quit();
 
-#pragma endregion
+	
 
 }
 
@@ -195,6 +159,7 @@ void TestProject::Draw()
 
 void TestProject::Destroy()
 {
+	RakNet::RakPeerInterface::DestroyInstance(m_pRakPeer);
 	Gizmos::destroy();
 }
 

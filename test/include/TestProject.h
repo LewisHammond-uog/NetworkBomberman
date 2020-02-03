@@ -7,12 +7,14 @@
 //Rak Net Includes
 #include <MessageIdentifiers.h>
 #include <RakNetTypes.h>
+
 //Forward declare
 namespace RakNet {
 	class RakPeerInterface;
 }
 
-//Connection State enum
+//Connection State, not reltated to raknet
+//just to move through our own switch statement
 typedef enum ConnectionState {
 	//Client
 	CLIENT_SERVER_DECISION,
@@ -24,12 +26,19 @@ typedef enum ConnectionState {
 	//Server
 	SERVER_CLIENTS_CONNECTED,
 	SERVER_PROCESSING_EVENTS,
+	SERVER_HANDLE_CLIENT_DISCONNECT,
+
+	//Game
+	START_GAME,
+	GAME_RUNNING,
+	END_GAME,
 
 	MAX_CONNECTIONS_STATES
 
 }ConnectionState;
 
-//Message types
+//Custom Message Types for custom data that we are sending
+//over hte network, extend from RakNets Messages (i.e ID_CONNECTION_REQUEST_ACCEPTED)
 typedef enum CSNetMessages {
 	AUTHENTICATE = ID_USER_PACKET_ENUM + 1,
 
@@ -58,11 +67,13 @@ protected:
 	glm::mat4	m_projectionMatrix;
 
 	//Raknet Variables and connection status
+	void ProcessServerEvents(); //[To do client processing events]
 	RakNet::RakPeerInterface* m_pRakPeer;
 	RakNet::SystemAddress m_serverAddress;
-	void ProcessServerEvents();
 
 	ConnectionState m_currentState;
+
+	void LogConsoleMessage(const char* a_sMessage);
 };
 
 #endif // __MY_APPLICATION_H__

@@ -5,6 +5,8 @@
 #include <RakPeerInterface.h>
 #include <BitStream.h>
 
+#include <string.h>
+
 #define MAX_CLIENTS 10
 #define SERVER_PORT 60000
 
@@ -14,7 +16,7 @@ enum GameMessages {
 
 TestProject::TestProject()
 {
-
+	
 }
 
 TestProject::~TestProject()
@@ -141,7 +143,7 @@ void TestProject::Update(float a_deltaTime)
 					LogConsoleMessage("Connection Request Accepted");
 					break;
 				}
-				case(CSNetMessages::AUTHENTICATE):
+				case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS):
 				{
 					//Read in byte from packet, ignore the first byte (which is the message id)
 					m_serverAddress = packet->systemAddress;
@@ -208,6 +210,7 @@ void TestProject::Update(float a_deltaTime)
 		}
 
 		ImGui::End();
+		break;
 
 	}
 	case(ConnectionState::CLIENT_WAITING_FOR_AUTHORISATION):
@@ -221,7 +224,17 @@ void TestProject::Update(float a_deltaTime)
 
 			switch (packet->data[0])
 			{
-				//TO DO - AUTHENTICATION
+			//TO DO - AUTHENTICATION
+			case(SERVER_AUTHENTICATE_SUCCESS): 
+			{
+				LogConsoleMessage("Authentication Successfull");
+				break;
+			}
+			case(SERVER_AUTHENTICATE_FAIL):
+			{
+				LogConsoleMessage("Authentication Failed");
+				break;
+			}
 			default:
 				break;
 			}
@@ -312,7 +325,6 @@ void TestProject::ProcessServerEvents() {
 
 	RakNet::Packet* packet = m_pRakPeer->Receive();
 
-
 	while (packet != nullptr) {
 
 		switch (packet->data[0])
@@ -342,7 +354,7 @@ void TestProject::ProcessServerEvents() {
 				LogConsoleMessage("A Client is attempting to connect");
 
 				RakNet::BitStream connectionAuthorise;
-				connectionAuthorise.Write((RakNet::MessageID)CSNetMessages::AUTHENTICATE);
+				connectionAuthorise.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_SUCCESS);
 				connectionAuthorise.Write("Identify yourself!");
 				m_pRakPeer->Send(&connectionAuthorise, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 				break;
@@ -365,8 +377,17 @@ void TestProject::ProcessServerEvents() {
 				bsIn.Read(password, 256);
 
 				LogConsoleMessage("Received Login Info");
-				LogConsoleMessage(username);
-				LogConsoleMessage(password);
+
+				std::string usernameString = std::string(username);
+				std::string passwordString = std::string(password);
+
+				if (usernameString == "a" && passwordString == "a") 
+				{
+					RakNet::BitStream authCreds;
+					authCreds.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_SUCCESS);
+					m_pRakPeer->Send(&authCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+					LogConsoleMessage("Sending Auth");
+				}
 
 				break;
 			}

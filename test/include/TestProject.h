@@ -40,7 +40,8 @@ typedef enum ConnectionState {
 //Custom Message Types for custom data that we are sending
 //over hte network, extend from RakNets Messages (i.e ID_CONNECTION_REQUEST_ACCEPTED)
 typedef enum CSNetMessages {
-	AUTHENTICATE = ID_USER_PACKET_ENUM + 1,
+	SERVER_AUTHENTICATE_SUCCESS = ID_USER_PACKET_ENUM + 1,
+	SERVER_AUTHENTICATE_FAIL,
 
 	CLIENT_LOGIN_DATA,
 	CLIENT_REGISTER_DATA,

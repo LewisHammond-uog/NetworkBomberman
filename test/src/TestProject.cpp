@@ -225,12 +225,12 @@ void TestProject::Update(float a_deltaTime)
 			switch (packet->data[0])
 			{
 			//TO DO - AUTHENTICATION
-			case(SERVER_AUTHENTICATE_SUCCESS): 
+			case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS):
 			{
 				LogConsoleMessage("Authentication Successfull");
 				break;
 			}
-			case(SERVER_AUTHENTICATE_FAIL):
+			case(CSNetMessages::SERVER_AUTHENTICATE_FAIL):
 			{
 				LogConsoleMessage("Authentication Failed");
 				break;
@@ -381,12 +381,19 @@ void TestProject::ProcessServerEvents() {
 				std::string usernameString = std::string(username);
 				std::string passwordString = std::string(password);
 
+				RakNet::BitStream authCreds;
+
 				if (usernameString == "a" && passwordString == "a") 
 				{
-					RakNet::BitStream authCreds;
+					
 					authCreds.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_SUCCESS);
 					m_pRakPeer->Send(&authCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-					LogConsoleMessage("Sending Auth");
+					LogConsoleMessage("Sending Auth Success");
+				}
+				else {
+					authCreds.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_FAIL);
+					m_pRakPeer->Send(&authCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+					LogConsoleMessage("Sending Auth Fail");
 				}
 
 				break;

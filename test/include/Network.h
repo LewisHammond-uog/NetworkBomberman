@@ -5,6 +5,10 @@
 #include <MessageIdentifiers.h>
 #include <RakNetTypes.h>
 
+//Defines for max clients and server port
+#define SERVER_PORT 6000
+#define MAX_CLIENTS 2
+
 //Connection State, not reltated to raknet
 //just to move through our own switch statement
 typedef enum ConnectionState {
@@ -57,6 +61,17 @@ protected:
 	//Raknet peer for packet send/receive
 	RakNet::RakPeerInterface* m_pRakPeer;
 	ConnectionState m_eConnectionState;
+	RakNet::SystemAddress m_serverAddress;
+
+	//Function for Debug Log console message
+	//TODO - Move this somewhere else
+	void LogConsoleMessage(const char* m_Message) {
+		Application_Log* log = Application_Log::Get();
+
+		if (log != nullptr) {
+			log->addLog(LOG_LEVEL::LOG_INFO, m_Message);
+		}
+	}
 };
 
 #endif // !__NETWORK_H__s

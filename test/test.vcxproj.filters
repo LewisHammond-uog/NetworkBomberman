@@ -27,6 +27,9 @@
     <ClCompile Include="src\stdafx.cpp">
       <Filter>PCH</Filter>
     </ClCompile>
+    <ClCompile Include="src\NetworkClient.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\TestProject.h">
@@ -34,6 +37,12 @@
     </ClInclude>
     <ClInclude Include="include\stdafx.h">
       <Filter>PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Network.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkClient.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

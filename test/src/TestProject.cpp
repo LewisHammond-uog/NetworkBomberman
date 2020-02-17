@@ -7,8 +7,8 @@
 
 #include <string.h>
 
-#define MAX_CLIENTS 10
-#define SERVER_PORT 60000
+#include "NetworkClient.h"
+
 
 enum GameMessages {
 	ID_GAME_MESSAGE_1 = ID_USER_PACKET_ENUM + 1
@@ -29,13 +29,7 @@ bool TestProject::onCreate()
 
 	// initialise the Gizmos helper class
 	Gizmos::create();
-
-	//Get instance of rakPeerInterface and set state
-	m_pRakPeer = RakNet::RakPeerInterface::GetInstance();
-	m_currentState = ConnectionState::CLIENT_SERVER_DECISION;
-
 	#pragma region Render
-
 
 	// initialise the Gizmos helper class
 	Gizmos::create();
@@ -49,6 +43,9 @@ bool TestProject::onCreate()
 	glClearColor(0.25f, 0.25f, 0.25f, 1.f);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
+
+	gameClient = new NetworkClient();
+	gameClient->Init();
 
 	#pragma endregion
 
@@ -70,6 +67,9 @@ void TestProject::Update(float a_deltaTime)
 	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
+	gameClient->Update();
+
+	/*
 	switch (m_currentState) {
 	case(ConnectionState::CLIENT_SERVER_DECISION):
 	{
@@ -252,7 +252,7 @@ void TestProject::Update(float a_deltaTime)
 		break;
 
 	}
-
+	*/
 
 #pragma region Rendering
 
@@ -313,14 +313,8 @@ void TestProject::Destroy()
 	Gizmos::destroy();
 }
 
-void TestProject::LogConsoleMessage(const char* m_Message) {
-	Application_Log* log = Application_Log::Get();
 
-	if (log != nullptr) {
-		log->addLog(LOG_LEVEL::LOG_INFO, m_Message);
-	}
-}
-
+/*
 void TestProject::ProcessServerEvents() {
 
 	RakNet::Packet* packet = m_pRakPeer->Receive();
@@ -411,4 +405,4 @@ void TestProject::ProcessServerEvents() {
 	}
 
 
-}
+}*/

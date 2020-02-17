@@ -8,7 +8,8 @@
 #include <MessageIdentifiers.h>
 #include <RakNetTypes.h>
 
-#include "NetworkClient.h"
+//Forward Delcleration
+class ServerClientBase;
 
 // Derived application class that wraps up all globals neatly
 class TestProject : public Application
@@ -28,12 +29,9 @@ protected:
 	glm::mat4	m_cameraMatrix;
 	glm::mat4	m_projectionMatrix;
 
-	//Raknet Variables and connection status
-	void ProcessServerEvents(); //[To do client processing events]
-	RakNet::RakPeerInterface* m_pRakPeer;
-	RakNet::SystemAddress m_serverAddress;
-
-	NetworkClient* gameClient;
+private:
+	ServerClientBase* networkUpdater; //Network Updater (i.e client or server)
+	bool showConnectionWindow = true;
 };
 
 #endif // __MY_APPLICATION_H__

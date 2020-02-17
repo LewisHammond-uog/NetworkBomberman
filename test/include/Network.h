@@ -49,14 +49,15 @@ typedef enum CSNetMessages {
 /*
 Abstract class that is used for functionality shared between clients and severs
 */
-class Network
+class ServerClientBase
 {
-protected:
-
+public:
 	//Pure Virtual Function to make sure that network clients/servers have
 	//an init and update funciton
 	virtual void Init() = 0;
 	virtual void Update() = 0;
+
+protected:
 
 	//Raknet peer for packet send/receive
 	RakNet::RakPeerInterface* m_pRakPeer;

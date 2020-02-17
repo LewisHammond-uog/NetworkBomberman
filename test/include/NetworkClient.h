@@ -9,7 +9,7 @@ namespace RakNet {
 	class RakPeerInterface;
 }
 
-class NetworkClient : public Network
+class NetworkClient : public ServerClientBase
 {
 public:
 	//Constructor/Destructor

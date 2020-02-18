@@ -79,6 +79,9 @@ void TestProject::Update(float a_deltaTime)
 			gameServer = new NetworkServer();
 			gameServer->Init();
 
+			gameClient = new NetworkClient();
+			gameClient->Init();
+
 			//Hide the connection window
 			showConnectionWindow = false;
 		}
@@ -151,5 +154,13 @@ void TestProject::Draw()
 
 void TestProject::Destroy()
 {
+	if (gameClient != nullptr) {
+		delete gameClient;
+	}
+
+	if (gameServer != nullptr) {
+		delete gameServer;
+	}
+
 	Gizmos::destroy();
 }

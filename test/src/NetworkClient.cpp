@@ -26,6 +26,7 @@ void NetworkClient::Init() {
 	//Get instance of rakPeerInterface and set state
 	m_pRakPeer = RakNet::RakPeerInterface::GetInstance();
 	m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
+	m_eClientGameState = ClientLocalState::NOT_CONNECTED;
 
 	//Startup Client
 	RakNet::SocketDescriptor sd;
@@ -34,17 +35,24 @@ void NetworkClient::Init() {
 
 void NetworkClient::Update()
 {
-	//If we haven't yet made it through to being authenticated with the server
-	//then keep trying to connect
-	if (m_eConnectionState <= CLIENT_WAITING_FOR_AUTHORISATION) {
-		DoServerConnectionEvents();
+	//Choose what functions to run based on the current client state
+	switch (m_eClientGameState) {
+		case(ClientLocalState::NOT_CONNECTED): {
+			DoClientConnectionEvents();
+		}
+		case(ClientLocalState::PRE_GAME): {
+			DoClientPreGameEvents();
+		}
+		default: {
+			m_eClientGameState = ClientLocalState::NOT_CONNECTED;
+		}
 	}
 }
 
 /// <summary>
 /// An update loop to get the client connected to the server
 /// </summary>
-void NetworkClient::DoServerConnectionEvents()
+void NetworkClient::DoClientConnectionEvents()
 {
 
 	//Setup window to display login details
@@ -210,6 +218,8 @@ void NetworkClient::DoServerConnectionEvents()
 
 						//We have successfully connected and logged in to the server,
 						//move on to actually doing game stuff
+						m_eClientGameState = ClientLocalState::PRE_GAME;
+						m_eConnectionState = ClientConnectionState::CLIENT_INIT_PREGAME;
 
 						break;
 					}
@@ -234,6 +244,58 @@ void NetworkClient::DoServerConnectionEvents()
 		}
 		default:
 			break;
-
 	}
 }
+
+/// <summary>
+/// An update loop to get the client ready for the game (i.e downloading level,
+/// telling the server we are ready)
+/// </summary>
+void NetworkClient::DoClientPreGameEvents()
+{
+	//Window 
+	//TODO, Create this as a seperate funct
+	static bool showConnectionWindow = true;
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 windowSize = ImVec2(400.f, 250.f);
+	ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+
+	switch (m_eConnectionState) {
+		case(ClientConnectionState::CLIENT_INIT_PREGAME): {
+			//Start the pre game functionality
+			m_eConnectionState = ClientConnectionState::CLIENT_SEND_READY;
+			break;
+		}
+		case(ClientConnectionState::CLIENT_SEND_READY): {
+
+			/*
+			Tell the server that this client is ready to start the game
+			*/
+			RakNet::BitStream readyMessage;
+			readyMessage.Write((RakNet::MessageID)CSNetMessages::CLIENT_READY_TO_PLAY);
+			m_pRakPeer->Send(&readyMessage, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
+
+			//Set state to wait for the game to start
+			m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_GAME_START;
+			LogConsoleMessage("CLIENT :: SENT SERVER READY MESSAGE");
+
+			break;
+		}
+		case(ClientConnectionState::CLIENT_WAITING_FOR_GAME_START): {
+
+			/*
+			Wait for the server to tell us the game is starting
+			*/
+			ImGui::Begin("Waiting for the game to start", &showConnectionWindow);
+			ImGui::Text("Waiting for the game to start %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
+			ImGui::End();
+			break;
+		}
+		default:
+			break;
+	}
+
+}
+

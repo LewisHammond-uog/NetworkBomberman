@@ -9,8 +9,9 @@ class NetworkClient : public ServerClientBase
 public:
 
 	//Client Running State
-	typedef enum ClientState {
-		STATE_CONNECTING_TO_SERVER,
+	typedef enum ClientLocalState {
+		NOT_CONNECTED,
+		PRE_GAME,
 	};
 
 	//Client Connection States
@@ -21,7 +22,12 @@ public:
 		CLIENT_ENTER_AUTH_DETAILS,
 		CLIENT_WAITING_FOR_AUTHORISATION,
 
-		//Game Running
+		//Setup Game
+		CLIENT_INIT_PREGAME,
+		CLIENT_SEND_READY,
+		CLIENT_WAITING_FOR_GAME_START,
+
+		//Start Game
 
 		//Game Shutdown
 
@@ -39,9 +45,11 @@ private:
 
 	//Functions to run different network events based on 
 	//the current game state
-	void DoServerConnectionEvents();
+	void DoClientConnectionEvents();
+	void DoClientPreGameEvents();
 
-	//Connection State
+	//Local (i.e game running, loading) & Connection State
+	ClientLocalState m_eClientGameState;
 	ClientConnectionState m_eConnectionState;
 
 };

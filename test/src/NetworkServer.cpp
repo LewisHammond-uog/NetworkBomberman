@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "NetworkServer.h"
 
-
 //Raknet Includes
 #include "RakPeerInterface.h"
 #include "BitStream.h"
@@ -86,7 +85,7 @@ void NetworkServer::DoPreGameServerEvents()
 				bsIn.Read(username, 256);
 				bsIn.Read(password, 256);
 
-				LogConsoleMessage("Received Login Info");
+				LogConsoleMessage("SERVER :: A CLIENT HAS SENT THE SERVER LOGIN DETAILS");
 
 				std::string usernameString = std::string(username);
 				std::string passwordString = std::string(password);
@@ -98,14 +97,18 @@ void NetworkServer::DoPreGameServerEvents()
 
 					authCreds.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_SUCCESS);
 					m_pRakPeer->Send(&authCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-					LogConsoleMessage("Sending Auth Success");
+					LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
 				}
 				else {
 					authCreds.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_FAIL);
 					m_pRakPeer->Send(&authCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-					LogConsoleMessage("Sending Auth Fail");
+					LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN FAIL INFO");
 				}
 
+				break;
+			}
+			case(CSNetMessages::CLIENT_READY_TO_PLAY): {
+				LogConsoleMessage("SERVER :: A CLIENT IS READY TO PLAY");
 				break;
 			}
 			default:

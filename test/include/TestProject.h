@@ -9,7 +9,8 @@
 #include <RakNetTypes.h>
 
 //Forward Delcleration
-class ServerClientBase;
+class NetworkServer;
+class NetworkClient;
 
 // Derived application class that wraps up all globals neatly
 class TestProject : public Application
@@ -30,7 +31,8 @@ protected:
 	glm::mat4	m_projectionMatrix;
 
 private:
-	ServerClientBase* networkUpdater; //Network Updater (i.e client or server)
+	NetworkServer* gameServer; //Game Server (if we are the host)
+	NetworkClient* gameClient; //Game Client (always used), connects to the server and shares info
 	bool showConnectionWindow = true;
 };
 

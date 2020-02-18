@@ -48,13 +48,6 @@ typedef enum CSNetMessages {
 	CSNET_MESSAGE_END
 }CSNetMessages;
 
-struct TestNetworkData
-{
-	int a = 0;
-	float f = 0;
-	std::string string = "2020";
-};
-
 /*
 Abstract class that is used for functionality shared between clients and severs
 */

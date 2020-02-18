@@ -33,8 +33,6 @@ bool TestProject::onCreate()
 	Gizmos::create();
 	#pragma region Render
 
-	// initialise the Gizmos helper class
-	Gizmos::create();
 	// create a world-space matrix for a camera
 	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 
@@ -63,15 +61,14 @@ void TestProject::Update(float a_deltaTime)
 	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
-
 	///////DECISION WINDOW///////////////
 	if (showConnectionWindow) {
 		ImGui::Begin("Establish Connection", &showConnectionWindow);
 
 		if (ImGui::Button("Client")) {
 			//Create Client
-			networkUpdater = new NetworkClient();
-			networkUpdater->Init();
+			gameClient = new NetworkClient();
+			gameClient->Init();
 
 			//Hide the connection window
 			showConnectionWindow = false;
@@ -79,8 +76,8 @@ void TestProject::Update(float a_deltaTime)
 
 		if (ImGui::Button("Server")) {
 			//Create Server
-			networkUpdater = new NetworkServer();
-			networkUpdater->Init();
+			gameServer = new NetworkServer();
+			gameServer->Init();
 
 			//Hide the connection window
 			showConnectionWindow = false;
@@ -90,8 +87,12 @@ void TestProject::Update(float a_deltaTime)
 	}
 	//////////////////////////////////////
 
-	if (networkUpdater != nullptr) {
-		networkUpdater->Update();
+	if (gameClient != nullptr) {
+		gameClient->Update();
+	}
+
+	if (gameServer != nullptr) {
+		gameServer->Update();
 	}
 
 	#pragma region Rendering
@@ -113,10 +114,11 @@ void TestProject::Update(float a_deltaTime)
 		Gizmos::addLine(glm::vec3(10, 0, -10 + i), glm::vec3(-10, 0, -10 + i),
 			i == 10 ? glm::vec4(1, 1, 1, 1) : glm::vec4(0, 0, 0, 1));
 	}
+
 	#pragma endregion
 
 	static bool show_demo_window = true;
-	//ImGui::ShowDemoWindow(&show_demo_window);
+
 	if (log != nullptr && show_demo_window)
 	{
 		log->showLog(&show_demo_window);

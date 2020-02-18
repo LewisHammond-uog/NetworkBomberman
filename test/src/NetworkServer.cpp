@@ -124,12 +124,7 @@ void NetworkServer::DoPreGameServerEvents()
 				//Ignore Message ID
 				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
 
-				TestNetworkData data;
-				bsIn.Read(data);
-
-				int f = 0;
-
-
+				break;
 			}
 			default:
 			{
@@ -142,5 +137,4 @@ void NetworkServer::DoPreGameServerEvents()
 		m_pRakPeer->DeallocatePacket(packet);
 		packet = m_pRakPeer->Receive();
 	}
-
 }

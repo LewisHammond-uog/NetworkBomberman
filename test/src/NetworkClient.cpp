@@ -201,15 +201,7 @@ void NetworkClient::DoPreGameConnectionEvents()
 
 			//Create a packet and send it
 			RakNet::BitStream myStream;
-			float x = 0.5f;
-			float y = 0.0f;
-			float z = 0.1f;
-
 			myStream.Write((RakNet::MessageID)CSNetMessages::CLIENT_TEST_DATA);
-			TestNetworkData* testD = new TestNetworkData();
-			testD->a = 69;
-
-			myStream.Write(*testD);
 
 			m_pRakPeer->Send(&myStream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
 

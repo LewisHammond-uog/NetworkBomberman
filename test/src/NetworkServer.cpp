@@ -92,6 +92,7 @@ void NetworkServer::DoPreGameServerEvents()
 
 				char username[256];
 				char password[256];
+				
 				bsIn.Read(username, 256);
 				bsIn.Read(password, 256);
 
@@ -116,6 +117,19 @@ void NetworkServer::DoPreGameServerEvents()
 				}
 
 				break;
+			}
+			case(CSNetMessages::CLIENT_TEST_DATA):
+			{
+				RakNet::BitStream bsIn(packet->data, packet->length, false);
+				//Ignore Message ID
+				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+
+				TestNetworkData data;
+				bsIn.Read(data);
+
+				int f = 0;
+
+
 			}
 			default:
 			{

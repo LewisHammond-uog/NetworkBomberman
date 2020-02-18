@@ -5,6 +5,8 @@
 #include <MessageIdentifiers.h>
 #include <RakNetTypes.h>
 
+#include <string.h>
+
 //Defines for max clients and server port
 #define SERVER_PORT 6000
 #define MAX_CLIENTS 2
@@ -41,10 +43,17 @@ typedef enum CSNetMessages {
 
 	CLIENT_LOGIN_DATA,
 	CLIENT_REGISTER_DATA,
+	CLIENT_TEST_DATA,
 
 	CSNET_MESSAGE_END
 }CSNetMessages;
 
+struct TestNetworkData
+{
+	int a = 0;
+	float f = 0;
+	std::string string = "2020";
+};
 
 /*
 Abstract class that is used for functionality shared between clients and severs

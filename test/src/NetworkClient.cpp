@@ -176,11 +176,13 @@ void NetworkClient::DoPreGameConnectionEvents()
 				case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS):
 				{
 					LogConsoleMessage("Authentication Successfull");
+					m_eConnectionState = ConnectionState::START_GAME;
 					break;
 				}
 				case(CSNetMessages::SERVER_AUTHENTICATE_FAIL):
 				{
 					LogConsoleMessage("Authentication Failed");
+					m_eConnectionState = ConnectionState::START_GAME;
 					break;
 				}
 				default:
@@ -195,7 +197,23 @@ void NetworkClient::DoPreGameConnectionEvents()
 			ImGui::End();
 			break;
 		}
+		case(ConnectionState::START_GAME): {
 
+			//Create a packet and send it
+			RakNet::BitStream myStream;
+			float x = 0.5f;
+			float y = 0.0f;
+			float z = 0.1f;
+
+			myStream.Write((RakNet::MessageID)CSNetMessages::CLIENT_TEST_DATA);
+			TestNetworkData* testD = new TestNetworkData();
+			testD->a = 69;
+
+			myStream.Write(*testD);
+
+			m_pRakPeer->Send(&myStream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
+
+		}
 		default:
 			break;
 

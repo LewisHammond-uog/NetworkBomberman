@@ -41,13 +41,13 @@
     <ClInclude Include="include\stdafx.h">
       <Filter>PCH</Filter>
     </ClInclude>
-    <ClInclude Include="include\Network.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\NetworkClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\NetworkServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ClientServerBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

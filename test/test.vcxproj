@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Network.h" />
+    <ClInclude Include="include\ClientServerBase.h" />
     <ClInclude Include="include\NetworkClient.h" />
     <ClInclude Include="include\NetworkServer.h" />
     <ClInclude Include="include\stdafx.h" />

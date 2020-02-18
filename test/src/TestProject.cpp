@@ -8,7 +8,7 @@
 #include <string.h>
 
 //Project Includes
-#include "Network.h"
+#include "ClientServerBase.h"
 #include "NetworkClient.h"
 #include "NetworkServer.h"
 

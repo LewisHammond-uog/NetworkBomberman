@@ -25,7 +25,7 @@ void NetworkClient::Init() {
 
 	//Get instance of rakPeerInterface and set state
 	m_pRakPeer = RakNet::RakPeerInterface::GetInstance();
-	m_eConnectionState = ConnectionState::CLIENT_CONNECTION;
+	m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
 
 	//Startup Client
 	RakNet::SocketDescriptor sd;
@@ -34,15 +34,21 @@ void NetworkClient::Init() {
 
 void NetworkClient::Update()
 {
-	DoPreGameConnectionEvents();
+	//If we haven't yet made it through to being authenticated with the server
+	//then keep trying to connect
+	if (m_eConnectionState <= CLIENT_WAITING_FOR_AUTHORISATION) {
+		DoServerConnectionEvents();
+	}
 }
 
-void NetworkClient::DoPreGameConnectionEvents()
+/// <summary>
+/// An update loop to get the client connected to the server
+/// </summary>
+void NetworkClient::DoServerConnectionEvents()
 {
 
-	//WINDOW RENDERING
+	//Setup window to display login details
 	static bool showConnectionWindow = true;
-	//Setup Imgui window size and position
 	ImGuiIO& io = ImGui::GetIO();
 	ImVec2 windowSize = ImVec2(400.f, 250.f);
 	ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
@@ -50,24 +56,31 @@ void NetworkClient::DoPreGameConnectionEvents()
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	switch (m_eConnectionState) {
-		case(ConnectionState::CLIENT_CONNECTION):
+		case(ClientConnectionState::CLIENT_START_CONNECTION):
 		{
+			/*
+			State where the UI is waiting for the user to input the server
+			ip address
+			*/
 
+			//Window Render
 			ImGui::Begin("Connect To Server", &showConnectionWindow);
 			ImGui::AlignTextToFramePadding();
 			ImGui::Text("Enter Server IP");
 
+			//Fill in with Defualt 
 			static int ipAddress[4] = { 127,0,0,1 };
 			ImGui::InputInt4("Server Address", ipAddress);
 
 			if (ImGui::Button("Connect")) {
 
-				LogConsoleMessage("Client Connect Started");
+				LogConsoleMessage("CLIENT :: CLIENT CONNECTION STARTED");
 
+				//Get user inputed IP address and try and connect to the server
 				std::stringstream ss;
 				ss << ipAddress[0] << "." << ipAddress[1] << "." << ipAddress[2] << "." << ipAddress[3];
 				m_pRakPeer->Connect(ss.str().c_str(), SERVER_PORT, 0, 0);
-				m_eConnectionState = ConnectionState::CLIENT_WAITING_FOR_CONNECTION;
+				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_CONNECTION;
 			}
 
 
@@ -75,47 +88,49 @@ void NetworkClient::DoPreGameConnectionEvents()
 
 			break;
 		}
-		case(ConnectionState::CLIENT_WAITING_FOR_CONNECTION):
+		case(ClientConnectionState::CLIENT_WAITING_FOR_CONNECTION):
 		{
+			/*
+			Wait here until the server has confirmed that we have connected or
+			that our connection has been rejected
+			*/
+
+			//Draw Imgui Window
 			ImGui::Begin("Waiting for Connection", &showConnectionWindow);
-			//Loading Animation
 			ImGui::Text("Waiting for Connection... %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
 
+			//Wait for a packet to be recieved
 			RakNet::Packet* packet = m_pRakPeer->Receive();
+
+			//While we still have packets to proccess keep processing them
 			while (packet != nullptr) {
 
 				switch (packet->data[0])
 				{
-				case(ID_CONNECTION_REQUEST_ACCEPTED):
-				{
-					LogConsoleMessage("Connection Request Accepted");
-					break;
-				}
-				case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS):
-				{
-					//Read in byte from packet, ignore the first byte (which is the message id)
-					m_serverAddress = packet->systemAddress;
-					RakNet::RakString rs;
-					RakNet::BitStream bsIn(packet->data, packet->length, false);
-					bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+					case(ID_CONNECTION_REQUEST_ACCEPTED):
+					{
+						//Server has accepted our requrest
+						LogConsoleMessage("CLIENT :: CLIENT SUCCESSFULLY CONNECTED TO THE SERVER");
+						m_eConnectionState = ClientConnectionState::CLIENT_ENTER_AUTH_DETAILS;
 
-					bsIn.Read(rs);
-					LogConsoleMessage(rs.C_String());
+						//We have successfully connected to the server store it's ip to send all further
+						//packet to
+						m_serverAddress = packet->systemAddress;
 
-					m_eConnectionState = ConnectionState::CLIENT_AUTHORISATION;
-					break;
-				}
-				case(ID_NO_FREE_INCOMING_CONNECTIONS):
-				{
-					ImGui::Text("Server Full");
-					m_pRakPeer->CloseConnection(packet->systemAddress, true);
-					LogConsoleMessage("Connection Closed :: Server Full");
-					m_eConnectionState = ConnectionState::CLIENT_SERVER_DECISION;
-					break;
-				}
-				default:
-					break;
-				}
+						break;
+					}
+					case(ID_NO_FREE_INCOMING_CONNECTIONS):
+					{
+						//Server is full - reset to new connection window
+						ImGui::Text("Server Full");
+						m_pRakPeer->CloseConnection(packet->systemAddress, true);
+						LogConsoleMessage("CLIENT :: CLIENT CANNOT CONNECT TO A FULL SERVER");
+						m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
+						break;
+					}
+					default:
+						break;
+					}
 
 				//Deallocate Packet and get the next packet
 				m_pRakPeer->DeallocatePacket(packet);
@@ -127,8 +142,14 @@ void NetworkClient::DoPreGameConnectionEvents()
 
 			break;
 		}
-		case(ConnectionState::CLIENT_AUTHORISATION):
+		case(ClientConnectionState::CLIENT_ENTER_AUTH_DETAILS):
 		{
+			/*
+			Wait here for the user to input login/registration details and then
+			send them to the server
+			*/
+
+			//Vars to store details
 			static char username[256];
 			static char password[256];
 
@@ -136,16 +157,19 @@ void NetworkClient::DoPreGameConnectionEvents()
 			ImGui::InputText("Enter Username: ", username, 256);
 			ImGui::InputText("Enter Password: ", password, 256);
 
+			//Send Login Details and move to waiting for authorization
 			if (ImGui::Button("Login")) {
 				RakNet::BitStream loginCreds;
 				loginCreds.Write((RakNet::MessageID)CSNetMessages::CLIENT_LOGIN_DATA);
 				loginCreds.Write(username, 256 * 8);
 				loginCreds.Write(password, 256 * 8);
 				m_pRakPeer->Send(&loginCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
-				LogConsoleMessage("Sending Login Data");
-				m_eConnectionState = ConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
+				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
+
+				LogConsoleMessage("CLIENT :: SENDING LOGIN DETAILS TO THE SERVER");
 			}
 
+			//Send Registation Details and move to waiting for authorization
 			if (ImGui::Button("Register")) {
 				//Send through new username and password
 				RakNet::BitStream regCreds;
@@ -153,41 +177,52 @@ void NetworkClient::DoPreGameConnectionEvents()
 				regCreds.Write(username, 256 * 8);
 				regCreds.Write(password, 256 * 8);
 				m_pRakPeer->Send(&regCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
-				LogConsoleMessage("Sending Register Data");
-				m_eConnectionState = ConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
+				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
+
+				LogConsoleMessage("CLIENT :: SENDING REGISTARTION DETAILS TO THE SERVER");
 			}
 
 			ImGui::End();
 			break;
 
 		}
-		case(ConnectionState::CLIENT_WAITING_FOR_AUTHORISATION):
+		case(ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION):
 		{
-			ImGui::Begin("Waiting for server to authenticate", &showConnectionWindow);
 
-			RakNet::Packet* packet = m_pRakPeer->Receive();
+			/*
+			Wait here for the server to send back whether the details we sent were correct,
+			if they were then we are connected to the server and can move on to actually getting game data
+			*/
+
+			ImGui::Begin("Waiting for server to authenticate", &showConnectionWindow);
 			ImGui::Text("Waiting for Authentication... %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
 
+			//Wait for message of login.fail success
+			RakNet::Packet* packet = m_pRakPeer->Receive();
 			while (packet != nullptr) {
 
 				switch (packet->data[0])
 				{
 					//TO DO - AUTHENTICATION
-				case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS):
-				{
-					LogConsoleMessage("Authentication Successfull");
-					m_eConnectionState = ConnectionState::START_GAME;
-					break;
-				}
-				case(CSNetMessages::SERVER_AUTHENTICATE_FAIL):
-				{
-					LogConsoleMessage("Authentication Failed");
-					m_eConnectionState = ConnectionState::START_GAME;
-					break;
-				}
-				default:
-					break;
-				}
+					case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS):
+					{
+						LogConsoleMessage("CLIENT :: LOGIN SUCCESS");
+
+						//We have successfully connected and logged in to the server,
+						//move on to actually doing game stuff
+
+						break;
+					}
+					case(CSNetMessages::SERVER_AUTHENTICATE_FAIL):
+					{
+						LogConsoleMessage("CLIENT :: LOGIN FAILED");
+						//Reset to enter new login details
+						m_eConnectionState = ClientConnectionState::CLIENT_ENTER_AUTH_DETAILS;
+						break;
+					}
+					default:
+						break;
+					}
 
 				//Deallocate Packet and get the next packet
 				m_pRakPeer->DeallocatePacket(packet);
@@ -196,15 +231,6 @@ void NetworkClient::DoPreGameConnectionEvents()
 
 			ImGui::End();
 			break;
-		}
-		case(ConnectionState::START_GAME): {
-
-			//Create a packet and send it
-			RakNet::BitStream myStream;
-			myStream.Write((RakNet::MessageID)CSNetMessages::CLIENT_TEST_DATA);
-
-			m_pRakPeer->Send(&myStream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
-
 		}
 		default:
 			break;

@@ -29,7 +29,7 @@ void NetworkServer::Init()
 	RakNet::SocketDescriptor sd(SERVER_PORT, 0);
 	m_pRakPeer->Startup(MAX_CLIENTS, &sd, 1);
 	m_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
-	m_eConnectionState = ConnectionState::SERVER_PROCESSING_EVENTS;
+	m_eConnectionState = ServerConnectionState::SERVER_PROCESSING_EVENTS;
 
 	LogConsoleMessage("Server Initalised");
 }
@@ -50,37 +50,27 @@ void NetworkServer::DoPreGameServerEvents()
 		{
 			case(ID_REMOTE_DISCONNECTION_NOTIFICATION):
 			{
-				LogConsoleMessage("Another Client has Disconnected");
+				LogConsoleMessage("SERVER :: A CLIENT HAS DISCONNECTED");
 				break;
 			}
 			case(ID_REMOTE_CONNECTION_LOST):
 			{
-				LogConsoleMessage("Another Client has Lost Connection");
+				LogConsoleMessage("SERVER :: A CLIENT HAS LOST CONNECTION");
 				break;
 			}
 			case(ID_REMOTE_NEW_INCOMING_CONNECTION):
 			{
-				LogConsoleMessage("A new client is trying to connect");
-				break;
-			}
-			case(ID_CONNECTION_REQUEST_ACCEPTED):
-			{
-				LogConsoleMessage("Our Connection Request has been accepted");
+				LogConsoleMessage("SERVER :: NEW INCOMING CONNECTION REQUEST");
 				break;
 			}
 			case(ID_NEW_INCOMING_CONNECTION):
 			{
-				LogConsoleMessage("A Client is attempting to connect");
-
-				RakNet::BitStream connectionAuthorise;
-				connectionAuthorise.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_SUCCESS);
-				connectionAuthorise.Write("Identify yourself!");
-				m_pRakPeer->Send(&connectionAuthorise, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+				LogConsoleMessage("SERVER :: NEW INCOMING CONNECTION REQUEST");
 				break;
 			}
 			case(ID_NO_FREE_INCOMING_CONNECTIONS):
 			{
-				LogConsoleMessage("A Client attempted to connect a full server");
+				LogConsoleMessage("SERVER :: A CLIENT ATTEMPTED TO CONNECT TO A FULL SERVER");
 				break;
 			}
 			case(CSNetMessages::CLIENT_LOGIN_DATA): {
@@ -115,14 +105,6 @@ void NetworkServer::DoPreGameServerEvents()
 					m_pRakPeer->Send(&authCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 					LogConsoleMessage("Sending Auth Fail");
 				}
-
-				break;
-			}
-			case(CSNetMessages::CLIENT_TEST_DATA):
-			{
-				RakNet::BitStream bsIn(packet->data, packet->length, false);
-				//Ignore Message ID
-				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
 
 				break;
 			}

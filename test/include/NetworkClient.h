@@ -12,6 +12,7 @@ public:
 	typedef enum ClientLocalState {
 		NOT_CONNECTED,
 		PRE_GAME,
+		GAME_PLAYING
 	};
 
 	//Client Connection States

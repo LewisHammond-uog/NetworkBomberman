@@ -288,9 +288,28 @@ void NetworkClient::DoClientPreGameEvents()
 			/*
 			Wait for the server to tell us the game is starting
 			*/
+			//Show waiting to start
 			ImGui::Begin("Waiting for the game to start", &showConnectionWindow);
 			ImGui::Text("Waiting for the game to start %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
 			ImGui::End();
+
+			//Wait for a packet to be recieved
+			RakNet::Packet* packet = m_pRakPeer->Receive();
+			//Wait for us to receive the game start message
+			while (packet != nullptr) {
+				//Check if we have the game start message
+				if (packet->data[0] == CSGameMessages::SERVER_GAME_STARTING) {
+					LogConsoleMessage("CLIENT :: RECIEVED GAME START MESSAGES");
+
+					//Change state to game playing
+					m_eClientGameState = ClientLocalState::GAME_PLAYING;
+
+				}
+				//Deallocate Packet and get the next packet
+				m_pRakPeer->DeallocatePacket(packet);
+				packet = m_pRakPeer->Receive();
+			}
+			
 			break;
 		}
 		default:

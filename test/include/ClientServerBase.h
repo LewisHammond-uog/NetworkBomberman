@@ -9,13 +9,12 @@
 
 //Defines for max clients and server port
 #define SERVER_PORT 6000
-#define MAX_CLIENTS 1
+#define MAX_CLIENTS 8
 
 //Custom Message Types for custom data that we are sending
 //over hte network, extend from RakNets Messages (i.e ID_CONNECTION_REQUEST_ACCEPTED)
 typedef enum CSNetMessages {
 	SERVER_AUTHENTICATE_SUCCESS = ID_USER_PACKET_ENUM + 1,
-	
 	SERVER_AUTHENTICATE_FAIL,
 
 	CLIENT_LOGIN_DATA,
@@ -25,6 +24,17 @@ typedef enum CSNetMessages {
 	CSNET_MESSAGE_END
 }CSNetMessages;
 
+//Custom Message Types for game messages
+//extends from RakNets Messages (i.e ID_CONNECTION_REQUEST_ACCEPTED)
+typedef enum CSGameMessages {
+	CLIENT_PLAYER_INPUT_DATA = CSNET_MESSAGE_END + 1,
+
+	SERVER_GAME_STARTING,
+	SERVER_VERIFIY_PLAYER_POS,
+	SERVER_OTHER_PLAYER_POS
+
+
+};
 /*
 Abstract class that is used for functionality shared between clients and severs
 */

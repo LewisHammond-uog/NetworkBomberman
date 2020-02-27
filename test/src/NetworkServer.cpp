@@ -2,7 +2,6 @@
 #include "NetworkServer.h"
 
 //Raknet Includes
-#include "RakPeerInterface.h"
 #include "BitStream.h"
 
 NetworkServer::NetworkServer()
@@ -14,11 +13,14 @@ NetworkServer::NetworkServer()
 
 NetworkServer::~NetworkServer()
 {
-	//TO DO
 	//Destory rakpeer
 	RakNet::RakPeerInterface::DestroyInstance(m_pRakPeer);
 }
 
+/// <summary>
+/// Initalise he server by setting up it's 
+/// rak peer and setting it's starting state
+/// </summary>
 void NetworkServer::Init()
 {
 	//Get instance of rakPeerInterface and set state
@@ -28,7 +30,7 @@ void NetworkServer::Init()
 	RakNet::SocketDescriptor sd(SERVER_PORT, 0);
 	m_pRakPeer->Startup(MAX_CLIENTS, &sd, 1);
 	m_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
-	m_eConnectionState = ServerConnectionState::SERVER_PROCESSING_EVENTS;
+	m_eServerState = ServerGameStates::SERVER_PROCESSING_EVENTS;
 
 	LogConsoleMessage("Server Initalised");
 }
@@ -38,6 +40,10 @@ void NetworkServer::Update()
 	DoPreGameServerEvents();
 }
 
+/// <summary>
+/// Does server events until enough clients are connected to the 
+/// server and a ready
+/// </summary>
 void NetworkServer::DoPreGameServerEvents()
 {
 
@@ -79,9 +85,9 @@ void NetworkServer::DoPreGameServerEvents()
 				//Ignore Message ID
 				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
 
+				//Read in given username and password
 				char username[256];
 				char password[256];
-				
 				bsIn.Read(username, 256);
 				bsIn.Read(password, 256);
 
@@ -92,12 +98,21 @@ void NetworkServer::DoPreGameServerEvents()
 
 				RakNet::BitStream authCreds;
 
+				//Check if username and password match those of a registered user
+				//TODO - Move this to another class
 				if (usernameString == "a" && passwordString == "a")
 				{
 
 					authCreds.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_SUCCESS);
 					m_pRakPeer->Send(&authCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
 					LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
+
+					//Add to list of connected clients
+					ConnectedClientInfo newClientInfo;
+					newClientInfo.m_clientAddress = packet->systemAddress;
+					newClientInfo.playerID = ++connectedClients;
+					m_vConnectedClients.push_back(newClientInfo);
+
 				}
 				else {
 					authCreds.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_FAIL);
@@ -109,11 +124,27 @@ void NetworkServer::DoPreGameServerEvents()
 			}
 			case(CSNetMessages::CLIENT_READY_TO_PLAY): {
 				LogConsoleMessage("SERVER :: A CLIENT IS READY TO PLAY");
+
+				//Add to our ready clients count
+				++readyClients;
+
+				//Check if game is ready to start
+				if (readyClients >= requiredPlayerCount) {
+					
+					//Need to make this work so it sends to all clients
+					//Create and send packet that game is ready to play
+					RakNet::BitStream readyMessage;
+					readyMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_STARTING);
+					SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+
+					LogConsoleMessage("SERVER :: GAME STARTING");
+				}
+
 				break;
 			}
 			default:
 			{
-				LogConsoleMessage("Unknown Data Received");
+				LogConsoleMessage("SERVER :: UNKNOWN DATA RECEIVED");
 				break;
 			}
 		}
@@ -121,5 +152,69 @@ void NetworkServer::DoPreGameServerEvents()
 		//Deallocate Packet and get the next packet
 		m_pRakPeer->DeallocatePacket(packet);
 		packet = m_pRakPeer->Receive();
+	}
+}
+
+void NetworkServer::SendMessageToClient(int a_iPlayerID, RakNet::BitStream& a_data, PacketPriority a_priotity, PacketReliability a_reliability)
+{
+	//Loop through the vector and see if we have a client with the given player
+	//id, then get it's address and call the send message function
+	for (int i = 0; i < m_vConnectedClients.size(); ++i) {
+		if (m_vConnectedClients[i].playerID == a_iPlayerID) {
+			RakNet::SystemAddress clientAddress = m_vConnectedClients[i].m_clientAddress;
+			SendMessageToClient(clientAddress, a_data, a_priotity, a_reliability);
+		}
+
+	}
+}
+
+/// <summary>
+/// Send a BitStream Message to a client with a given IP address
+/// </summary>
+/// <param name="a_sClientAddress">Address to send message to</param>
+/// <param name="a_data">Bitstream Data to send to</param>
+/// <param name="a_priotity">Priotity to Send this message as</param>
+/// <param name="a_reliability">Reliability to send this message as</param>
+void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priotity, PacketReliability a_reliability)
+{
+	//Send Message over rak peer
+	m_pRakPeer->Send(&a_data, a_priotity, a_reliability, 0, a_clientAddress, false);
+}
+
+/// <summary>
+/// Send just a Net Message to a client and no other data
+/// (e.g sending that a client has been successfully authenticated, SERVER_AUTHENTICATE_SUCCESS)
+/// </summary>
+/// <param name="a_clientAddress"></param>
+/// <param name="a_data"></param>
+/// <param name="a_priotity"></param>
+/// <param name="a_reliability"></param>
+void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priotity, PacketReliability a_reliability)
+{
+	//Create a bit stream and write
+	//the message ID
+	RakNet::BitStream messageBitStream;
+	messageBitStream.Write((RakNet::MessageID)a_eMessage);
+
+	//Call Send Message Function
+	SendMessageToClient(a_clientAddress, messageBitStream, a_priotity, a_reliability);
+}
+
+/// <summary>
+/// Send a Message to all Clients connected to this server
+/// </summary>
+/// <param name="a_data">Message to Send</param>
+/// <param name="a_priotity">Priotity to Send this message as</param>
+/// <param name="a_reliability">Reliability to send this message as</param>
+void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priotity, PacketReliability a_reliability)
+{
+	//Loop though all of the clients and call the send message function
+	for (int i = 0; i < m_vConnectedClients.size(); ++i) {
+		
+		//Get the server address of the client
+		RakNet::SystemAddress sClientAddress = m_vConnectedClients[i].m_clientAddress;
+
+		//Call Send Message Function on the selected client
+		SendMessageToClient(sClientAddress, a_data, a_priotity, a_reliability);
 	}
 }

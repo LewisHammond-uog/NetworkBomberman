@@ -11,7 +11,7 @@ public:
 	~Authenticator();
 
 	//Login or Register an existing user from a bitstream
-	bool LoginFromBitstream(RakNet::BitStream& a_bitStream, bool a_bRegisterNewUser = false);
+	bool LoginFromBitstream(RakNet::BitStream& a_bitStream, bool a_bRegisterNewUser);
 
 	//Authenticate an existing user from a username and password
 	bool AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword);

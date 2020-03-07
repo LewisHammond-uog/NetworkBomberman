@@ -5,6 +5,9 @@
 #include <RakPeerInterface.h>
 #include <BitStream.h>
 
+//Project Incldues
+#include "Authenticator.h"
+
 //Default Client Contstructor
 NetworkClient::NetworkClient()
 {
@@ -158,19 +161,19 @@ void NetworkClient::DoClientConnectionEvents()
 			*/
 
 			//Vars to store details
-			static char username[256];
-			static char password[256];
+			static char username[Authenticator::mc_iMaxUsernameLen];
+			static char password[Authenticator::mc_iMaxPasswordLen];
 
 			ImGui::Begin("Enter Login Details", &showConnectionWindow);
-			ImGui::InputText("Enter Username: ", username, 256);
-			ImGui::InputText("Enter Password: ", password, 256);
+			ImGui::InputText("Enter Username: ", username, Authenticator::mc_iMaxUsernameLen);
+			ImGui::InputText("Enter Password: ", password, Authenticator::mc_iMaxPasswordLen);
 
 			//Send Login Details and move to waiting for authorization
 			if (ImGui::Button("Login")) {
 				RakNet::BitStream loginCreds;
 				loginCreds.Write((RakNet::MessageID)CSNetMessages::CLIENT_LOGIN_DATA);
-				loginCreds.Write(username, 256 * 8);
-				loginCreds.Write(password, 256 * 8);
+				loginCreds.Write(username, Authenticator::mc_iMaxUsernameLen * sizeof(char));
+				loginCreds.Write(password, Authenticator::mc_iMaxPasswordLen * sizeof(char));
 				m_pRakPeer->Send(&loginCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
 
@@ -182,8 +185,8 @@ void NetworkClient::DoClientConnectionEvents()
 				//Send through new username and password
 				RakNet::BitStream regCreds;
 				regCreds.Write((RakNet::MessageID)CSNetMessages::CLIENT_REGISTER_DATA);
-				regCreds.Write(username, 256 * 8);
-				regCreds.Write(password, 256 * 8);
+				regCreds.Write(username, Authenticator::mc_iMaxUsernameLen * sizeof(char));
+				regCreds.Write(password, Authenticator::mc_iMaxPasswordLen * sizeof(char));
 				m_pRakPeer->Send(&regCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
 

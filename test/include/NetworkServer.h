@@ -3,6 +3,7 @@
 
 //Project Includes
 #include "ClientServerBase.h"
+#include "Authenticator.h"
 
 //C++ Includes
 #include <vector>
@@ -47,6 +48,9 @@ private:
 	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priotity, PacketReliability a_reliability);
 	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priotity, PacketReliability a_reliability);
 	void SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priotity, PacketReliability a_reliability);
+
+	//Server Authenticator - used to verify usernames/passwords
+	Authenticator* m_oServerAuthenticator;
 
 	//Current State of the server - Waiting, Playing etc.
 	ServerGameStates m_eServerState;

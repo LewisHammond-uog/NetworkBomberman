@@ -9,12 +9,20 @@ NetworkServer::NetworkServer()
 	//Null out ptrs and network values
 	m_pRakPeer = nullptr;
 	m_serverAddress = RakNet::SystemAddress();
+
+	//Create Authenticator
+	m_oServerAuthenticator = new Authenticator();
 }
 
 NetworkServer::~NetworkServer()
 {
 	//Destory rakpeer
 	RakNet::RakPeerInterface::DestroyInstance(m_pRakPeer);
+
+	//Destroy Authenticator
+	if (m_oServerAuthenticator != nullptr) {
+		delete m_oServerAuthenticator;
+	}
 }
 
 /// <summary>
@@ -78,45 +86,57 @@ void NetworkServer::DoPreGameServerEvents()
 				LogConsoleMessage("SERVER :: A CLIENT ATTEMPTED TO CONNECT TO A FULL SERVER");
 				break;
 			}
-			case(CSNetMessages::CLIENT_LOGIN_DATA): {
+			case(CSNetMessages::CLIENT_REGISTER_DATA): {
+				//Fall through to login data as it uses (mostly) the same code
+				RakNet::BitStream incomingLoginData(packet->data, packet->length, false);
 
-				RakNet::RakString rs;
-				RakNet::BitStream bsIn(packet->data, packet->length, false);
-				//Ignore Message ID
-				bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
-
-				//Read in given username and password
-				char username[256];
-				char password[256];
-				bsIn.Read(username, 256);
-				bsIn.Read(password, 256);
-
-				LogConsoleMessage("SERVER :: A CLIENT HAS SENT THE SERVER LOGIN DETAILS");
-
-				std::string usernameString = std::string(username);
-				std::string passwordString = std::string(password);
-
-				RakNet::BitStream authCreds;
-
-				//Check if username and password match those of a registered user
-				//TODO - Move this to another class
-				if (usernameString == "a" && passwordString == "a")
+				//Try and authenticate exsiting user, return message to client
+				//if this is successfull or not
+				if (m_oServerAuthenticator->LoginFromBitstream(incomingLoginData, true))
 				{
-
-					authCreds.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_SUCCESS);
-					m_pRakPeer->Send(&authCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
-					LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
+					LogConsoleMessage("SERVER :: SENDING CLIENT REGISTER SUCCESS INFO");
+					//Send success message to client
+					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
 
 					//Add to list of connected clients
-					ConnectedClientInfo newClientInfo;
-					newClientInfo.m_clientAddress = packet->systemAddress;
-					newClientInfo.playerID = ++connectedClients;
+					ConnectedClientInfo newClientInfo{
+						packet->systemAddress, //Store Sys address
+						++connectedClients //Store Client ID
+					};
 					m_vConnectedClients.push_back(newClientInfo);
-
 				}
 				else {
-					authCreds.Write((RakNet::MessageID)CSNetMessages::SERVER_AUTHENTICATE_FAIL);
-					m_pRakPeer->Send(&authCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->systemAddress, false);
+
+					//Send fail message to client
+					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+					LogConsoleMessage("SERVER :: SENDING CLIENT REGISTER FAIL INFO");
+				}
+
+				break;
+			}
+			case(CSNetMessages::CLIENT_LOGIN_DATA): {
+				
+				RakNet::BitStream incomingLoginData(packet->data, packet->length, false);
+
+				//Try and authenticate exsiting user, return message to client
+				//if this is successfull or not
+				if (m_oServerAuthenticator->LoginFromBitstream(incomingLoginData, false))
+				{
+					LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
+					//Send success message to client
+					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+
+					//Add to list of connected clients
+					ConnectedClientInfo newClientInfo{
+						packet->systemAddress, //Store Sys address
+						++connectedClients //Store Client ID
+					};
+					m_vConnectedClients.push_back(newClientInfo);
+				}
+				else {
+
+					//Send fail message to client
+					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
 					LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN FAIL INFO");
 				}
 

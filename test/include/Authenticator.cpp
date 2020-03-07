@@ -16,25 +16,12 @@ Authenticator::~Authenticator()
 }
 
 /// <summary>
-/// Authenticates if a username/password exists within the username/password file
+/// Login to the server from a raw bit stream sent from the client (withough ignoring the message ID).
+/// Either logging in as an existing user or registering as a new one
 /// </summary>
-/// <param name="a_username">Username to check</param>
-/// <param name="a_password">Password to check</param>
-/// <returns>If login details are correct</returns>
-bool Authenticator::AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword)
-{
-	//Check that username/password does not exceed size limits
-	if (std::strlen(a_szUsername) > mc_iMaxUsernameLen || std::strlen(a_szPassword) > mc_iMaxPasswordLen) {
-		//Over max size
-		return false;
-	}
-
-	bool bAuthDetailsValid = ValidUsernameAndPassword(a_szUsername, a_szPassword);
-
-	//Return if the auth details were valid
-	return bAuthDetailsValid;
-}
-
+/// <param name="a_loginData">Bitstream Login Data</param>
+/// <param name="a_bRegisterNewUser">Whether to register as a new user</param>
+/// <returns></returns>
 bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, bool a_bRegisterNewUser = false)
 {
 	//Strip Message ID From Bitstream
@@ -56,8 +43,26 @@ bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, bool a_bR
 		//Authenticate an existing user
 		return AuthenticateExistingUser(username, password);
 	}
+}
 
+/// <summary>
+/// Authenticates if a username/password exists within the username/password file
+/// </summary>
+/// <param name="a_username">Username to check</param>
+/// <param name="a_password">Password to check</param>
+/// <returns>If login details are correct</returns>
+bool Authenticator::AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword)
+{
+	//Check that username/password does not exceed size limits
+	if (std::strlen(a_szUsername) > mc_iMaxUsernameLen || std::strlen(a_szPassword) > mc_iMaxPasswordLen) {
+		//Over max size
+		return false;
+	}
 
+	bool bAuthDetailsValid = ValidUsernameAndPassword(a_szUsername, a_szPassword);
+
+	//Return if the auth details were valid
+	return bAuthDetailsValid;
 }
 
 bool Authenticator::RegisterNewUser(const char* a_szUsername, const char* a_szPassword)

@@ -15,8 +15,6 @@ Authenticator::~Authenticator()
 {
 }
 
-//TO DO - Coding Standards Check
-
 /// <summary>
 /// Authenticates if a username/password exists within the username/password file
 /// </summary>
@@ -31,24 +29,41 @@ bool Authenticator::AuthenticateUser(const char* a_szUsername, const char* a_szP
 		return false;
 	}
 
-	//Open auth details file
-	std::fstream sLoginDetailsFile = std::fstream(mc_LoginDetailsFileName, std::ios_base::in);
+	bool bAuthDetailsValid = ValidUsernameAndPassword(a_szUsername, a_szPassword);
 
+	//Return if the auth details were valid
+	return bAuthDetailsValid;
+}
+
+bool Authenticator::RegisterNewUser(const char* a_szUsername, const char* a_szPassword)
+{
+	//Check that username/password does not exceed size limits
+	if (std::strlen(a_szUsername) > mc_iMaxUsernameLen || std::strlen(a_szPassword) > mc_iMaxPasswordLen) {
+		//Over max size
+		return false;
+	}
+
+	//Check if the username already exists within the file, if 
+	//it does reject registration
+	if (UsernameExists(a_szUsername)) {
+		return false;
+	}
+
+	//Open auth details file
+	std::fstream sLoginDetailsFile = std::fstream(mc_LoginDetailsFileName, std::ios_base::app);
 	//If we cannot open the file then return false
-	//- cannot check username/password
+	//- cannot add new username/password
 	if (!sLoginDetailsFile.is_open()) {
 		//File Failed to open
 		return false;
 	}
-	
-	bool bAuthDetailsValid = ValidUsernameAndPassword(a_szUsername, a_szPassword, sLoginDetailsFile);
 
-	//Flush and close file
-	sLoginDetailsFile.flush();
-	sLoginDetailsFile.close();
+	//Username does not already exist within the file
+	//Write new username and password to file with a space seperator
+	sLoginDetailsFile << a_szUsername << " " << a_szPassword << std::endl;
 
-	//Return if the auth details were valid
-	return bAuthDetailsValid;
+	//Return true because we have now written the new username/password
+	return true;
 }
 
 /// <summary>
@@ -58,24 +73,56 @@ bool Authenticator::AuthenticateUser(const char* a_szUsername, const char* a_szP
 /// <param name="a_username">Username to check</param>
 /// <param name="a_fStream">File stream of file to check</param>
 /// <returns>If username exists</returns>
-bool Authenticator::UsernameExists(const char* a_szUsername, std::fstream& a_rFileStream)
+bool Authenticator::UsernameExists(const char* a_szUsername)
 {
+	//Open auth details file
+	std::fstream sLoginDetailsFile = std::fstream(mc_LoginDetailsFileName, std::ios_base::in);
+
+	//If we cannot open the file then return false
+	//- cannot check username/password
+	if (!sLoginDetailsFile.is_open()) {
+		//File Failed to open
+		return false;
+	}
+
 	//Init Char Array
 	char storedUsername[mc_iMaxUsernameLen] = "";
 	char storedPassword[mc_iMaxUsernameLen] = "";
-	while (a_rFileStream >> storedUsername >> storedPassword) {
-		//Check that the input username does not equal the current username
+	while (!sLoginDetailsFile.eof()) {
+
+		//Load in username/password
+		sLoginDetailsFile >> storedUsername >> storedPassword;
+
+		//Check that the input username does not equal the current username,
+		//if it does return true
 		if (!strcmp(a_szUsername, storedUsername)) {
-			return false;
+			//Flush and close file
+			sLoginDetailsFile.flush();
+			sLoginDetailsFile.close();
+			return true;
 		}
 	}
 
 	//Did not find username in file
-	return true;
+	//Flush and close file
+	sLoginDetailsFile.flush();
+	sLoginDetailsFile.close();
+	return false;
 }
 
-bool Authenticator::ValidUsernameAndPassword(const char* a_szUsername, const char* a_szPassword, std::fstream& a_rFileStream)
+bool Authenticator::ValidUsernameAndPassword(const char* a_szUsername, const char* a_szPassword)
 {
+
+	//Open auth details file
+	std::fstream sLoginDetailsFile = std::fstream(mc_LoginDetailsFileName, std::ios_base::in);
+
+	//If we cannot open the file then return false
+	//- cannot check username/password
+	if (!sLoginDetailsFile.is_open()) {
+		//File Failed to open
+		return false;
+	}
+
 	//Init Char Array
 	char storedUsername[mc_iMaxUsernameLen] = "";
 	char storedPassword[mc_iMaxUsernameLen] = "";
@@ -84,13 +131,16 @@ bool Authenticator::ValidUsernameAndPassword(const char* a_szUsername, const cha
 	//the given username or 
 	while (strcmp(a_szUsername, storedUsername)) {
 		//Check that we are not at the end of the file
-		if (a_rFileStream.eof()) {
+		if (sLoginDetailsFile.eof()) {
 			//At end of file without username being found - username invalid
+			//Flush and close file
+			sLoginDetailsFile.flush();
+			sLoginDetailsFile.close();
 			return false;
 		}
 
 		//Store the next username and password in the file
-		a_rFileStream >> storedUsername >> storedPassword;
+		sLoginDetailsFile >> storedUsername >> storedPassword;
 	}
 	
 	//Loop completed - username was found
@@ -98,8 +148,15 @@ bool Authenticator::ValidUsernameAndPassword(const char* a_szUsername, const cha
 	//password
 	if (!strcmp(a_szPassword, storedPassword)) {
 		//Username and password match, return true
+		//Flush and close file
+		sLoginDetailsFile.flush();
+		sLoginDetailsFile.close();
 		return true;
 	}
+
+	//Flush and close file
+	sLoginDetailsFile.flush();
+	sLoginDetailsFile.close();
 
 	//Username and password did not match, return false
 	return false;

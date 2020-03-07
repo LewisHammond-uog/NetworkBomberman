@@ -10,17 +10,17 @@ public:
 
 	//Authenticate an existing user from a username
 	//password - Hashed passwords not yet implemented
-	bool AuthenticateUser(const char* a_szUsername, const char* a_szPassword/*, bool a_passwordIsHashed = false*/);
+	bool AuthenticateUser(const char* a_szUsername, const char* a_szPassword);
 
 	//Register a new user to the system
-	bool RegisterNewUser(const char* a_username, const char* a_password/*, bool a_passwordIsHashed = false*/);
+	bool RegisterNewUser(const char* a_szUsername, const char* a_szPassword);
 
 private:
 
 	//Checks if a username exists within the login credentials file
-	bool UsernameExists(const char* a_szUsername, std::fstream& a_rFileStream);
+	bool UsernameExists(const char* a_szUsername);
 	//Checks if a username and password match an item within the file
-	bool ValidUsernameAndPassword(const char* a_szUsername, const char* a_szPassword, std::fstream& a_rFileStream);
+	bool ValidUsernameAndPassword(const char* a_szUsername, const char* a_szPassword);
 
 
 	//Const filename for the username/password file

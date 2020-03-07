@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Authenticator.h" />
     <ClInclude Include="include\ClientServerBase.h" />
     <ClInclude Include="include\NetworkClient.h" />
     <ClInclude Include="include\NetworkServer.h" />
@@ -18,6 +19,7 @@
     <ClInclude Include="include\TestProject.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\Authenticator.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\NetworkClient.cpp" />
     <ClCompile Include="src\NetworkServer.cpp" />

@@ -1,19 +1,26 @@
 #ifndef __AUTHENTICATOR_H__
 #define __AUTHENTICATOR_H__
 
+//Raknet Includes
+#include "BitStream.h"
+
 class Authenticator {
 public:
 	//Constructors/Destructors
 	Authenticator();
 	~Authenticator();
 
+	//Login or Register an existing user from a bitstream
+	bool LoginFromBitstream(RakNet::BitStream& a_bitStream, bool a_bRegisterNewUser = false);
 
-	//Authenticate an existing user from a username
-	//password - Hashed passwords not yet implemented
-	bool AuthenticateUser(const char* a_szUsername, const char* a_szPassword);
-
+	//Authenticate an existing user from a username and password
+	bool AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword);
 	//Register a new user to the system
 	bool RegisterNewUser(const char* a_szUsername, const char* a_szPassword);
+
+	//Max Size of username and password
+	const static int mc_iMaxUsernameLen = 25;
+	const static int mc_iMaxPasswordLen = 25;
 
 private:
 
@@ -25,10 +32,6 @@ private:
 
 	//Const filename for the username/password file
 	const char* mc_LoginDetailsFileName = "authDetails.txt";
-
-	//Max Size of username and password
-	const static int mc_iMaxUsernameLen = 25;
-	const static int mc_iMaxPasswordLen = 25;
 
 
 };

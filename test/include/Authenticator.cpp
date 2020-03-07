@@ -21,7 +21,7 @@ Authenticator::~Authenticator()
 /// <param name="a_username">Username to check</param>
 /// <param name="a_password">Password to check</param>
 /// <returns>If login details are correct</returns>
-bool Authenticator::AuthenticateUser(const char* a_szUsername, const char* a_szPassword)
+bool Authenticator::AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword)
 {
 	//Check that username/password does not exceed size limits
 	if (std::strlen(a_szUsername) > mc_iMaxUsernameLen || std::strlen(a_szPassword) > mc_iMaxPasswordLen) {
@@ -33,6 +33,31 @@ bool Authenticator::AuthenticateUser(const char* a_szUsername, const char* a_szP
 
 	//Return if the auth details were valid
 	return bAuthDetailsValid;
+}
+
+bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, bool a_bRegisterNewUser = false)
+{
+	//Strip Message ID From Bitstream
+	a_loginData.IgnoreBytes(sizeof(RakNet::MessageID));
+
+	//Read in given username and password
+	char username[Authenticator::mc_iMaxUsernameLen];
+	char password[Authenticator::mc_iMaxPasswordLen];
+	a_loginData.Read(username, Authenticator::mc_iMaxUsernameLen * sizeof(char));
+	a_loginData.Read(password, Authenticator::mc_iMaxPasswordLen * sizeof(char));
+
+	//Call other Function with new extracted info based on whether to register
+	//a new user or not
+	if (a_bRegisterNewUser) {
+		//Register a new user
+		return RegisterNewUser(username, password);
+	}
+	else {
+		//Authenticate an existing user
+		return AuthenticateExistingUser(username, password);
+	}
+
+
 }
 
 bool Authenticator::RegisterNewUser(const char* a_szUsername, const char* a_szPassword)

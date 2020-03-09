@@ -7,6 +7,7 @@
 
 //Project Incldues
 #include "Authenticator.h"
+#include "NetworkNotifier.h"
 
 //Default Client Contstructor
 NetworkClient::NetworkClient()
@@ -30,6 +31,8 @@ void NetworkClient::Init() {
 	m_pRakPeer = RakNet::RakPeerInterface::GetInstance();
 	m_eConnectionState = NetworkClient::ClientConnectionState::CLIENT_START_CONNECTION;
 	m_eClientGameState = NetworkClient::ClientLocalState::NOT_CONNECTED;
+
+	NetworkNotifier::AddReceivedObjectPacket();
 
 	//Startup Client
 	RakNet::SocketDescriptor sd;
@@ -204,7 +207,6 @@ void NetworkClient::DoClientConnectionEvents()
 			Wait here for the server to send back whether the details we sent were correct,
 			if they were then we are connected to the server and can move on to actually getting game data
 			*/
-
 			ImGui::Begin("Waiting for server to authenticate", &showConnectionWindow);
 			ImGui::Text("Waiting for Authentication... %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
 

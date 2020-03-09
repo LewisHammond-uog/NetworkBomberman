@@ -38,9 +38,9 @@ void NetworkServer::Init()
 	RakNet::SocketDescriptor sd(SERVER_PORT, 0);
 	m_pRakPeer->Startup(MAX_CLIENTS, &sd, 1);
 	m_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
-	m_eServerState = ServerGameStates::SERVER_PROCESSING_EVENTS;
+	m_eServerState = NetworkServer::ServerGameStates::SERVER_PROCESSING_EVENTS;
 
-	LogConsoleMessage("Server Initalised");
+	LogConsoleMessage("SERVER :: Server Initalised");
 }
 
 void NetworkServer::Update()

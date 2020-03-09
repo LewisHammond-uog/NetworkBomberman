@@ -28,8 +28,8 @@ void NetworkClient::Init() {
 
 	//Get instance of rakPeerInterface and set state
 	m_pRakPeer = RakNet::RakPeerInterface::GetInstance();
-	m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
-	m_eClientGameState = ClientLocalState::NOT_CONNECTED;
+	m_eConnectionState = NetworkClient::ClientConnectionState::CLIENT_START_CONNECTION;
+	m_eClientGameState = NetworkClient::ClientLocalState::NOT_CONNECTED;
 
 	//Startup Client
 	RakNet::SocketDescriptor sd;

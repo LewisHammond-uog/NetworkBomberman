@@ -13,7 +13,7 @@ public:
 		NOT_CONNECTED,
 		PRE_GAME,
 		GAME_PLAYING
-	};
+	} ClientLocalState;
 
 	//Client Connection States
 	typedef enum ClientConnectionState {

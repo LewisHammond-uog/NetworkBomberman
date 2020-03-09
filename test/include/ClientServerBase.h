@@ -34,7 +34,7 @@ typedef enum CSGameMessages {
 	SERVER_OTHER_PLAYER_POS
 
 
-};
+} CSGameMessages;
 /*
 Abstract class that is used for functionality shared between clients and severs
 */

@@ -32,8 +32,6 @@ void NetworkClient::Init() {
 	m_eConnectionState = NetworkClient::ClientConnectionState::CLIENT_START_CONNECTION;
 	m_eClientGameState = NetworkClient::ClientLocalState::NOT_CONNECTED;
 
-	NetworkNotifier::AddReceivedObjectPacket();
-
 	//Startup Client
 	RakNet::SocketDescriptor sd;
 	m_pRakPeer->Startup(1, &sd, 1);
@@ -118,6 +116,8 @@ void NetworkClient::DoClientConnectionEvents()
 
 			//While we still have packets to proccess keep processing them
 			while (packet != nullptr) {
+
+				NetworkNotifier::AddReceivedObjectPacket(packet);
 
 				switch (packet->data[0])
 				{

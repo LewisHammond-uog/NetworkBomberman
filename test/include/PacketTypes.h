@@ -5,14 +5,14 @@
 /// the server/client can receive/send
 /// </summary>
 
-class GamePacket{
+struct GameDataPacket{
+	CSGameMessages m_packetType; //Type of packet
+	RakNet::NetworkID m_recepient; //Network ID of Intended Recepient
+	GameDataPacket* m_packetData; //Actual Packet Data (i.e updated transform, etc.)
 };
 
-class TestPacket : public GamePacket {
-public:
-	int x = 0;
-	int y = 0;
-	int z = 0;
+struct TestPacket : public GameDataPacket {
+
 };
 
 

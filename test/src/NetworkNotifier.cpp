@@ -6,16 +6,19 @@
 /// game objects
 /// </summary>
 /// <param name="a_packetToAdd">Raw Packet to add to the list</param>
-void NetworkNotifier::AddReceivedObjectPacket(/*RakNet::BitStream& a_receivedPacket*/)
+void NetworkNotifier::AddReceivedObjectPacket(RakNet::Packet* a_receivedPacket)
 {
-	//Create new struct
-	ReceivedObjectPacket newPacket;
-	//a_receivedPacket.Read(newPacket.m_packetType);
-	//a_receivedPacket.Read(newPacket.m_recepient);
-	
-	//Create a test packet and it pointer to the 
+	RakNet::BitStream packetData(a_receivedPacket->data, a_receivedPacket->length, false);;
+	CSGameMessages eMessageType = (CSGameMessages)a_receivedPacket->data[0];
+
+	//Strip Message ID From Bitstream
+	packetData.IgnoreBytes(sizeof(RakNet::MessageID));
+}
+
+/*
+//Create a test packet and it pointer to the
 	//TestPacket (bigger than the GamePacket) and set a pointer
-	//to it to the m_packetData that is just a pointer to 
+	//to it to the m_packetData that is just a pointer to
 	//a GamePacket (the smaller data structure)
 	TestPacket p;
 	p.x = 2;
@@ -24,5 +27,6 @@ void NetworkNotifier::AddReceivedObjectPacket(/*RakNet::BitStream& a_receivedPac
 	//This can then be coverted back to a test packet like so
 	TestPacket tp = *static_cast<TestPacket*>(newPacket.m_packetData);
 	int i = tp.x;
-	
-}
+
+
+*/

@@ -87,7 +87,7 @@ void NetworkServer::DoPreGameServerEvents()
 				break;
 			}
 			case(CSNetMessages::CLIENT_REGISTER_DATA): {
-				//Fall through to login data as it uses (mostly) the same code
+
 				RakNet::BitStream incomingLoginData(packet->data, packet->length, false);
 
 				//Try and authenticate exsiting user, return message to client

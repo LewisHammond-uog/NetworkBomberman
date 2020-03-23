@@ -17,6 +17,9 @@
 
 class TestConnection : public RakNet::Connection_RM3 {
 public:
+	TestConnection(const RakNet::SystemAddress& _systemAddress, RakNet::RakNetGUID _guid) : Connection_RM3(_systemAddress, _guid) {}
+	virtual ~TestConnection() {}
+
 	virtual RakNet::Replica3* AllocReplica(RakNet::BitStream* allocationId, RakNet::ReplicaManager3* replicaManager3);
 	virtual void DeallocReplica(RakNet::Connection_RM3* sourceConnection);
 
@@ -25,6 +28,12 @@ public:
 class NetworkReplicator : public RakNet::ReplicaManager3
 {
 public:
+	virtual RakNet::Connection_RM3* AllocConnection(const RakNet::SystemAddress& systemAddress, RakNet::RakNetGUID rakNetGUID) const {
+		return new TestConnection(systemAddress, rakNetGUID);
+	}
+	virtual void DeallocConnection(RakNet::Connection_RM3* connection) const {
+		delete connection;
+	}
 private:
 };
 

@@ -39,11 +39,14 @@
     <ClCompile Include="src\NetworkServer.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
+    <ClCompile Include="src\Authenticator.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
     <ClCompile Include="src\NetworkNotifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Authenticator.cpp">
-      <Filter>Source Files\Network</Filter>
+    <ClCompile Include="src\TestObject.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\PacketTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TestObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

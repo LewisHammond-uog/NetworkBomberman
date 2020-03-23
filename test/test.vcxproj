@@ -18,6 +18,7 @@
     <ClInclude Include="include\NetworkServer.h" />
     <ClInclude Include="include\PacketTypes.h" />
     <ClInclude Include="include\stdafx.h" />
+    <ClInclude Include="include\TestObject.h" />
     <ClInclude Include="include\TestProject.h" />
   </ItemGroup>
   <ItemGroup>
@@ -29,6 +30,7 @@
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\TestObject.cpp" />
     <ClCompile Include="src\TestProject.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

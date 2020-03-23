@@ -117,7 +117,6 @@ void NetworkClient::DoClientConnectionEvents()
 			//While we still have packets to proccess keep processing them
 			while (packet != nullptr) {
 
-				NetworkNotifier::AddReceivedObjectPacket(packet);
 
 				switch (packet->data[0])
 				{

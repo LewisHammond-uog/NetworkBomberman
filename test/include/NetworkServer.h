@@ -76,6 +76,8 @@ private:
 	RakNet::NetworkIDManager* networkIdManager;
 	// The system that performs most of our functionality for this demo
 	NetworkReplicator* replicaManager;
+
+	TestObject* objT;
 };
 
 #endif // !__NETWORK_SERVER_H__

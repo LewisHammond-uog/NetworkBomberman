@@ -66,11 +66,12 @@ void NetworkServer::DoPreGameServerEvents()
 
 	RakNet::Packet* packet = m_pRakPeer->Receive();
 
+
 	//TEST CREATING A NEW TEST OBJECT - THIS SHOULD TRIGGER THE CONSOLE MESSAGE
 	//"Create Test object" on the server and then the client!
 	static bool testTriggered = false;
 	if (!testTriggered) {
-		replicaManager->Reference(new TestObject);
+		replicaManager->Reference(objT = new TestObject);
 		testTriggered = true;
 	}
 
@@ -104,6 +105,31 @@ void NetworkServer::DoPreGameServerEvents()
 				LogConsoleMessage("SERVER :: A CLIENT ATTEMPTED TO CONNECT TO A FULL SERVER");
 				break;
 			}
+			case(ID_REPLICA_MANAGER_SCOPE_CHANGE):
+			{
+				LogConsoleMessage("SERVER :: A REPLICA OBJECT HAS CHANGED SCOPE");
+				break;
+			}
+			case(ID_REPLICA_MANAGER_SERIALIZE):
+			{
+				LogConsoleMessage("SERVER :: A REPLICA OBJECT IS BEING SERIALIZED");
+				break;
+			}
+			case(ID_REPLICA_MANAGER_CONSTRUCTION):
+			{
+				LogConsoleMessage("SERVER :: A REPLICA OBJECT IS BEING CONSTRUCTED");
+				break;
+			}
+			case(ID_REPLICA_MANAGER_DOWNLOAD_STARTED):
+			{
+				LogConsoleMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS STARTING");
+				break;
+			}
+			case(ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE):
+			{
+				LogConsoleMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS COMPLETE");
+				break;
+			}
 			case(CSNetMessages::CLIENT_REGISTER_DATA): {
 
 				RakNet::BitStream incomingLoginData(packet->data, packet->length, false);
@@ -122,6 +148,8 @@ void NetworkServer::DoPreGameServerEvents()
 						++connectedClients //Store Client ID
 					};
 					m_vConnectedClients.push_back(newClientInfo);
+
+
 				}
 				else {
 
@@ -134,6 +162,9 @@ void NetworkServer::DoPreGameServerEvents()
 			}
 			case(CSNetMessages::CLIENT_LOGIN_DATA): {
 				
+
+
+
 				RakNet::BitStream incomingLoginData(packet->data, packet->length, false);
 
 				//Try and authenticate exsiting user, return message to client
@@ -150,6 +181,8 @@ void NetworkServer::DoPreGameServerEvents()
 						++connectedClients //Store Client ID
 					};
 					m_vConnectedClients.push_back(newClientInfo);
+
+
 				}
 				else {
 
@@ -162,6 +195,8 @@ void NetworkServer::DoPreGameServerEvents()
 			}
 			case(CSNetMessages::CLIENT_READY_TO_PLAY): {
 				LogConsoleMessage("SERVER :: A CLIENT IS READY TO PLAY");
+
+				objT->UpdateHealth();
 
 				//Add to our ready clients count
 				++readyClients;

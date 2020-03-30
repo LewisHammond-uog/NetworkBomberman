@@ -8,6 +8,7 @@
 #include "BitStream.h"
 #include "RakString.h"
 
+#include <string.h>
 
 class TestObject : public RakNet::Replica3 {
 public:
@@ -37,8 +38,10 @@ public:
 	//Function for when we lose a connection 
 	virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3* droppedConnection) const;
 
-	const RakNet::RakString m_sObjName = "name";
-	float m_fHealth = 0;
+	const int m_sObjName = 9;
+	float m_fHealth = 22.f;
+
+	void UpdateHealth();
 
 	//Saves and compares the variables of this serialise and the last serialize
 	//call. If they are different then true is writen to the bitstream and the value,

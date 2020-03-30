@@ -81,8 +81,8 @@ void TestProject::Update(float a_deltaTime)
 			gameServer = new NetworkServer();
 			gameServer->Init();
 
-			gameClient = new NetworkClient();
-			gameClient->Init();
+			//gameClient = new NetworkClient();
+			//gameClient->Init();
 
 			//Hide the connection window
 			showConnectionWindow = false;

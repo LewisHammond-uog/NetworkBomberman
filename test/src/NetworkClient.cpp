@@ -8,6 +8,7 @@
 //Project Incldues
 #include "Authenticator.h"
 #include "NetworkNotifier.h"
+#include "TestObject.h"
 
 //Default Client Contstructor
 NetworkClient::NetworkClient()
@@ -122,6 +123,7 @@ void NetworkClient::DoClientConnectionEvents()
 			//Wait for a packet to be recieved
 			RakNet::Packet* packet = m_pRakPeer->Receive();
 
+
 			//While we still have packets to proccess keep processing them
 			while (packet != nullptr) {
 
@@ -137,7 +139,6 @@ void NetworkClient::DoClientConnectionEvents()
 						//We have successfully connected to the server store it's ip to send all further
 						//packet to
 						m_serverAddress = packet->systemAddress;
-
 						break;
 					}
 					case(ID_NO_FREE_INCOMING_CONNECTIONS):
@@ -293,6 +294,9 @@ void NetworkClient::DoClientPreGameEvents()
 			//Set state to wait for the game to start
 			m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_GAME_START;
 			LogConsoleMessage("CLIENT :: SENT SERVER READY MESSAGE");
+
+
+
 
 			break;
 		}

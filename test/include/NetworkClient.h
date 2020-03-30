@@ -8,6 +8,9 @@
 #include <ReplicaManager3.h>
 #include "NetworkNotifier.h"
 
+//Test Includes
+#include "TestObject.h"
+
 class NetworkClient : public ServerClientBase
 {
 public:
@@ -61,6 +64,8 @@ private:
 	RakNet::NetworkIDManager* networkIdManager;
 	// The system that performs most of our functionality for this demo
 	NetworkReplicator* replicaManager;
+
+
 
 };
 

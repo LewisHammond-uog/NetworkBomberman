@@ -18,6 +18,7 @@ TestObject::TestObject()
 /// </summary>
 TestObject::~TestObject()
 {
+
 }
 
 void TestObject::WriteAllocationID(RakNet::Connection_RM3* destinationConnection, RakNet::BitStream* allocationIdBitstream) const
@@ -62,6 +63,11 @@ RakNet::RM3ActionOnPopConnection TestObject::QueryActionOnPopConnection(RakNet::
 	return QueryActionOnPopConnection_Server(droppedConnection);
 }
 
+void TestObject::UpdateHealth()
+{
+	m_fHealth = 65.f;
+}
+
 void TestObject::Deserialize(RakNet::DeserializeParameters* deserializeParameters)
 {
 	RakNet::VariableDeltaSerializer::DeserializationContext deserializationContext;
@@ -69,10 +75,14 @@ void TestObject::Deserialize(RakNet::DeserializeParameters* deserializeParameter
 	//Deserialise the data
 	variableDeltaSerializer.BeginDeserialize(&deserializationContext, &deserializeParameters->serializationBitstream[0]);
 	variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_sObjName);
-	variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_fHealth);
+	if (variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_fHealth)) {
+		ServerClientBase::LogConsoleMessage("health change");
+	}
 
 	variableDeltaSerializer.EndDeserialize(&deserializationContext);
 }
+
+
 
 RakNet::RM3SerializationResult TestObject::Serialize(RakNet::SerializeParameters* serializeParameters)
 {
@@ -125,6 +135,7 @@ bool TestObject::DeserializeConstruction(RakNet::BitStream* constructionBitstrea
 	//Extact Data from Construction BitStream
 	constructionBitstream->Read(m_sObjName);
 	constructionBitstream->Read(m_fHealth);
+
 
 	return true;
 }

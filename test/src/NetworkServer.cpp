@@ -66,6 +66,8 @@ void NetworkServer::DoPreGameServerEvents()
 
 	RakNet::Packet* packet = m_pRakPeer->Receive();
 
+	//TEST CREATING A NEW TEST OBJECT - THIS SHOULD TRIGGER THE CONSOLE MESSAGE
+	//"Create Test object" on the server and then the client!
 	static bool testTriggered = false;
 	if (!testTriggered) {
 		replicaManager->Reference(new TestObject);

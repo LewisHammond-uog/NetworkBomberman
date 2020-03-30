@@ -12,9 +12,7 @@
 #include "NetworkClient.h"
 #include "NetworkServer.h"
 
-enum GameMessages {
-	ID_GAME_MESSAGE_1 = ID_USER_PACKET_ENUM + 1
-};
+bool TestProject::isServer = false;
 
 TestProject::TestProject()
 {
@@ -72,6 +70,10 @@ void TestProject::Update(float a_deltaTime)
 
 			//Hide the connection window
 			showConnectionWindow = false;
+
+			//Set is Server
+			TestProject::isServer = false;
+
 		}
 
 		if (ImGui::Button("Server")) {
@@ -84,6 +86,9 @@ void TestProject::Update(float a_deltaTime)
 
 			//Hide the connection window
 			showConnectionWindow = false;
+
+			//Set is Server
+			TestProject::isServer = true;
 		}
 
 		ImGui::End();

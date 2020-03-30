@@ -1,11 +1,16 @@
 #include "stdafx.h"
 #include "TestObject.h"
 
+//Test Includes
+#include "ClientServerBase.h"
+#include "TestProject.h"
+
 /// <summary>
 /// Default Constructor
 /// </summary>
 TestObject::TestObject()
 {
+	ServerClientBase::LogConsoleMessage("Create Test object");
 }
 
 /// <summary>
@@ -35,19 +40,19 @@ void TestObject::SerializeConstruction(RakNet::BitStream* constructionBitstream,
 RakNet::RM3ConstructionState TestObject::QueryConstruction(RakNet::Connection_RM3* destinationConnection, RakNet::ReplicaManager3* replicaManager3)
 {
 	//TODO CHANGE SO THAT NETWORK TOPOLIGY IS CORRECT - replace false
-	return QueryConstruction_ServerConstruction(destinationConnection, false);
+	return QueryConstruction_ServerConstruction(destinationConnection, TestProject::isServer);
 }
 
 bool TestObject::QueryRemoteConstruction(RakNet::Connection_RM3* sourceConnection)
 {
 	//TODO CHANGE SO THAT NETWORK TOPOLIGY IS CORRECT - replace false
-	return QueryRemoteConstruction_ServerConstruction(sourceConnection, false);
+	return QueryRemoteConstruction_ServerConstruction(sourceConnection, TestProject::isServer);
 }
 
 RakNet::RM3QuerySerializationResult TestObject::QuerySerialization(RakNet::Connection_RM3* destinationConnection)
 {
 	//TODO CHANGE SO THAT NETWORK TOPOLIGY IS CORRECT - replace false
-	return QuerySerialization_ServerSerializable(destinationConnection, false);
+	return QuerySerialization_ServerSerializable(destinationConnection, TestProject::isServer);
 }
 
 RakNet::RM3ActionOnPopConnection TestObject::QueryActionOnPopConnection(RakNet::Connection_RM3* droppedConnection) const

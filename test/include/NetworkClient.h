@@ -4,6 +4,10 @@
 //Project includes
 #include "ClientServerBase.h"
 
+#include <NetworkIDManager.h>
+#include <ReplicaManager3.h>
+#include "NetworkNotifier.h"
+
 class NetworkClient : public ServerClientBase
 {
 public:
@@ -52,6 +56,11 @@ private:
 	//Local (i.e game running, loading) & Connection State
 	ClientLocalState m_eClientGameState;
 	ClientConnectionState m_eConnectionState;
+
+	// ReplicaManager3 requires NetworkIDManager to lookup pointers from numbers.
+	RakNet::NetworkIDManager* networkIdManager;
+	// The system that performs most of our functionality for this demo
+	NetworkReplicator* replicaManager;
 
 };
 

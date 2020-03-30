@@ -20,6 +20,9 @@ public:
 	TestProject();
 	virtual ~TestProject();
 
+	//Dirty debug static just to test replication
+	static bool isServer;
+
 protected:
 
 	virtual bool onCreate();
@@ -29,6 +32,8 @@ protected:
 
 	glm::mat4	m_cameraMatrix;
 	glm::mat4	m_projectionMatrix;
+
+
 
 private:
 	NetworkServer* gameServer; //Game Server (if we are the host)

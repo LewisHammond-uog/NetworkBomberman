@@ -3,7 +3,6 @@
 
 //C++ Includes
 #include <vector>
-#include <type_traits>
 
 //RakIncludes
 #include "NetworkIDObject.h"
@@ -11,7 +10,6 @@
 
 //Project Includes
 #include "ClientServerBase.h"
-#include "PacketTypes.h"
 
 #include "ReplicaManager3.h"
 

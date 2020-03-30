@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "NetworkServer.h"
 
+
 //Raknet Includes
 #include "BitStream.h"
 
@@ -40,6 +41,14 @@ void NetworkServer::Init()
 	m_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
 	m_eServerState = NetworkServer::ServerGameStates::SERVER_PROCESSING_EVENTS;
 
+	//Create nework id manager
+	networkIdManager = new RakNet::NetworkIDManager();
+
+	//Create Replica Manager
+	replicaManager = new NetworkReplicator();
+	replicaManager->SetNetworkIDManager(networkIdManager);
+	m_pRakPeer->AttachPlugin(replicaManager);
+
 	LogConsoleMessage("SERVER :: Server Initalised");
 }
 
@@ -56,6 +65,13 @@ void NetworkServer::DoPreGameServerEvents()
 {
 
 	RakNet::Packet* packet = m_pRakPeer->Receive();
+
+	static bool testTriggered = false;
+	if (!testTriggered) {
+		replicaManager->Reference(new TestObject);
+		testTriggered = true;
+	}
+
 
 	while (packet != nullptr) {
 

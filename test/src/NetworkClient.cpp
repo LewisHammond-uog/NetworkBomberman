@@ -35,6 +35,14 @@ void NetworkClient::Init() {
 	//Startup Client
 	RakNet::SocketDescriptor sd;
 	m_pRakPeer->Startup(1, &sd, 1);
+
+	//Create nework id manager
+	networkIdManager = new RakNet::NetworkIDManager();
+
+	//Create Replica Manager
+	replicaManager = new NetworkReplicator();
+	replicaManager->SetNetworkIDManager(networkIdManager);
+	m_pRakPeer->AttachPlugin(replicaManager);
 }
 
 void NetworkClient::Update()
@@ -246,6 +254,7 @@ void NetworkClient::DoClientConnectionEvents()
 			ImGui::End();
 			break;
 		}
+
 		default:
 			break;
 	}

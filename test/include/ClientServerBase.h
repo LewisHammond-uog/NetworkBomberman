@@ -5,6 +5,7 @@
 #include <MessageIdentifiers.h>
 #include <RakNetTypes.h>
 
+
 #include <string.h>
 
 //Defines for max clients and server port
@@ -47,21 +48,27 @@ public:
 	virtual void Init() = 0;
 	virtual void Update() = 0;
 
-protected:
-
-	//Raknet peer for packet send/receive
-	RakNet::RakPeerInterface* m_pRakPeer;
-	RakNet::SystemAddress m_serverAddress;
+	static bool isServer;
 
 	//Function for Debug Log console message
 	//TODO - Move this somewhere else
-	void LogConsoleMessage(const char* m_Message) {
+	static void LogConsoleMessage(const char* m_Message) {
 		Application_Log* log = Application_Log::Get();
 
 		if (log != nullptr) {
 			log->addLog(LOG_LEVEL::LOG_INFO, m_Message);
 		}
 	}
+
+protected:
+
+	//Raknet peer for packet send/receive
+	RakNet::RakPeerInterface* m_pRakPeer;
+	RakNet::SystemAddress m_serverAddress;
+
+
+
+
 };
 
 #endif // !__NETWORK_H__s

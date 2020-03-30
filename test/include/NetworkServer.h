@@ -11,6 +11,12 @@
 //Raknet Includes
 #include "RakPeerInterface.h"
 
+//Test Includes
+#include <NetworkIDManager.h>
+#include <ReplicaManager3.h>
+#include "TestObject.h"
+#include "NetworkNotifier.h"
+
 //Struct to store info about a connected client
 struct ConnectedClientInfo {
 	RakNet::SystemAddress m_clientAddress;
@@ -65,6 +71,11 @@ private:
 
 	//Number of players required to start the game
 	const int requiredPlayerCount = 2;
+
+	// ReplicaManager3 requires NetworkIDManager to lookup pointers from numbers.
+	RakNet::NetworkIDManager* networkIdManager;
+	// The system that performs most of our functionality for this demo
+	NetworkReplicator* replicaManager;
 };
 
 #endif // !__NETWORK_SERVER_H__

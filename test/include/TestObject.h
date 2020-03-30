@@ -36,9 +36,7 @@ public:
 	
 	//Function for when we lose a connection 
 	virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3* droppedConnection) const;
-	
 
-private:
 	const RakNet::RakString m_sObjName = "name";
 	float m_fHealth = 0;
 

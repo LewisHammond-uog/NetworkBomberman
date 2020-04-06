@@ -2,10 +2,12 @@
 #include "NetworkServer.h"
 
 //Raknet Includes
+#include  "RakPeerInterface.h"
 #include "BitStream.h"
 
 //TestIncludes
 #include "GameManager.h"
+
 
 NetworkServer::NetworkServer()
 {

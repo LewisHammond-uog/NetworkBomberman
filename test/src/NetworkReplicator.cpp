@@ -2,7 +2,7 @@
 #include "NetworkReplicator.h"
 
 #include "Entity.h"
-#include "ServerCreatedObject.h"
+#include "TransformComponent.h"
 
 
 RakNet::Replica3* TestConnection::AllocReplica(RakNet::BitStream* allocationId, RakNet::ReplicaManager3* replicaManager3)
@@ -11,6 +11,7 @@ RakNet::Replica3* TestConnection::AllocReplica(RakNet::BitStream* allocationId, 
 	allocationId->Read(typeName);
 
 	if (typeName == "Entity") { return new Entity; }
+	if (typeName == "TransformComponent") { return new TransformComponent; }
 
 	//Default nullptr - don't create anything
 	return nullptr;

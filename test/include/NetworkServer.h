@@ -5,7 +5,6 @@
 #include <vector>
 
 //Raknet Includes
-#include "RakPeerInterface.h"
 #include <NetworkIDManager.h>
 
 //Project Includes
@@ -68,6 +67,7 @@ private:
 	//Number of players required to start the game
 	const int requiredPlayerCount = 2;
 
+	//TODO Remove and put in client server base
 	// ReplicaManager3 requires NetworkIDManager to lookup pointers from numbers.
 	RakNet::NetworkIDManager* m_pNetworkIdManager;
 	//Network Replicator - manages replication of objects

@@ -15,13 +15,12 @@
 /// functions which are needed to the implemented in derived classes 
 /// </summary>
 class ServerCreatedObject : public RakNet::Replica3 {
-public:
+protected:
 	ServerCreatedObject();
 	~ServerCreatedObject();
 	
 	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("ServerCreatedObject"); }
 
-	
 	virtual void WriteAllocationID(RakNet::Connection_RM3* destinationConnection, RakNet::BitStream* allocationIdBitstream) const;
 	
 	//Serialise/Deserialise functions
@@ -45,8 +44,6 @@ public:
 	//Function for when we lose a connection 
 	virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3* droppedConnection) const;
 
-protected:
-	
 	//Saves and compares the variables of this serialise and the last serialize
 	//call. If they are different then true is writen to the bitstream and the value,
 	//otherwise false and no value

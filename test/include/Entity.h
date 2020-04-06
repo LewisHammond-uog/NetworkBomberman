@@ -21,8 +21,7 @@ public:
 	Entity();
 	~Entity();
 
-	//Entity Name
-	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("Entity"); }
+
 
 	virtual void Update(float a_fDeltaTime);
 	virtual void Draw(Shader* a_pShader);
@@ -36,6 +35,11 @@ public:
 	//Get all of the entities that we have created
 	static const std::map<const unsigned int, Entity*>& GetEntityMap() { return s_xEntityMap; }
 
+
+#pragma region Replica Manager Functions
+	//Entity Name
+	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("Entity"); }
+	
 	//Serialise/Deserialise functions
 	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters* serializeParameters);
 	virtual void Deserialize(RakNet::DeserializeParameters* deserializeParameters);
@@ -45,6 +49,7 @@ public:
 	virtual bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection);
 	virtual void SerializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* destinationConnection);
 	virtual bool DeserializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* sourceConnection);
+#pragma  endregion 
 
 private:
 	unsigned int m_uEntityID;

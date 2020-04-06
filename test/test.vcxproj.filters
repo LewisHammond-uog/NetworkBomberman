@@ -22,6 +22,18 @@
     <Filter Include="Source Files\Network">
       <UniqueIdentifier>{1dd01bea-011a-43ad-a390-aff403cee3fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\ECS">
+      <UniqueIdentifier>{b915be7a-b90c-4712-8b44-024944c06949}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ECS\Components">
+      <UniqueIdentifier>{b7057c4a-7655-421a-87ba-8b285a234e8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ECS">
+      <UniqueIdentifier>{7cf0f4af-f425-4ad5-85d7-8400368e7b92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ECS\Components">
+      <UniqueIdentifier>{9fa1672c-64fa-44a2-a5ea-e5d1c10950c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TestProject.cpp">
@@ -48,14 +60,17 @@
     <ClCompile Include="src\GameManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Entity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ServerCreatedObject.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Component.cpp">
+      <Filter>Source Files\ECS\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Entity.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TransformComponent.cpp">
+      <Filter>Source Files\ECS\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -86,14 +101,17 @@
     <ClInclude Include="include\NetworkReplicator.h">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
-    <ClInclude Include="include\Component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\ServerCreatedObject.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Component.h">
+      <Filter>Header Files\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Entity.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TransformComponent.h">
+      <Filter>Header Files\ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

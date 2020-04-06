@@ -3,12 +3,8 @@
 
 //RakNet Includes
 #include <RakPeerInterface.h>
-#include <BitStream.h>
-
-#include <string.h>
 
 //Project Includes
-#include "ClientServerBase.h"
 #include "NetworkClient.h"
 #include "NetworkServer.h"
 
@@ -35,7 +31,7 @@ bool TestProject::onCreate()
 	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 
 	// create a perspective projection matrix with a 90 degree field-of-view and widescreen aspect ratio
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, m_windowWidth / (float)m_windowHeight, 0.1f, 1000.0f);
+	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)m_windowWidth / (float)m_windowHeight, 0.1f, 1000.0f);
 
 	// set the clear colour and enable depth testing and backface culling
 	glClearColor(0.25f, 0.25f, 0.25f, 1.f);

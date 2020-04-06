@@ -10,22 +10,29 @@
 
 #include <string.h>
 
-class TestObject : public RakNet::Replica3 {
+/// <summary>
+/// Abstract Class for Server Created Objects. Does not contain Serialize/Deserialize, Serialize/DeserializeConstructoion or Destruction
+/// functions which are needed to the implemented in derived classes 
+/// </summary>
+class ServerCreatedObject : public RakNet::Replica3 {
 public:
-	TestObject();
-	~TestObject();
+	ServerCreatedObject();
+	~ServerCreatedObject();
+	
+	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("ServerCreatedObject"); }
 
+	
 	virtual void WriteAllocationID(RakNet::Connection_RM3* destinationConnection, RakNet::BitStream* allocationIdBitstream) const;
 	
 	//Serialise/Deserialise functions
-	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters* serializeParameters);
-	virtual void Deserialize(RakNet::DeserializeParameters* deserializeParameters);
+	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters* serializeParameters)=0;
+	virtual void Deserialize(RakNet::DeserializeParameters* deserializeParameters)=0;
 
 	//Fuctions for deserialise and serialize on create
-	virtual void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection);
-	virtual bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection);
-	virtual void SerializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* destinationConnection);
-	virtual bool DeserializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* sourceConnection);
+	virtual void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection)=0;
+	virtual bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection)=0;
+	virtual void SerializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* destinationConnection)=0;
+	virtual bool DeserializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* sourceConnection)=0;
 
 	//Dellocating Object
 	virtual void DeallocReplica(RakNet::Connection_RM3* sourceConnection);
@@ -38,15 +45,12 @@ public:
 	//Function for when we lose a connection 
 	virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3* droppedConnection) const;
 
-	const int m_sObjName = 9;
-	float m_fHealth = 22.f;
-
-	void UpdateHealth();
-
+protected:
+	
 	//Saves and compares the variables of this serialise and the last serialize
 	//call. If they are different then true is writen to the bitstream and the value,
 	//otherwise false and no value
-	RakNet::VariableDeltaSerializer variableDeltaSerializer;
+	RakNet::VariableDeltaSerializer m_variableDeltaSerializer;
 };
 
 #endif // !__TEST_OBJECT_H__

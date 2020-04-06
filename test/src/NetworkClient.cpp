@@ -7,8 +7,8 @@
 
 //Project Incldues
 #include "Authenticator.h"
-#include "NetworkNotifier.h"
-#include "TestObject.h"
+#include "NetworkReplicator.h"
+#include "ServerCreatedObject.h"
 
 //Default Client Contstructor
 NetworkClient::NetworkClient()
@@ -37,13 +37,13 @@ void NetworkClient::Init() {
 	RakNet::SocketDescriptor sd;
 	m_pRakPeer->Startup(1, &sd, 1);
 
-	//Create nework id manager
-	networkIdManager = new RakNet::NetworkIDManager();
+	//Create network id manager
+	m_pNetworkIdManager = new RakNet::NetworkIDManager();
 
 	//Create Replica Manager
-	replicaManager = new NetworkReplicator();
-	replicaManager->SetNetworkIDManager(networkIdManager);
-	m_pRakPeer->AttachPlugin(replicaManager);
+	m_pReplicaManager = new NetworkReplicator();
+	m_pReplicaManager->SetNetworkIDManager(m_pNetworkIdManager);
+	m_pRakPeer->AttachPlugin(m_pReplicaManager);
 }
 
 void NetworkClient::Update()

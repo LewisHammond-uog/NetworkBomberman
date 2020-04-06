@@ -1,26 +1,22 @@
 #ifndef __NETWORK_SERVER_H__
 #define __NETWORK_SERVER_H__
 
-//Project Includes
-#include "ClientServerBase.h"
-#include "Authenticator.h"
-
 //C++ Includes
 #include <vector>
 
 //Raknet Includes
 #include "RakPeerInterface.h"
-
-//Test Includes
 #include <NetworkIDManager.h>
-#include <ReplicaManager3.h>
-#include "TestObject.h"
-#include "NetworkNotifier.h"
+
+//Project Includes
+#include "ClientServerBase.h"
+#include "Authenticator.h"
+#include "NetworkReplicator.h"
 
 //Struct to store info about a connected client
 struct ConnectedClientInfo {
 	RakNet::SystemAddress m_clientAddress;
-	int playerID;
+	int m_playerId;
 };
 
 class NetworkServer : public ServerClientBase
@@ -38,7 +34,7 @@ public:
 
 	//Constructor/Destructor
 	NetworkServer();
-	~NetworkServer();
+	virtual ~NetworkServer();
 
 	//Update and Init
 	void Init();
@@ -63,8 +59,8 @@ private:
 	ServerGameStates m_eServerState;
 
 	//Current number of connected clients
-	int connectedClients = 0;
-	int readyClients = 0;
+	int m_iConnectedClients = 0;
+	int m_iReadyClients = 0;
 
 	//List of clients connected to the server
 	std::vector<ConnectedClientInfo> m_vConnectedClients;
@@ -73,11 +69,9 @@ private:
 	const int requiredPlayerCount = 2;
 
 	// ReplicaManager3 requires NetworkIDManager to lookup pointers from numbers.
-	RakNet::NetworkIDManager* networkIdManager;
-	// The system that performs most of our functionality for this demo
-	NetworkReplicator* replicaManager;
-
-	TestObject* objT;
+	RakNet::NetworkIDManager* m_pNetworkIdManager;
+	//Network Replicator - manages replication of objects
+	NetworkReplicator* m_pReplicaManager;
 };
 
 #endif // !__NETWORK_SERVER_H__

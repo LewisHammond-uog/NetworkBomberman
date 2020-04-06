@@ -1,5 +1,9 @@
 #ifndef __PACKET_TYPES_H__
 #define __PACKET_TYPES_H__
+#include <NetworkIDObject.h>
+
+#include "ClientServerBase.h"
+
 /// <summary>
 /// File that contains definitions for all of the types of packets that
 /// the server/client can receive/send

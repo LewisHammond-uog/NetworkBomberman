@@ -1,12 +1,19 @@
 #include "stdafx.h"
-#include "NetworkNotifier.h"
-#include "TestObject.h"
+#include "NetworkReplicator.h"
+
+#include "Entity.h"
+#include "ServerCreatedObject.h"
 
 
 RakNet::Replica3* TestConnection::AllocReplica(RakNet::BitStream* allocationId, RakNet::ReplicaManager3* replicaManager3)
 {
-	return new TestObject;
-	//return nullptr;
+	RakNet::RakString typeName;
+	allocationId->Read(typeName);
+
+	if (typeName == "Entity") { return new Entity; }
+
+	//Default nullptr - don't create anything
+	return nullptr;
 }
 
 void TestConnection::DeallocReplica(RakNet::Connection_RM3* sourceConnection)

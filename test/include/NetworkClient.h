@@ -4,12 +4,11 @@
 //Project includes
 #include "ClientServerBase.h"
 
+//RaknetIncludes
 #include <NetworkIDManager.h>
-#include <ReplicaManager3.h>
-#include "NetworkNotifier.h"
 
-//Test Includes
-#include "TestObject.h"
+//Project Includes
+#include "NetworkReplicator.h"
 
 class NetworkClient : public ServerClientBase
 {
@@ -61,9 +60,9 @@ private:
 	ClientConnectionState m_eConnectionState;
 
 	// ReplicaManager3 requires NetworkIDManager to lookup pointers from numbers.
-	RakNet::NetworkIDManager* networkIdManager;
+	RakNet::NetworkIDManager* m_pNetworkIdManager;
 	// The system that performs most of our functionality for this demo
-	NetworkReplicator* replicaManager;
+	NetworkReplicator* m_pReplicaManager;
 
 
 

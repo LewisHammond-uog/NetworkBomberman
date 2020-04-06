@@ -159,7 +159,7 @@ bool Authenticator::ValidUsernameAndPassword(const char* a_szUsername, const cha
 
 	//Loop through usernames until we either get to
 	//the given username or 
-	while (strcmp(a_szUsername, storedUsername)) {
+	while (strcmp(a_szUsername, storedUsername) != 0) {
 		//Check that we are not at the end of the file
 		if (sLoginDetailsFile.eof()) {
 			//At end of file without username being found - username invalid

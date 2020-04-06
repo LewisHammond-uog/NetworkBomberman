@@ -4,8 +4,6 @@
 //Rak Net Includes
 #include <MessageIdentifiers.h>
 #include <RakNetTypes.h>
-
-
 #include <string.h>
 
 //Defines for max clients and server port

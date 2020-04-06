@@ -5,12 +5,7 @@
 #include <vector>
 
 //RakIncludes
-#include "NetworkIDObject.h"
 #include "BitStream.h"
-
-//Project Includes
-#include "ClientServerBase.h"
-
 #include "ReplicaManager3.h"
 
 class TestConnection : public RakNet::Connection_RM3 {
@@ -32,7 +27,6 @@ public:
 	virtual void DeallocConnection(RakNet::Connection_RM3* connection) const {
 		delete connection;
 	}
-private:
 };
 
 #endif // !__NETWORK_NOTIFIER_H__

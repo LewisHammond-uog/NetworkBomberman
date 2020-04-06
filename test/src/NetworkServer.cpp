@@ -1,9 +1,11 @@
 #include "stdafx.h"
 #include "NetworkServer.h"
 
-
 //Raknet Includes
 #include "BitStream.h"
+
+//TestIncludes
+#include "GameManager.h"
 
 NetworkServer::NetworkServer()
 {
@@ -41,13 +43,13 @@ void NetworkServer::Init()
 	m_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
 	m_eServerState = NetworkServer::ServerGameStates::SERVER_PROCESSING_EVENTS;
 
-	//Create nework id manager
-	networkIdManager = new RakNet::NetworkIDManager();
+	//Create network id manager
+	m_pNetworkIdManager = new RakNet::NetworkIDManager();
 
 	//Create Replica Manager
-	replicaManager = new NetworkReplicator();
-	replicaManager->SetNetworkIDManager(networkIdManager);
-	m_pRakPeer->AttachPlugin(replicaManager);
+	m_pReplicaManager = new NetworkReplicator();
+	m_pReplicaManager->SetNetworkIDManager(m_pNetworkIdManager);
+	m_pRakPeer->AttachPlugin(m_pReplicaManager);
 
 	LogConsoleMessage("SERVER :: Server Initalised");
 }
@@ -64,17 +66,8 @@ void NetworkServer::Update()
 void NetworkServer::DoPreGameServerEvents()
 {
 
+
 	RakNet::Packet* packet = m_pRakPeer->Receive();
-
-
-	//TEST CREATING A NEW TEST OBJECT - THIS SHOULD TRIGGER THE CONSOLE MESSAGE
-	//"Create Test object" on the server and then the client!
-	static bool testTriggered = false;
-	if (!testTriggered) {
-		replicaManager->Reference(objT = new TestObject);
-		testTriggered = true;
-	}
-
 
 	while (packet != nullptr) {
 
@@ -145,9 +138,11 @@ void NetworkServer::DoPreGameServerEvents()
 					//Add to list of connected clients
 					ConnectedClientInfo newClientInfo{
 						packet->systemAddress, //Store Sys address
-						++connectedClients //Store Client ID
+						++m_iConnectedClients //Store Client ID
 					};
 					m_vConnectedClients.push_back(newClientInfo);
+					
+					GameManager::CreatePlayers(1, m_pReplicaManager);
 
 
 				}
@@ -161,9 +156,6 @@ void NetworkServer::DoPreGameServerEvents()
 				break;
 			}
 			case(CSNetMessages::CLIENT_LOGIN_DATA): {
-				
-
-
 
 				RakNet::BitStream incomingLoginData(packet->data, packet->length, false);
 
@@ -178,7 +170,7 @@ void NetworkServer::DoPreGameServerEvents()
 					//Add to list of connected clients
 					ConnectedClientInfo newClientInfo{
 						packet->systemAddress, //Store Sys address
-						++connectedClients //Store Client ID
+						++m_iConnectedClients //Store Client ID
 					};
 					m_vConnectedClients.push_back(newClientInfo);
 
@@ -196,13 +188,13 @@ void NetworkServer::DoPreGameServerEvents()
 			case(CSNetMessages::CLIENT_READY_TO_PLAY): {
 				LogConsoleMessage("SERVER :: A CLIENT IS READY TO PLAY");
 
-				objT->UpdateHealth();
-
 				//Add to our ready clients count
-				++readyClients;
+				++m_iReadyClients;
 
 				//Check if game is ready to start
-				if (readyClients >= requiredPlayerCount) {
+				if (m_iReadyClients >= requiredPlayerCount) {
+
+					//Create the player objects
 					
 					//Need to make this work so it sends to all clients
 					//Create and send packet that game is ready to play
@@ -233,7 +225,7 @@ void NetworkServer::SendMessageToClient(int a_iPlayerID, RakNet::BitStream& a_da
 	//Loop through the vector and see if we have a client with the given player
 	//id, then get it's address and call the send message function
 	for (int i = 0; i < m_vConnectedClients.size(); ++i) {
-		if (m_vConnectedClients[i].playerID == a_iPlayerID) {
+		if (m_vConnectedClients[i].m_playerId == a_iPlayerID) {
 			RakNet::SystemAddress clientAddress = m_vConnectedClients[i].m_clientAddress;
 			SendMessageToClient(clientAddress, a_data, a_priotity, a_reliability);
 		}

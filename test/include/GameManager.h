@@ -22,14 +22,9 @@ public:
 	void Update(float a_fDeltaTime);
 
 	//Function to Create Player
-	static void CreatePlayers(int a_iPlayerCount, NetworkReplicator* a_pNetworkReplicator);
+	static void CreatePlayers(int a_iPlayerCount);
 
 private:
-	//Pointer to the network ID manager used to assign networkID's
-	//todo move to client/server
-	//todo implement
-	RakNet::NetworkIDManager* m_pNetworkIDManager;
-	NetworkReplicator* m_pNetworkReplicator;
 
 	//Instance of this sigleton
 	static GameManager* s_pInstance;

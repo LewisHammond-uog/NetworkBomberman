@@ -127,8 +127,8 @@ void NetworkServer::DoPreGameServerEvents()
 
 				RakNet::BitStream incomingLoginData(packet->data, packet->length, false);
 
-				//Try and authenticate exsiting user, return message to client
-				//if this is successfull or not
+				//Try and authenticate a new user user, return message to client
+				//if this is successful or not
 				if (m_oServerAuthenticator->LoginFromBitstream(incomingLoginData, true))
 				{
 					LogConsoleMessage("SERVER :: SENDING CLIENT REGISTER SUCCESS INFO");
@@ -142,7 +142,7 @@ void NetworkServer::DoPreGameServerEvents()
 					};
 					m_vConnectedClients.push_back(newClientInfo);
 
-					GameManager::CreatePlayers(1, GetNetworkReplicator());
+					GameManager::CreatePlayers(10);
 					
 				} else {
 

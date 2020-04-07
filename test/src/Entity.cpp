@@ -13,14 +13,13 @@ std::map<const unsigned int, Entity*> Entity::s_xEntityMap;
 
 Entity::Entity()
 {
+	//todo remove? - don't think we need this because we are a replica object and this is pre assigned by s_pReplicaManager->SetNetworkIDManager(GetNetworkIDManager()); in Client Server Base
+	//Set our Network ID Manager
+	SetNetworkIDManager(ServerClientBase::GetNetworkIDManager());
+	
 	//Increment entity count and add to entity list
 	m_uEntityID = s_uEntityCount++;
 	s_xEntityMap.insert(EntityPair(m_uEntityID, this));
-
-	//todo remove
-	char buffer[128];
-	sprintf(buffer, "Entity, ID: ", GetNetworkID());
-	ServerClientBase::LogConsoleMessage(buffer);
 }
 
 Entity::~Entity()

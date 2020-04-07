@@ -11,7 +11,8 @@
 Component::Component(Entity* a_pOwner) : m_pOwnerEntity(a_pOwner),
 											m_eComponentType(NONE)
 {
-	//Set our network mananger
+	//todo remove? - don't think we need this because we are a replica object and this is pre assigned by s_pReplicaManager->SetNetworkIDManager(GetNetworkIDManager()); in Client Server Base
+	//Set our network manager
 	NetworkIDObject::SetNetworkIDManager(ServerClientBase::GetNetworkIDManager());
 
 	//todo remove - this is just debug testing
@@ -66,9 +67,13 @@ void Component::SerializeConstruction(RakNet::BitStream* constructionBitstream, 
 	// This call adds another remote system to track
 	m_variableDeltaSerializer.AddRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
 
+	/*
+	 * CONSTRUCTION DATA LAYOUT
+	 * NetworkID* OwnerNetworkID
+	 */
+	
 	//Generate our network ID
 	//Get the network ID of our owner
-	constructionBitstream->Write(GetNetworkID());
 	constructionBitstream->Write(m_pOwnerEntity->GetNetworkID());
 	
 }
@@ -80,16 +85,22 @@ bool Component::DeserializeConstruction(RakNet::BitStream* constructionBitstream
 		return false;
 	}
 
-	//TODO - get the network ID of the object and create using GET_OBJECT_FROM_ID
-	//Extact Data from Construction BitStream
-	RakNet::NetworkID ourNetworkID;
+	/*
+	 * CONSTRUCTION DATA LAYOUT
+	 * NetworkID* OwnerNetworkID
+	 */
+	
+	//Get the network ID of the entity that owns this component
 	RakNet::NetworkID ownerNetworkID;
-	constructionBitstream->Read(ourNetworkID);
 	constructionBitstream->Read(ownerNetworkID);
 
-	//Assign our owner based on ID
+	//Get our owner entity based on the owner network ID that we were given from the server, then add this component
+	//to our owner entity (as long as it's not nullptr), so that our entity and component are linked as they are
+	//on the server
 	m_pOwnerEntity = ServerClientBase::GetNetworkIDManager()->GET_OBJECT_FROM_ID<Entity*>(ownerNetworkID);
-	m_pOwnerEntity->AddComponent(this);
+	if (m_pOwnerEntity != nullptr) {
+		m_pOwnerEntity->AddComponent(this);
+	}
 
 	return true;
 }

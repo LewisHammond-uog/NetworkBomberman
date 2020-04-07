@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Entity.h"
 
+//todo remove
+#include "ServerClientBase.h"
+
 //Typedefs
 typedef std::pair<const unsigned int, Entity*> EntityPair;
 
@@ -13,6 +16,11 @@ Entity::Entity()
 	//Increment entity count and add to entity list
 	m_uEntityID = s_uEntityCount++;
 	s_xEntityMap.insert(EntityPair(m_uEntityID, this));
+
+	//todo remove
+	char buffer[128];
+	sprintf(buffer, "Entity, ID: ", GetNetworkID());
+	ServerClientBase::LogConsoleMessage(buffer);
 }
 
 Entity::~Entity()
@@ -107,8 +115,8 @@ RakNet::RM3SerializationResult Entity::Serialize(RakNet::SerializeParameters* se
 	);
 
 	//Serialize Variables
-	m_variableDeltaSerializer.SerializeVariable(&serializationContext, 0);
-	m_variableDeltaSerializer.SerializeVariable(&serializationContext, 0);
+	//m_variableDeltaSerializer.SerializeVariable(&serializationContext, 0);
+	//m_variableDeltaSerializer.SerializeVariable(&serializationContext, 0);
 
 	//Return that we should always serialize
 	return RakNet::RM3SR_SERIALIZED_ALWAYS;

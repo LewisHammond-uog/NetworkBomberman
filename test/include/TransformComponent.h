@@ -15,7 +15,7 @@ enum MATRIX_ROW
 class TransformComponent : public Component
 {
 public:
-	TransformComponent();//TODO remove - this is temp to statisfy AllocReplica
+	TransformComponent();//TODO remove or clarify - this is temp to satisfy AllocReplica
 	TransformComponent(Entity* a_pOwner);	
 	virtual ~TransformComponent();
 

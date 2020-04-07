@@ -12,11 +12,9 @@ Component::Component(Entity* a_pOwner) : m_pOwnerEntity(a_pOwner),
 											m_eComponentType(NONE)
 {
 	//Set our network mananger
-	//SetNetworkIDManager(GameManager::GetInstance()->GetNetworkIDManager());
+	NetworkIDObject::SetNetworkIDManager(ServerClientBase::GetNetworkIDManager());
 
-	
-	//char buffer[128];
-	//sprintf(buffer, "Created Component %i", GetNetworkID());
+	//todo remove - this is just debug testing
 	ServerClientBase::LogConsoleMessage("Create Component");
 }
 
@@ -30,7 +28,7 @@ Component::~Component()
 RakNet::RM3SerializationResult Component::Serialize(RakNet::SerializeParameters* serializeParameters)
 {
 	RakNet::VariableDeltaSerializer::SerializationContext serializationContext;
-
+	
 	//Write reliability type
 	serializeParameters->pro[0].reliability = PacketReliability::RELIABLE;
 
@@ -53,6 +51,7 @@ void Component::Deserialize(RakNet::DeserializeParameters* deserializeParameters
 {
 	RakNet::VariableDeltaSerializer::DeserializationContext deserializationContext;
 
+
 	//Deserialise the data
 	m_variableDeltaSerializer.BeginDeserialize(&deserializationContext, &deserializeParameters->serializationBitstream[0]);
 	//m_variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_sObjName);
@@ -67,8 +66,11 @@ void Component::SerializeConstruction(RakNet::BitStream* constructionBitstream, 
 	// This call adds another remote system to track
 	m_variableDeltaSerializer.AddRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
 
-	//Write Owner - TODO pass owners network id and reconstruct on the other side
-	constructionBitstream->Write(m_pOwnerEntity);
+	//Generate our network ID
+	//Get the network ID of our owner
+	constructionBitstream->Write(GetNetworkID());
+	constructionBitstream->Write(m_pOwnerEntity->GetNetworkID());
+	
 }
 
 bool Component::DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection)
@@ -80,9 +82,14 @@ bool Component::DeserializeConstruction(RakNet::BitStream* constructionBitstream
 
 	//TODO - get the network ID of the object and create using GET_OBJECT_FROM_ID
 	//Extact Data from Construction BitStream
-	//constructionBitstream->Read();
-	//constructionBitstream->Read(m_fHealth);
+	RakNet::NetworkID ourNetworkID;
+	RakNet::NetworkID ownerNetworkID;
+	constructionBitstream->Read(ourNetworkID);
+	constructionBitstream->Read(ownerNetworkID);
 
+	//Assign our owner based on ID
+	m_pOwnerEntity = ServerClientBase::GetNetworkIDManager()->GET_OBJECT_FROM_ID<Entity*>(ownerNetworkID);
+	m_pOwnerEntity->AddComponent(this);
 
 	return true;
 }

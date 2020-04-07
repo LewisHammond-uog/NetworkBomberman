@@ -46,8 +46,11 @@ void GameManager::CreatePlayers(int a_iPlayerCount, NetworkReplicator* a_pNetwor
 		Entity* e = new Entity();
 		Component* c = new TransformComponent(e);
 		e->AddComponent(c);
-		a_pNetworkReplicator->Reference(c);
+
 		a_pNetworkReplicator->Reference(e);
+		a_pNetworkReplicator->Reference(c);
+		
+
 		
 	}
 }

@@ -21,7 +21,7 @@ Authenticator::~Authenticator()
 /// </summary>
 /// <param name="a_loginData">Bitstream Login Data</param>
 /// <param name="a_bRegisterNewUser">Whether to register as a new user</param>
-/// <returns></returns>
+/// <returns>If login details are correct</returns>
 bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, bool a_bRegisterNewUser = false)
 {
 	//Strip Message ID From Bitstream

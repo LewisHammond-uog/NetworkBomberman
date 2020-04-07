@@ -141,6 +141,8 @@ void NetworkServer::DoPreGameServerEvents()
 						++m_iConnectedClients //Store Client ID
 					};
 					m_vConnectedClients.push_back(newClientInfo);
+
+					GameManager::CreatePlayers(1, GetNetworkReplicator());
 					
 				} else {
 

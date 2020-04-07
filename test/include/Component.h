@@ -14,7 +14,9 @@ enum COMPONENT_TYPE {
 	TRANSFORM,
 	MODEL,
 	BRAIN,
-	COLLIDER
+	COLLIDER,
+	PRIMITIVE_BOX,
+	PRIMITIVE_SPHERE
 };
 
 class Component : public ServerCreatedObject

@@ -34,6 +34,12 @@
     <Filter Include="Header Files\ECS\Components">
       <UniqueIdentifier>{9fa1672c-64fa-44a2-a5ea-e5d1c10950c3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ECS\Components\Primitives">
+      <UniqueIdentifier>{f6f5cc6e-1702-4f26-bd9a-1038c0bcb2ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ECS\Components\Primitives">
+      <UniqueIdentifier>{964ef13f-71b4-4c53-8428-53edbd1e6248}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TestProject.cpp">
@@ -75,6 +81,15 @@
     <ClCompile Include="src\ServerClientBase.cpp">
       <Filter>Source Files\Network</Filter>
     </ClCompile>
+    <ClCompile Include="src\BoxPrimitiveComponent.cpp">
+      <Filter>Source Files\ECS\Components\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PrimitiveComponent.cpp">
+      <Filter>Source Files\ECS\Components\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpherePrimitiveComponent.cpp">
+      <Filter>Source Files\ECS\Components\Primitives</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\TestProject.h">
@@ -115,6 +130,15 @@
     </ClInclude>
     <ClInclude Include="include\ServerClientBase.h">
       <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\BoxPrimitiveComponent.h">
+      <Filter>Header Files\ECS\Components\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PrimitiveComponent.h">
+      <Filter>Header Files\ECS\Components\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="include\SpherePrimitiveComponent.h">
+      <Filter>Header Files\ECS\Components\Primitives</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

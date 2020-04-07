@@ -40,18 +40,16 @@ void NetworkServer::Init()
 	m_pRakPeer = RakNet::RakPeerInterface::GetInstance();
 
 	//Start up Server
-	RakNet::SocketDescriptor sd(SERVER_PORT, 0);
+	RakNet::SocketDescriptor sd(SERVER_PORT, nullptr);
 	m_pRakPeer->Startup(MAX_CLIENTS, &sd, 1);
 	m_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
 	m_eServerState = NetworkServer::ServerGameStates::SERVER_PROCESSING_EVENTS;
 
-	//Create network id manager
-	m_pNetworkIdManager = new RakNet::NetworkIDManager();
-
-	//Create Replica Manager
-	m_pReplicaManager = new NetworkReplicator();
-	m_pReplicaManager->SetNetworkIDManager(m_pNetworkIdManager);
-	m_pRakPeer->AttachPlugin(m_pReplicaManager);
+	//Attach the network replicator to our Rak Peer
+	//so that it runs automatically
+	//We get the network replicator from the base class
+	//ServerClientBase
+	m_pRakPeer->AttachPlugin(GetNetworkReplicator());
 
 	LogConsoleMessage("SERVER :: Server Initalised");
 }
@@ -144,11 +142,7 @@ void NetworkServer::DoPreGameServerEvents()
 					};
 					m_vConnectedClients.push_back(newClientInfo);
 					
-					GameManager::CreatePlayers(1, m_pReplicaManager);
-
-
-				}
-				else {
+				} else {
 
 					//Send fail message to client
 					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);

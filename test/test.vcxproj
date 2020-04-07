@@ -12,7 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Authenticator.h" />
-    <ClInclude Include="include\ClientServerBase.h" />
+    <ClInclude Include="include\ServerClientBase.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\Entity.h" />
     <ClInclude Include="include\GameManager.h" />
@@ -34,6 +34,7 @@
     <ClCompile Include="src\NetworkClient.cpp" />
     <ClCompile Include="src\NetworkReplicator.cpp" />
     <ClCompile Include="src\NetworkServer.cpp" />
+    <ClCompile Include="src\ServerClientBase.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>

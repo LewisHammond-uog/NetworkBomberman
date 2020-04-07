@@ -24,10 +24,6 @@ public:
 	//Function to Create Player
 	static void CreatePlayers(int a_iPlayerCount, NetworkReplicator* a_pNetworkReplicator);
 
-	//Function to get the network ID manager that should be used by all game objects
-	//to assign and check game objects
-	RakNet::NetworkIDManager* GetNetworkIDManager();
-	NetworkReplicator* GetNetworkReplicator();
 private:
 	//Pointer to the network ID manager used to assign networkID's
 	//todo move to client/server
@@ -36,9 +32,8 @@ private:
 	NetworkReplicator* m_pNetworkReplicator;
 
 	//Instance of this sigleton
-	static GameManager* s_pSceneInstance;
+	static GameManager* s_pInstance;
 
-	
 };
 
 #endif //__GAME_MANAGER_H__

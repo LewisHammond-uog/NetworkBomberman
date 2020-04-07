@@ -72,6 +72,9 @@
     <ClCompile Include="src\TransformComponent.cpp">
       <Filter>Source Files\ECS\Components</Filter>
     </ClCompile>
+    <ClCompile Include="src\ServerClientBase.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\TestProject.h">
@@ -84,9 +87,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\NetworkServer.h">
-      <Filter>Header Files\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ClientServerBase.h">
       <Filter>Header Files\Network</Filter>
     </ClInclude>
     <ClInclude Include="include\NetworkClient.h">
@@ -112,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="include\TransformComponent.h">
       <Filter>Header Files\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ServerClientBase.h">
+      <Filter>Header Files\Network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 #define __NETWORK_CLIENT_H__
 
 //Project includes
-#include "ClientServerBase.h"
+#include "ServerClientBase.h"
 
 //RaknetIncludes
 #include <NetworkIDManager.h>
@@ -58,14 +58,6 @@ private:
 	//Local (i.e game running, loading) & Connection State
 	ClientLocalState m_eClientGameState;
 	ClientConnectionState m_eConnectionState;
-
-	// ReplicaManager3 requires NetworkIDManager to lookup pointers from numbers.
-	RakNet::NetworkIDManager* m_pNetworkIdManager;
-	// The system that performs most of our functionality for this demo
-	NetworkReplicator* m_pReplicaManager;
-
-
-
 };
 
 #endif //!__NETWORK_CLIENT_H__

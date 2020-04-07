@@ -1,10 +1,13 @@
-#ifndef __NETWORK_H__
-#define __NETWORK_H__
+#ifndef __SERVER_CLIENT_BASE_H__
+#define __SERVER_CLIENT_BASE_H__
 
 //Rak Net Includes
 #include <MessageIdentifiers.h>
+#include <NetworkIDManager.h>
 #include <RakNetTypes.h>
-#include <string.h>
+
+//Project Includes
+#include "NetworkReplicator.h"
 
 //Defines for max clients and server port
 #define SERVER_PORT 6000
@@ -34,6 +37,7 @@ typedef enum CSGameMessages {
 
 
 } CSGameMessages;
+
 /*
 Abstract class that is used for functionality shared between clients and severs
 */
@@ -46,8 +50,9 @@ public:
 	virtual void Init() = 0;
 	virtual void Update() = 0;
 
-	static bool isServer;
-
+	static RakNet::NetworkIDManager* GetNetworkIDManager();
+	static NetworkReplicator* GetNetworkReplicator();
+	
 	//Function for Debug Log console message
 	//TODO - Move this somewhere else
 	static void LogConsoleMessage(const char* m_Message) {
@@ -59,15 +64,26 @@ public:
 	}
 
 protected:
+	
+	//Protected Constructor/Destructor so that this class cannot be created
+	//without it being a server or a client
+	ServerClientBase() = default;
+	~ServerClientBase();
+	
 
 	//Raknet peer for packet send/receive
 	RakNet::RakPeerInterface* m_pRakPeer;
 	RakNet::SystemAddress m_serverAddress;
 
-
-
+private:
+	//Members for the replica and network ID Management
+	// ReplicaManager3 requires NetworkIDManager to lookup pointers from numbers.
+	static RakNet::NetworkIDManager* s_pNetworkIdManager;
+	//Network Replicator - manages replication of objects
+	static NetworkReplicator* s_pReplicaManager;
 
 };
 
-#endif // !__NETWORK_H__s
+
+#endif //!__SERVER_CLIENT_BASE_H__
 

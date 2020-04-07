@@ -37,13 +37,11 @@ void NetworkClient::Init() {
 	RakNet::SocketDescriptor sd;
 	m_pRakPeer->Startup(1, &sd, 1);
 
-	//Create network id manager
-	m_pNetworkIdManager = new RakNet::NetworkIDManager();
-
-	//Create Replica Manager
-	m_pReplicaManager = new NetworkReplicator();
-	m_pReplicaManager->SetNetworkIDManager(m_pNetworkIdManager);
-	m_pRakPeer->AttachPlugin(m_pReplicaManager);
+	//Attach the network replicator to our Rak Peer
+	//so that it runs automatically
+	//We get the network replicator from the base class
+	//ServerClientBase
+	m_pRakPeer->AttachPlugin(GetNetworkReplicator());
 }
 
 void NetworkClient::Update()

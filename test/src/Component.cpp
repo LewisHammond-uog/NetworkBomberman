@@ -5,7 +5,7 @@
 #include "Entity.h"
 
 //TODO REMOVE INCLUDES
-#include "ClientServerBase.h"
+#include "ServerClientBase.h"
 #include "GameManager.h"
 
 Component::Component(Entity* a_pOwner) : m_pOwnerEntity(a_pOwner),

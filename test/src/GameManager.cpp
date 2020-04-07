@@ -51,18 +51,3 @@ void GameManager::CreatePlayers(int a_iPlayerCount, NetworkReplicator* a_pNetwor
 		
 	}
 }
-
-/// <summary>
-/// Gets the game's network ID Manager. If one is not assigned then
-/// this function will create one and return that
-/// </summary>
-/// <returns></returns>
-RakNet::NetworkIDManager* GameManager::GetNetworkIDManager()
-{
-	if(m_pNetworkIDManager == nullptr)
-	{
-		m_pNetworkIDManager = new RakNet::NetworkIDManager();
-	}
-
-	return m_pNetworkIDManager;
-}

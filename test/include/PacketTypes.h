@@ -2,7 +2,7 @@
 #define __PACKET_TYPES_H__
 #include <NetworkIDObject.h>
 
-#include "ClientServerBase.h"
+#include "ServerClientBase.h"
 
 /// <summary>
 /// File that contains definitions for all of the types of packets that

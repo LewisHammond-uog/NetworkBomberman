@@ -8,7 +8,7 @@
 #include <NetworkIDManager.h>
 
 //Project Includes
-#include "ClientServerBase.h"
+#include "ServerClientBase.h"
 #include "Authenticator.h"
 #include "NetworkReplicator.h"
 
@@ -67,11 +67,6 @@ private:
 	//Number of players required to start the game
 	const int requiredPlayerCount = 2;
 
-	//TODO Remove and put in client server base
-	// ReplicaManager3 requires NetworkIDManager to lookup pointers from numbers.
-	RakNet::NetworkIDManager* m_pNetworkIdManager;
-	//Network Replicator - manages replication of objects
-	NetworkReplicator* m_pReplicaManager;
 };
 
 #endif // !__NETWORK_SERVER_H__

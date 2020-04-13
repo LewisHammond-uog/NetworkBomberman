@@ -66,7 +66,6 @@ private:
 
 	//Number of players required to start the game
 	const int requiredPlayerCount = 2;
-
 };
 
 #endif // !__NETWORK_SERVER_H__

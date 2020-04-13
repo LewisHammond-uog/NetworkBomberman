@@ -8,13 +8,12 @@
 class Entity;
 class Shader;
 
-
 enum COMPONENT_TYPE {
 	NONE,
 	TRANSFORM,
 	MODEL,
-	BRAIN,
 	COLLIDER,
+	PLAYER_CONTROL,
 	PRIMITIVE_BOX,
 	PRIMITIVE_SPHERE
 };

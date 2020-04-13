@@ -90,6 +90,9 @@
     <ClCompile Include="src\SpherePrimitiveComponent.cpp">
       <Filter>Source Files\ECS\Components\Primitives</Filter>
     </ClCompile>
+    <ClCompile Include="src\PlayerControlComponent.cpp">
+      <Filter>Source Files\ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\TestProject.h">
@@ -139,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="include\SpherePrimitiveComponent.h">
       <Filter>Header Files\ECS\Components\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerControlComponent.h">
+      <Filter>Header Files\ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

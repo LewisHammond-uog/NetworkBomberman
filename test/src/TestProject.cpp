@@ -8,6 +8,13 @@
 #include "NetworkClient.h"
 #include "NetworkServer.h"
 
+//todo remove
+#include "GameManager.h"
+#include "Entity.h"
+#include "TransformComponent.h"
+#include "SpherePrimitiveComponent.h"
+#include "PlayerControlComponent.h"
+
 bool TestProject::isServer = false;
 
 TestProject::TestProject()
@@ -28,7 +35,7 @@ bool TestProject::onCreate()
 	#pragma region Render
 
 	// create a world-space matrix for a camera
-	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(10, 10, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
+	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(0, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 
 	// create a perspective projection matrix with a 90 degree field-of-view and widescreen aspect ratio
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)m_windowWidth / (float)m_windowHeight, 0.1f, 1000.0f);
@@ -39,6 +46,19 @@ bool TestProject::onCreate()
 	glEnable(GL_CULL_FACE);
 	#pragma endregion
 
+
+	//todo remove
+	//Create Player Entities with the required components
+	Entity* pPlayerEntity = new Entity(); //This is added to a static entity list when created so we don't need to worry about storing it here
+	TransformComponent* pPlayerTransform = new TransformComponent(pPlayerEntity); //This is the same for components
+	SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pPlayerEntity);
+	PlayerControlComponent* pPlayerControl = new PlayerControlComponent(pPlayerEntity);
+
+	//Add these components to the player entity
+	pPlayerEntity->AddComponent(pPlayerTransform);
+	pPlayerEntity->AddComponent(pSphere);
+	pPlayerEntity->AddComponent(pPlayerControl);
+	
 	return true;
 }
 
@@ -56,6 +76,7 @@ void TestProject::Update(float a_deltaTime)
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	///////DECISION WINDOW///////////////
+	/*
 	if (showConnectionWindow) {
 		ImGui::Begin("Establish Connection", &showConnectionWindow);
 
@@ -98,11 +119,12 @@ void TestProject::Update(float a_deltaTime)
 	if (gameServer != nullptr) {
 		gameServer->Update();
 	}
-
+	*/
 	#pragma region Rendering
 
+	
 	// update our camera matrix using the keyboard/mouse
-	Utility::freeMovement(m_cameraMatrix, a_deltaTime, 10);
+	//Utility::freeMovement(m_cameraMatrix, a_deltaTime, 10);
 
 	// clear all gizmos from last frame
 	Gizmos::clear();
@@ -121,6 +143,10 @@ void TestProject::Update(float a_deltaTime)
 
 	#pragma endregion
 
+
+	//todo remove
+	GameManager::Update(a_deltaTime);
+	
 	static bool show_demo_window = true;
 
 	if (log != nullptr && show_demo_window)
@@ -155,13 +181,10 @@ void TestProject::Draw()
 
 void TestProject::Destroy()
 {
-	if (gameClient != nullptr) {
-		delete gameClient;
-	}
+	//Delete Client or Server
+	delete gameClient;
+	delete gameServer;
 
-	if (gameServer != nullptr) {
-		delete gameServer;
-	}
 
 	Gizmos::destroy();
 }

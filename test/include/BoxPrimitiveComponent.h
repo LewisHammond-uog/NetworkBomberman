@@ -19,6 +19,8 @@ public:
 	virtual void Update(float a_fDeltaTime);
 	virtual void Draw(Shader* a_pShader);
 
+	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("BoxPrimitiveComponent"); }
+	
 private:
 	glm::vec3 m_v3BoxDimensions;
 };

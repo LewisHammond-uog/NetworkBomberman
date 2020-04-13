@@ -19,7 +19,7 @@ public:
 	static GameManager* GetInstance();
 	
 	//Update/Draw Functions
-	void Update(float a_fDeltaTime);
+	static void Update(float a_fDeltaTime);
 
 	//Function to Create Player
 	static void CreatePlayers(int a_iPlayerCount);

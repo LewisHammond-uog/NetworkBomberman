@@ -33,8 +33,6 @@ protected:
 	glm::mat4	m_cameraMatrix;
 	glm::mat4	m_projectionMatrix;
 
-
-
 private:
 	NetworkServer* gameServer; //Game Server (if we are the host)
 	NetworkClient* gameClient; //Game Client (always used), connects to the server and shares info

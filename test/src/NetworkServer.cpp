@@ -8,7 +8,6 @@
 //TestIncludes
 #include "GameManager.h"
 
-
 NetworkServer::NetworkServer()
 {
 	//Null out ptrs and network values
@@ -17,6 +16,7 @@ NetworkServer::NetworkServer()
 
 	//Create Authenticator
 	m_oServerAuthenticator = new Authenticator();
+
 }
 
 NetworkServer::~NetworkServer()
@@ -142,7 +142,7 @@ void NetworkServer::DoPreGameServerEvents()
 					};
 					m_vConnectedClients.push_back(newClientInfo);
 
-					GameManager::CreatePlayers(10);
+					GameManager::CreatePlayers(1);
 					
 				} else {
 

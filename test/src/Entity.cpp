@@ -50,9 +50,6 @@ void Entity::Update(float a_fDeltaTime)
 			pComponent->Update(a_fDeltaTime);
 		}
 	}
-
-	//Debug Draw Primative
-	Gizmos::addBox(glm::vec3(0.f), glm::vec3(1.f), true, glm::vec4(1.f));
 }
 
 ///Draw all elements of this entity

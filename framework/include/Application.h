@@ -18,6 +18,7 @@ public:
 
 	void	showFrameData(bool a_showFrameData);
 
+
 protected:
 
 	virtual bool	onCreate() = 0;

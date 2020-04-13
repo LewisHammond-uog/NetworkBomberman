@@ -8,18 +8,18 @@
 #include "NetworkReplicator.h"
 #include "Component.h"
 #include "NetworkIDManager.h"
-#include "TransformComponent.h"
 
 //Project Includes
 #include "Entity.h"
 #include "ServerClientBase.h"
-
+#include "TransformComponent.h"
+#include "SpherePrimitiveComponent.h"
 
 GameManager::~GameManager()
 {
 }
 
-void GameManager::Update(float a_fDeltaTime)
+void GameManager::Update(const float a_fDeltaTime)
 {
 	
 	//Get a list of and then update all of the entities
@@ -29,6 +29,7 @@ void GameManager::Update(float a_fDeltaTime)
 		Entity* pEntity = xIter->second;
 		if (pEntity) {
 			pEntity->Update(a_fDeltaTime);
+			pEntity->Draw(nullptr);
 		}
 	}
 	
@@ -47,9 +48,11 @@ void GameManager::CreatePlayers(const int a_iPlayerCount)
 		//Create Player Entities with the required components
 		Entity* pPlayerEntity = new Entity(); //This is added to a static entity list when created so we don't need to worry about storing it here
 		TransformComponent* pPlayerTransform = new TransformComponent(pPlayerEntity); //This is the same for components
-
+		SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pPlayerEntity);
+		
 		//Add these components to the player entity
 		pPlayerEntity->AddComponent(pPlayerTransform);
+		pPlayerEntity->AddComponent(pSphere);
 
 		//Send the entity and components to the replica manager, it is important
 		//that we send the player entity first as components rely on having
@@ -57,5 +60,6 @@ void GameManager::CreatePlayers(const int a_iPlayerCount)
 		NetworkReplicator* pNetworkReplicator = ServerClientBase::GetNetworkReplicator();
 		pNetworkReplicator->Reference(pPlayerEntity);
 		pNetworkReplicator->Reference(pPlayerTransform);
+		pNetworkReplicator->Reference(pSphere);
 	}
 }

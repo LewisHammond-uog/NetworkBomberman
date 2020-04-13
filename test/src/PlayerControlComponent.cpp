@@ -3,6 +3,9 @@
 
 #include "Application.h"
 
+//Project Includes
+#include "NetworkDataBlackboard.h"
+
 //todo remove
 #include "ServerClientBase.h"
 #include "TransformComponent.h"
@@ -16,7 +19,8 @@ typedef Component PARENT;
 PlayerControlComponent::PlayerControlComponent(Entity* a_pOwner) :
 	PARENT(a_pOwner),
 	m_iPlayerID(-1),//Init to -1 so we know that this is not initalised
-	m_v3CurrentVelocity(glm::vec3(0,0,0))
+	m_v3CurrentVelocity(glm::vec3(0,0,0)),
+	m_v2LastSentMovementInputs(0,0)
 {
 	//Set Component Type
 	m_eComponentType = COMPONENT_TYPE::PLAYER_CONTROL;
@@ -76,7 +80,15 @@ void PlayerControlComponent::ClientUpdatePlayer(float a_fDeltaTime)
 	//Get player input
 	glm::vec2 v2PlayerInput = GetPlayerKeyboardMovementInput();
 
-	//Send to server
+	//Send to server - if our inputs have changed
+	if(v2PlayerInput != m_v2LastSentMovementInputs)
+	{
+		PlayerInputNetworkData* pData = new PlayerInputNetworkData();
+		pData->iPlayerID = m_iPlayerID;
+		pData->v2MovementInputs = v2PlayerInput;
+		
+		NetworkDataBlackboard::GetInstance()->SendPlayerInputNetworkData(pData);
+	}
 }
 
 /// <summary>

@@ -76,7 +76,7 @@ void TestProject::Update(float a_deltaTime)
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 
 	///////DECISION WINDOW///////////////
-	/*
+	
 	if (showConnectionWindow) {
 		ImGui::Begin("Establish Connection", &showConnectionWindow);
 
@@ -119,7 +119,7 @@ void TestProject::Update(float a_deltaTime)
 	if (gameServer != nullptr) {
 		gameServer->Update();
 	}
-	*/
+	
 	#pragma region Rendering
 
 	

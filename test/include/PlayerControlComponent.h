@@ -28,11 +28,15 @@ private:
 
 	//Player ID
 	int m_iPlayerID;
+
+	//Last sent data 
+	glm::vec2 m_v2LastSentMovementInputs;
 	
 	//Store our current velocity - we transmit this over
 	//the network rather than our position every frame
 	glm::vec3 m_v3CurrentVelocity;
-	
+
+	//Speed for the player to move at
 	const float mc_fMovementSpeed = 5.0f;
 	
 	//Keys for movement

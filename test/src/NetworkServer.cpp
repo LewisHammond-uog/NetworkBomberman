@@ -7,6 +7,7 @@
 
 //TestIncludes
 #include "GameManager.h"
+#include <NetworkDataBlackboard.h>
 
 NetworkServer::NetworkServer()
 {
@@ -43,7 +44,7 @@ void NetworkServer::Init()
 	RakNet::SocketDescriptor sd(SERVER_PORT, nullptr);
 	m_pRakPeer->Startup(MAX_CLIENTS, &sd, 1);
 	m_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
-	m_eServerState = NetworkServer::ServerGameStates::SERVER_PROCESSING_EVENTS;
+	m_eServerState = ServerGameStates::SERVER_CLIENTS_CONNECTING;
 
 	//Attach the network replicator to our Rak Peer
 	//so that it runs automatically
@@ -56,7 +57,12 @@ void NetworkServer::Init()
 
 void NetworkServer::Update()
 {
-	DoPreGameServerEvents();
+	if (m_eServerState == ServerGameStates::SERVER_CLIENTS_CONNECTING) {
+		DoPreGameServerEvents();
+	}else if(m_eServerState == ServerGameStates::SERVER_PROCESSING_EVENTS)
+	{
+		DoGamePlayingServerEvents();
+	}
 }
 
 /// <summary>
@@ -65,7 +71,6 @@ void NetworkServer::Update()
 /// </summary>
 void NetworkServer::DoPreGameServerEvents()
 {
-
 
 	RakNet::Packet* packet = m_pRakPeer->Receive();
 
@@ -192,13 +197,15 @@ void NetworkServer::DoPreGameServerEvents()
 				//Check if game is ready to start
 				if (m_iReadyClients >= requiredPlayerCount) {
 
-					//Create the player objects
+					//todo - Create the player objects
 					
-					//Need to make this work so it sends to all clients
 					//Create and send packet that game is ready to play
 					RakNet::BitStream readyMessage;
 					readyMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_STARTING);
 					SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+
+					//Change Server State
+					m_eServerState = ServerGameStates::SERVER_PROCESSING_EVENTS;
 
 					LogConsoleMessage("SERVER :: GAME STARTING");
 				}
@@ -218,14 +225,41 @@ void NetworkServer::DoPreGameServerEvents()
 	}
 }
 
-void NetworkServer::SendMessageToClient(int a_iPlayerID, RakNet::BitStream& a_data, PacketPriority a_priotity, PacketReliability a_reliability)
+/// <summary>
+/// Do events relating to game playing (i.e processing movements, updating game objects)
+/// </summary>
+void NetworkServer::DoGamePlayingServerEvents()
+{
+	RakNet::Packet* packet = m_pRakPeer->Receive();
+
+	while (packet != nullptr) {
+		switch(packet->data[0])
+		{
+		case(CSGameMessages::CLIENT_PLAYER_INPUT_DATA):
+			{
+				//Send Player Input Data to the Blackboard so that it can be processed by
+				//individal players
+				RakNet::BitStream incomingInputData(packet->data, packet->length, false);
+				NetworkDataBlackboard::GetInstance()->AddReceivedNetworkData(incomingInputData);
+			}
+		}
+		
+
+		//Deallocate Packet and get the next packet
+		m_pRakPeer->DeallocatePacket(packet);
+		packet = m_pRakPeer->Receive();
+	}
+}
+
+
+void NetworkServer::SendMessageToClient(int a_iPlayerID, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability)
 {
 	//Loop through the vector and see if we have a client with the given player
 	//id, then get it's address and call the send message function
 	for (int i = 0; i < m_vConnectedClients.size(); ++i) {
 		if (m_vConnectedClients[i].m_playerId == a_iPlayerID) {
 			RakNet::SystemAddress clientAddress = m_vConnectedClients[i].m_clientAddress;
-			SendMessageToClient(clientAddress, a_data, a_priotity, a_reliability);
+			SendMessageToClient(clientAddress, a_data, a_priority, a_reliability);
 		}
 
 	}
@@ -236,12 +270,12 @@ void NetworkServer::SendMessageToClient(int a_iPlayerID, RakNet::BitStream& a_da
 /// </summary>
 /// <param name="a_sClientAddress">Address to send message to</param>
 /// <param name="a_data">Bitstream Data to send to</param>
-/// <param name="a_priotity">Priotity to Send this message as</param>
+/// <param name="a_priority">Priotity to Send this message as</param>
 /// <param name="a_reliability">Reliability to send this message as</param>
-void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priotity, PacketReliability a_reliability)
+void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability)
 {
 	//Send Message over rak peer
-	m_pRakPeer->Send(&a_data, a_priotity, a_reliability, 0, a_clientAddress, false);
+	m_pRakPeer->Send(&a_data, a_priority, a_reliability, 0, a_clientAddress, false);
 }
 
 /// <summary>
@@ -250,9 +284,9 @@ void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, R
 /// </summary>
 /// <param name="a_clientAddress"></param>
 /// <param name="a_data"></param>
-/// <param name="a_priotity"></param>
+/// <param name="a_priority"></param>
 /// <param name="a_reliability"></param>
-void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priotity, PacketReliability a_reliability)
+void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability)
 {
 	//Create a bit stream and write
 	//the message ID
@@ -260,24 +294,24 @@ void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, R
 	messageBitStream.Write((RakNet::MessageID)a_eMessage);
 
 	//Call Send Message Function
-	SendMessageToClient(a_clientAddress, messageBitStream, a_priotity, a_reliability);
+	SendMessageToClient(a_clientAddress, messageBitStream, a_priority, a_reliability);
 }
 
 /// <summary>
 /// Send a Message to all Clients connected to this server
 /// </summary>
 /// <param name="a_data">Message to Send</param>
-/// <param name="a_priotity">Priotity to Send this message as</param>
+/// <param name="a_priority">Priotity to Send this message as</param>
 /// <param name="a_reliability">Reliability to send this message as</param>
-void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priotity, PacketReliability a_reliability)
+void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability)
 {
 	//Loop though all of the clients and call the send message function
 	for (int i = 0; i < m_vConnectedClients.size(); ++i) {
 		
 		//Get the server address of the client
-		RakNet::SystemAddress sClientAddress = m_vConnectedClients[i].m_clientAddress;
+		const RakNet::SystemAddress sClientAddress = m_vConnectedClients[i].m_clientAddress;
 
 		//Call Send Message Function on the selected client
-		SendMessageToClient(sClientAddress, a_data, a_priotity, a_reliability);
+		SendMessageToClient(sClientAddress, a_data, a_priority, a_reliability);
 	}
 }

@@ -20,6 +20,7 @@ public:
 	TestProject();
 	virtual ~TestProject();
 
+	//todo change to be better
 	//Dirty debug static just to test replication
 	static bool isServer;
 

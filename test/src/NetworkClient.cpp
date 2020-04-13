@@ -10,6 +10,8 @@
 #include "NetworkReplicator.h"
 #include "ServerCreatedObject.h"
 
+NetworkClient* NetworkClient::instance = nullptr;
+
 //Default Client Contstructor
 NetworkClient::NetworkClient()
 {
@@ -17,6 +19,7 @@ NetworkClient::NetworkClient()
 	//Null out rakpeer
 	m_pRakPeer = nullptr;
 	m_serverAddress = RakNet::SystemAddress();
+	instance = this;
 }
 
 NetworkClient::~NetworkClient()
@@ -59,6 +62,7 @@ void NetworkClient::Update()
 		}
 	}
 }
+
 
 /// <summary>
 /// An update loop to get the client connected to the server
@@ -183,7 +187,8 @@ void NetworkClient::DoClientConnectionEvents()
 				loginCreds.Write((RakNet::MessageID)CSNetMessages::CLIENT_LOGIN_DATA);
 				loginCreds.Write(username, Authenticator::mc_iMaxUsernameLen * sizeof(char));
 				loginCreds.Write(password, Authenticator::mc_iMaxPasswordLen * sizeof(char));
-				m_pRakPeer->Send(&loginCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
+				SendMessageToServer(loginCreds, PacketPriority::LOW_PRIORITY, PacketReliability::RELIABLE_ORDERED);
+				
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
 
 				LogConsoleMessage("CLIENT :: SENDING LOGIN DETAILS TO THE SERVER");
@@ -196,7 +201,8 @@ void NetworkClient::DoClientConnectionEvents()
 				regCreds.Write((RakNet::MessageID)CSNetMessages::CLIENT_REGISTER_DATA);
 				regCreds.Write(username, Authenticator::mc_iMaxUsernameLen * sizeof(char));
 				regCreds.Write(password, Authenticator::mc_iMaxPasswordLen * sizeof(char));
-				m_pRakPeer->Send(&regCreds, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
+				SendMessageToServer(regCreds, PacketPriority::LOW_PRIORITY, PacketReliability::RELIABLE_ORDERED);
+
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
 
 				LogConsoleMessage("CLIENT :: SENDING REGISTARTION DETAILS TO THE SERVER");
@@ -285,16 +291,11 @@ void NetworkClient::DoClientPreGameEvents()
 			/*
 			Tell the server that this client is ready to start the game
 			*/
-			RakNet::BitStream readyMessage;
-			readyMessage.Write((RakNet::MessageID)CSNetMessages::CLIENT_READY_TO_PLAY);
-			m_pRakPeer->Send(&readyMessage, HIGH_PRIORITY, RELIABLE_ORDERED, 0, m_serverAddress, false);
+			SendMessageToServer(CSNetMessages::CLIENT_READY_TO_PLAY, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
 
 			//Set state to wait for the game to start
 			m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_GAME_START;
 			LogConsoleMessage("CLIENT :: SENT SERVER READY MESSAGE");
-
-
-
 
 			break;
 		}
@@ -333,3 +334,32 @@ void NetworkClient::DoClientPreGameEvents()
 
 }
 
+/// <summary>
+/// Send a bit stream message to the server with a given priority and reliability
+/// </summary>
+/// <param name="a_data">Bitstream of data to send, must include message id</param>
+/// <param name="a_priority">Priority of the message to send</param>
+/// <param name="a_reliability">Reliability of the message to send</param>
+void NetworkClient::SendMessageToServer(RakNet::BitStream& a_data, PacketPriority a_priority,
+	PacketReliability a_reliability) const
+{
+	m_pRakPeer->Send(&a_data, a_priority, a_reliability, 0, m_serverAddress, false);
+}
+
+/// <summary>
+/// Send a notification message that it just the Message ID to the server with a given priority
+/// and reliability
+/// </summary>
+/// <param name="a_eMessage">Message ID to send</param>
+/// <param name="a_priority">Priority of the message to send</param>
+/// <param name="a_reliability">Reliability of the message to send</param>
+void NetworkClient::SendMessageToServer(RakNet::MessageID a_eMessage, PacketPriority a_priority,
+	PacketReliability a_reliability) const
+{
+	//Create bitstream and write the message ID to it
+	RakNet::BitStream messageStream;
+	messageStream.Write((RakNet::MessageID)CSNetMessages::CLIENT_READY_TO_PLAY);
+
+	//Send Message using other SendMessageToServer function
+	SendMessageToServer(messageStream, a_priority, a_reliability);
+}

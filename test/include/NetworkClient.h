@@ -48,6 +48,13 @@ public:
 	void Init();
 	void Update();
 
+	//Functions to send a message to the server
+	void SendMessageToServer(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability) const;
+	void SendMessageToServer(RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability) const;
+
+	//todo remove
+	static NetworkClient* instance;
+
 private:
 
 	//Functions to run different network events based on 

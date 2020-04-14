@@ -9,6 +9,16 @@
 //Initalise static instance
 NetworkDataBlackboard* NetworkDataBlackboard::m_pInstance = nullptr;
 
+NetworkDataBlackboard::~NetworkDataBlackboard()
+{
+	//Delete all of the unread messages
+	std::vector<PlayerInputNetworkData*>::const_iterator xIter;
+	for (xIter = m_vUnreadInputMessages.begin(); xIter < m_vUnreadInputMessages.end(); ++xIter)
+	{
+		delete* xIter;
+	}
+}
+
 /// <summary>
 /// Get the instance of the NetworkDataBlackboard singleton
 /// </summary>

@@ -21,8 +21,6 @@ public:
 	Entity();
 	~Entity();
 
-
-
 	virtual void Update(float a_fDeltaTime);
 	virtual void Draw(Shader* a_pShader);
 

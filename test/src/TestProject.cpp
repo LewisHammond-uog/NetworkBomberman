@@ -45,19 +45,6 @@ bool TestProject::onCreate()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	#pragma endregion
-
-
-	//todo remove
-	//Create Player Entities with the required components
-	Entity* pPlayerEntity = new Entity(); //This is added to a static entity list when created so we don't need to worry about storing it here
-	TransformComponent* pPlayerTransform = new TransformComponent(pPlayerEntity); //This is the same for components
-	SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pPlayerEntity);
-	PlayerControlComponent* pPlayerControl = new PlayerControlComponent(pPlayerEntity);
-
-	//Add these components to the player entity
-	pPlayerEntity->AddComponent(pPlayerTransform);
-	pPlayerEntity->AddComponent(pSphere);
-	pPlayerEntity->AddComponent(pPlayerControl);
 	
 	return true;
 }

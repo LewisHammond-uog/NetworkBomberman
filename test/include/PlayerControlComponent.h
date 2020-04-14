@@ -15,6 +15,15 @@ public:
 	virtual void Update(float a_fDeltaTime);
 	virtual void Draw(Shader* a_pShader);
 
+#pragma region Replica Manager Functions
+	//Entity Name
+	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("PlayerControlComponent"); }
+	//Functions for Replica Manager - so that it automatically
+	//sends updated velocity
+	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters* serializeParameters);
+	virtual void Deserialize(RakNet::DeserializeParameters* deserializeParameters);
+#pragma endregion
+	
 private:
 
 	//Seperate Functions for Server and Client Update

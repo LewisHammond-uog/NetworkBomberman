@@ -4,14 +4,12 @@
 //C++ Includes
 #include <map>
 
-//Raknet Includes
-#include "NetworkReplicator.h"
-#include "Component.h"
-#include "NetworkIDManager.h"
-
 //Project Includes
-#include "Entity.h"
 #include "ServerClientBase.h"
+#include "NetworkReplicator.h"
+#include "Entity.h"
+//Components
+#include "PlayerControlComponent.h"
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
 
@@ -39,7 +37,6 @@ void GameManager::Update(const float a_fDeltaTime)
 /// Creates a given number of players
 /// </summary>
 /// <param name="a_iPlayerCount">Given Number of Players</param>
-/// <param name="a_pNetworkReplicator"></param>
 void GameManager::CreatePlayers(const int a_iPlayerCount)
 {
 	//Loop through the required number of players
@@ -49,10 +46,13 @@ void GameManager::CreatePlayers(const int a_iPlayerCount)
 		Entity* pPlayerEntity = new Entity(); //This is added to a static entity list when created so we don't need to worry about storing it here
 		TransformComponent* pPlayerTransform = new TransformComponent(pPlayerEntity); //This is the same for components
 		SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pPlayerEntity);
+		PlayerControlComponent* pPlayerControl = new PlayerControlComponent(pPlayerEntity);
+			
 		
 		//Add these components to the player entity
 		pPlayerEntity->AddComponent(pPlayerTransform);
 		pPlayerEntity->AddComponent(pSphere);
+		pPlayerEntity->AddComponent(pPlayerControl);
 
 		//Send the entity and components to the replica manager, it is important
 		//that we send the player entity first as components rely on having
@@ -61,5 +61,6 @@ void GameManager::CreatePlayers(const int a_iPlayerCount)
 		pNetworkReplicator->Reference(pPlayerEntity);
 		pNetworkReplicator->Reference(pPlayerTransform);
 		pNetworkReplicator->Reference(pSphere);
+		pNetworkReplicator->Reference(pPlayerControl);
 	}
 }

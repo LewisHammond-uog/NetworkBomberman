@@ -124,4 +124,48 @@ glm::vec2 PlayerControlComponent::GetPlayerKeyboardMovementInput() const
 	return glm::vec2(iVertInput, iHorizInput);
 }
 
+/// <summary>
+/// Called by the Replica Manager
+/// Seralises Parameters for the Player Control Component to send to the server
+/// In this case it sends our velocity once it has updated
+/// </summary>
+/// <param name="serializeParameters"></param>
+/// <returns></returns>
+RakNet::RM3SerializationResult PlayerControlComponent::Serialize(RakNet::SerializeParameters* serializeParameters)
+{
+	RakNet::VariableDeltaSerializer::SerializationContext serializationContext;
+
+	//Write reliability type
+	serializeParameters->pro[0].reliability = PacketReliability::RELIABLE;
+
+	//Begin Serialization of the data that we are going to send
+	m_variableDeltaSerializer.BeginIdenticalSerialize(
+		&serializationContext,
+		serializeParameters->whenLastSerialized == 0,
+		&serializeParameters->outputBitstream[0]
+	);
+
+	//Serialize Variables
+	m_variableDeltaSerializer.SerializeVariable(&serializationContext, m_v3CurrentVelocity);
+
+	//Return that we should always serialize
+	return RakNet::RM3SR_SERIALIZED_ALWAYS;
+}
+
+/// <summary>
+/// Called by the Replica Manager
+/// Deserializes data that has been sent from the server
+/// In this case it will give us our updated velocity
+/// </summary>
+/// <param name="deserializeParameters"></param>
+void PlayerControlComponent::Deserialize(RakNet::DeserializeParameters* deserializeParameters)
+{
+	RakNet::VariableDeltaSerializer::DeserializationContext deserializationContext;
+	
+	//Deserialise the data
+	m_variableDeltaSerializer.BeginDeserialize(&deserializationContext, &deserializeParameters->serializationBitstream[0]);
+	m_variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_v3CurrentVelocity);
+	
+	m_variableDeltaSerializer.EndDeserialize(&deserializationContext);
+}
 

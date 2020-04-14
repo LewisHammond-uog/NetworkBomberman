@@ -207,6 +207,10 @@ void NetworkServer::DoPreGameServerEvents()
 					//Change Server State
 					m_eServerState = ServerGameStates::SERVER_PROCESSING_EVENTS;
 
+					//todo move?
+					//Create Players
+					GameManager::CreatePlayers(1);
+					
 					LogConsoleMessage("SERVER :: GAME STARTING");
 				}
 

@@ -24,7 +24,8 @@ class NetworkDataBlackboard
 public:
 	
 	//Destructor
-	~NetworkDataBlackboard() = default;
+	//todo destructor should remove all unread messages
+	~NetworkDataBlackboard();
 	
 	//Singleton Function
 	static NetworkDataBlackboard* GetInstance();

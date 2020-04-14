@@ -1,10 +1,13 @@
 #include "stdafx.h"
 #include "NetworkReplicator.h"
 
+//Project Includes
 #include "Entity.h"
+//Components
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
 #include "BoxPrimitiveComponent.h"
+#include "PlayerControlComponent.h"
 
 
 RakNet::Replica3* TestConnection::AllocReplica(RakNet::BitStream* allocationId, RakNet::ReplicaManager3* replicaManager3)
@@ -16,7 +19,7 @@ RakNet::Replica3* TestConnection::AllocReplica(RakNet::BitStream* allocationId, 
 	if (typeName == "TransformComponent") { return new TransformComponent(nullptr); }
 	if (typeName == "BoxPrimitiveComponent") { return new BoxPrimitiveComponent(nullptr); }
 	if (typeName == "SpherePrimitiveComponent") { return new SpherePrimitiveComponent(nullptr); }
-
+	if (typeName == "PlayerControlComponent") { return new PlayerControlComponent(nullptr); }
 	
 	//Default nullptr - don't create anything
 	return nullptr;

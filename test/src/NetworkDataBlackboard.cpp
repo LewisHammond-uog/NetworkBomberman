@@ -38,9 +38,11 @@ std::vector<PlayerInputNetworkData*> NetworkDataBlackboard::GetPlayerInputNetwor
 	{
 		//Loop through all of the data and get a vector of all the data for the specified
 		//player ID
-		std::vector<PlayerInputNetworkData*>::iterator xIter;
-		for (xIter = m_vUnreadInputMessages.begin(); xIter < m_vUnreadInputMessages.end(); ++xIter)
+		std::vector<PlayerInputNetworkData*>::const_iterator xIter;
+		for (xIter = m_vUnreadInputMessages.begin(); xIter < m_vUnreadInputMessages.end();)
 		{
+			//todo add explaination of xiter increment - https://stackoverflow.com/questions/9927163/erase-element-in-vector-while-iterating-the-same-vector
+			//todo nullcheck current message
 			PlayerInputNetworkData* pCurrentMessage = *xIter;
 			//If the player ID of the unread message matches the requested player id
 			//add it to the vector we are going to return and remove it from the unread vector
@@ -48,7 +50,10 @@ std::vector<PlayerInputNetworkData*> NetworkDataBlackboard::GetPlayerInputNetwor
 			{
 				//Add to vector to return
 				vInputDataVector.push_back(pCurrentMessage);
-				m_vUnreadInputMessages.erase(xIter);
+				xIter = m_vUnreadInputMessages.erase(xIter);
+			}else
+			{
+				++xIter;
 			}
 		}
 	}

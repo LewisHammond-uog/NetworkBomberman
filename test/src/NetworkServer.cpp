@@ -241,10 +241,13 @@ void NetworkServer::DoGamePlayingServerEvents()
 		{
 		case(CSGameMessages::CLIENT_PLAYER_INPUT_DATA):
 			{
+				//todo nicer, maybe a function that takes the raw bitstream?
 				//Send Player Input Data to the Blackboard so that it can be processed by
 				//individal players
-				RakNet::BitStream incomingInputData(packet->data, packet->length, false);
+				RakNet::BitStream incomingInputData(packet->data, packet->length, true);
+
 				NetworkDataBlackboard::GetInstance()->AddReceivedNetworkData(incomingInputData);
+				
 			}
 		}
 		

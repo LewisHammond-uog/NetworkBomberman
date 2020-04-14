@@ -71,10 +71,12 @@ void PlayerControlComponent::Draw(Shader* a_pShader)
 void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 {
 	//Get the inputs off the blackboard
-	const std::vector<PlayerInputNetworkData*> latestNetworkInputs = NetworkDataBlackboard::GetInstance()->GetPlayerInputNetworkData(m_iPlayerID);
+	const std::vector<NetworkData*> latestNetworkInputs = NetworkDataBlackboard::GetInstance()->GetNetworkData(CSGameMessages::CLIENT_PLAYER_INPUT_DATA, m_iPlayerID);
 	if (!latestNetworkInputs.empty()) {
 		
-		const glm::vec2 v2ClientInput = latestNetworkInputs[0]->v2MovementInputs;
+		//Get the movement amount
+		glm::vec2 v2ClientInput = glm::vec2(0, 0);
+		latestNetworkInputs[0]->m_data.Read(v2ClientInput);
 
 		//Take our inputs and mutiply then by the movement speed and delta time
 		//to get our velocity
@@ -90,11 +92,11 @@ void PlayerControlComponent::ClientUpdatePlayer(float a_fDeltaTime)
 	//Send to server - if our inputs have changed
 	if(v2PlayerInput != m_v2LastSentMovementInputs)
 	{
-		PlayerInputNetworkData* pData = new PlayerInputNetworkData();
-		pData->iPlayerID = m_iPlayerID;
-		pData->v2MovementInputs = v2PlayerInput;
+		//Write bitstream of player input data
+		RakNet::BitStream moveData;
+		moveData.Write(v2PlayerInput);
 		
-		NetworkDataBlackboard::GetInstance()->SendPlayerInputNetworkData(pData);
+		NetworkDataBlackboard::GetInstance()->SendBlackboardDataToServer(CSGameMessages::CLIENT_PLAYER_INPUT_DATA, m_iPlayerID, moveData);
 
 		m_v2LastSentMovementInputs = v2PlayerInput;
 	}

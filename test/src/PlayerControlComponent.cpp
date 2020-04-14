@@ -4,7 +4,7 @@
 #include "Application.h"
 
 //Project Includes
-#include "NetworkDataBlackboard.h"
+#include "NetworkBlackboard.h"
 
 //todo remove
 #include "ServerClientBase.h"
@@ -71,7 +71,7 @@ void PlayerControlComponent::Draw(Shader* a_pShader)
 void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 {
 	//Get the inputs off the blackboard
-	const std::vector<NetworkData*> latestNetworkInputs = NetworkDataBlackboard::GetInstance()->GetNetworkData(CSGameMessages::CLIENT_PLAYER_INPUT_DATA, m_iPlayerID);
+	const std::vector<NetworkData*> latestNetworkInputs = NetworkBlackboard::GetInstance()->GetNetworkData(CSGameMessages::CLIENT_PLAYER_INPUT_DATA, m_iPlayerID);
 	if (!latestNetworkInputs.empty()) {
 		
 		//Get the movement amount
@@ -96,7 +96,7 @@ void PlayerControlComponent::ClientUpdatePlayer(float a_fDeltaTime)
 		RakNet::BitStream moveData;
 		moveData.Write(v2PlayerInput);
 		
-		NetworkDataBlackboard::GetInstance()->SendBlackboardDataToServer(CSGameMessages::CLIENT_PLAYER_INPUT_DATA, m_iPlayerID, moveData);
+		NetworkBlackboard::GetInstance()->SendBlackboardDataToServer(CSGameMessages::CLIENT_PLAYER_INPUT_DATA, m_iPlayerID, moveData);
 
 		m_v2LastSentMovementInputs = v2PlayerInput;
 	}

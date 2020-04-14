@@ -12,8 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Authenticator.h" />
+    <ClInclude Include="include\BombSpawnerComponent.h" />
     <ClInclude Include="include\BoxPrimitiveComponent.h" />
-    <ClInclude Include="include\NetworkDataBlackboard.h" />
+    <ClInclude Include="include\NetworkBlackboard.h" />
     <ClInclude Include="include\PlayerControlComponent.h" />
     <ClInclude Include="include\PrimitiveComponent.h" />
     <ClInclude Include="include\ServerClientBase.h" />
@@ -32,13 +33,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Authenticator.cpp" />
+    <ClCompile Include="src\BombSpawnerComponent.cpp" />
     <ClCompile Include="src\BoxPrimitiveComponent.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\GameManager.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\NetworkClient.cpp" />
-    <ClCompile Include="src\NetworkDataBlackboard.cpp" />
+    <ClCompile Include="src\NetworkBlackboard.cpp" />
     <ClCompile Include="src\NetworkReplicator.cpp" />
     <ClCompile Include="src\NetworkServer.cpp" />
     <ClCompile Include="src\PlayerControlComponent.cpp" />

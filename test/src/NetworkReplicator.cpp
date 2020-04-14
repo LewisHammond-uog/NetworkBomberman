@@ -4,6 +4,7 @@
 //Project Includes
 #include "Entity.h"
 //Components
+#include "BombSpawnerComponent.h"
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
 #include "BoxPrimitiveComponent.h"
@@ -20,6 +21,7 @@ RakNet::Replica3* TestConnection::AllocReplica(RakNet::BitStream* allocationId, 
 	if (typeName == "BoxPrimitiveComponent") { return new BoxPrimitiveComponent(nullptr); }
 	if (typeName == "SpherePrimitiveComponent") { return new SpherePrimitiveComponent(nullptr); }
 	if (typeName == "PlayerControlComponent") { return new PlayerControlComponent(nullptr); }
+	if (typeName == "BombSpawnerComponent") { return new BombSpawnerComponent(nullptr); }
 	
 	//Default nullptr - don't create anything
 	return nullptr;

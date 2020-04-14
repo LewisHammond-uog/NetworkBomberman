@@ -7,7 +7,7 @@
 
 //TestIncludes
 #include "GameManager.h"
-#include <NetworkDataBlackboard.h>
+#include <NetworkBlackboard.h>
 
 NetworkServer::NetworkServer()
 {
@@ -239,16 +239,23 @@ void NetworkServer::DoGamePlayingServerEvents()
 		{
 		case(CSGameMessages::CLIENT_PLAYER_INPUT_DATA):
 			{
-				//todo nicer, maybe a function that takes the raw bitstream?
 				//Send Player Input Data to the Blackboard so that it can be processed by
 				//individal players
 				RakNet::BitStream incomingInputData(packet->data, packet->length, true);
 
-				NetworkDataBlackboard::GetInstance()->AddReceivedNetworkData(incomingInputData);
+				NetworkBlackboard::GetInstance()->AddReceivedNetworkData(incomingInputData);
 				
 			}
+		case(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB):
+			{
+				//Send Player Input Data to the Blackboard so that it can be processed by
+				//individal players
+				RakNet::BitStream incomingInputData(packet->data, packet->length, true);
+
+				NetworkBlackboard::GetInstance()->AddReceivedNetworkData(incomingInputData);
+
+			}
 		}
-		
 
 		//Deallocate Packet and get the next packet
 		m_pRakPeer->DeallocatePacket(packet);

@@ -9,6 +9,7 @@
 #include "NetworkReplicator.h"
 #include "Entity.h"
 //Components
+#include "BombSpawnerComponent.h"
 #include "PlayerControlComponent.h"
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
@@ -47,12 +48,14 @@ void GameManager::CreatePlayers(const int a_iPlayerCount)
 		TransformComponent* pPlayerTransform = new TransformComponent(pPlayerEntity); //This is the same for components
 		SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pPlayerEntity);
 		PlayerControlComponent* pPlayerControl = new PlayerControlComponent(pPlayerEntity);
+		BombSpawnerComponent* pBombSpawner = new BombSpawnerComponent(pPlayerEntity);
 			
 		
 		//Add these components to the player entity
 		pPlayerEntity->AddComponent(pPlayerTransform);
 		pPlayerEntity->AddComponent(pSphere);
 		pPlayerEntity->AddComponent(pPlayerControl);
+		pPlayerEntity->AddComponent(pBombSpawner);
 
 		//Send the entity and components to the replica manager, it is important
 		//that we send the player entity first as components rely on having
@@ -62,5 +65,6 @@ void GameManager::CreatePlayers(const int a_iPlayerCount)
 		pNetworkReplicator->Reference(pPlayerTransform);
 		pNetworkReplicator->Reference(pSphere);
 		pNetworkReplicator->Reference(pPlayerControl);
+		pNetworkReplicator->Reference(pBombSpawner);
 	}
 }

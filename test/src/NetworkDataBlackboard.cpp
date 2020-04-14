@@ -9,11 +9,12 @@
 //Initalise static instance
 NetworkDataBlackboard* NetworkDataBlackboard::m_pInstance = nullptr;
 
+
 NetworkDataBlackboard::~NetworkDataBlackboard()
 {
 	//Delete all of the unread messages
-	std::vector<PlayerInputNetworkData*>::const_iterator xIter;
-	for (xIter = m_vUnreadInputMessages.begin(); xIter < m_vUnreadInputMessages.end(); ++xIter)
+	std::vector<NetworkData*>::const_iterator xIter;
+	for (xIter = m_vUnreadMessages.begin(); xIter < m_vUnreadMessages.end(); ++xIter)
 	{
 		delete* xIter;
 	}
@@ -32,98 +33,94 @@ NetworkDataBlackboard* NetworkDataBlackboard::GetInstance()
 	return m_pInstance;
 }
 
+
 /// <summary>
-/// Get the input data we have received, and not yet processed, from a given player ID
+/// Get the network data for a given message type, for a given player
 /// </summary>
-/// <param name="a_iPlayerID">Player ID to get input data for</param>
-/// <returns>Vector of unprocessed inputs from given Player ID</returns>
-std::vector<PlayerInputNetworkData*> NetworkDataBlackboard::GetPlayerInputNetworkData(const int a_iPlayerID)
+/// <param name="a_dataType">Type of Data to Get</param>
+/// <param name="a_iPlayerID">ID of the Player to get the data for</param>
+/// <returns>List of data for the given</returns>
+std::vector<NetworkData*> NetworkDataBlackboard::GetNetworkData(RakNet::MessageID a_dataType, int a_iPlayerID)
 {
-	//Create a vector
-	std::vector<PlayerInputNetworkData*> vInputDataVector;
+	std::vector<NetworkData*> vReturnData;
 	
-	//Only check for inputs from clients if we are the server because we should not receive this data as
-	//a client
-	if (TestProject::isServer)
+	//Loop through all of the data we have and check for the data
+	//type and player ID
+	std::vector<NetworkData*>::const_iterator xIter;
+	for(xIter = m_vUnreadMessages.begin(); xIter < m_vUnreadMessages.end();)
 	{
-		//Loop through all of the data and get a vector of all the data for the specified
-		//player ID
-		std::vector<PlayerInputNetworkData*>::const_iterator xIter;
-		for (xIter = m_vUnreadInputMessages.begin(); xIter < m_vUnreadInputMessages.end();)
+		//Check that the current data is valid
+		NetworkData* currentData = *xIter;
+		if (currentData == nullptr) { return vReturnData; }
+
+		//Check for data type, add it to the return type if it is correct
+		if(currentData->m_dataType == a_dataType && currentData->m_iPlayerID == a_iPlayerID)
 		{
-			PlayerInputNetworkData* pCurrentMessage = *xIter;
-			//If the player ID of the unread message matches the requested player id
-			//add it to the vector we are going to return and remove it from the unread vector
-			if (pCurrentMessage != nullptr) {
-				if (pCurrentMessage->iPlayerID == a_iPlayerID)
-				{
-					//Add to vector to return
-					vInputDataVector.push_back(pCurrentMessage);
+			vReturnData.push_back(currentData);
 
-					//Remove this from unread messages and set the Iterator to know about this
-					xIter = m_vUnreadInputMessages.erase(xIter);
-					continue;
-				}
-			}
-
-			//We didn't remove anything so increment the Iterator
-			++xIter;
+			//Remove this from unread messages and set the Iterator to know about this
+			xIter = m_vUnreadMessages.erase(xIter);
+			continue;
 		}
+
+		//Data was not of correct format, just increment the iterator
+		++xIter;
 	}
 
-	//return the vector of inputs - this maybe empty if there are no inputs for the player, or
-	//we are the client
-	return vInputDataVector;
+	//Return the data we have collected, this maybe no data of the type
+	//we were looking for
+	return vReturnData;
 }
 
 /// <summary>
-/// Add raw received input data to the blackboard for us to process within the players
+/// Add received network data to the blackboard
 /// </summary>
-/// <param name="a_data">Raw (with message ID) data to procces</param>
+/// <param name="a_data">Raw Data (with type and player ID)</param>
 void NetworkDataBlackboard::AddReceivedNetworkData(RakNet::BitStream& a_data)
 {
-	//Check that we are the server as the client should never proccess this
-	if(!TestProject::isServer)
-	{
-		return;
-	}
+	//Strip off the data type and player ID then
+	//create a struct of the infomation and the remaining data
+	RakNet::MessageID dataType;
+	int iPlayerID;
+	RakNet::BitStream remainingData;
 
-	//Check that we have received the correct message type
-	RakNet::MessageID messageType;
-	a_data.Read(messageType);
-	if(messageType != CSGameMessages::CLIENT_PLAYER_INPUT_DATA)
-	{
-		return;
-	}
-
-	//Create input data struct and read data in
-	//PlayerID
-	//Movement Inputs
-	PlayerInputNetworkData* pReceivedData = new PlayerInputNetworkData();
-	a_data.Read(pReceivedData->iPlayerID);
-	a_data.Read(pReceivedData->v2MovementInputs);
-	m_vUnreadInputMessages.push_back(pReceivedData);
+	a_data.Read(dataType);
+	a_data.Read(iPlayerID);
+	a_data.Read(remainingData);
 	
+	NetworkData* netData = new NetworkData();
+	netData->m_dataType = dataType;
+	netData->m_iPlayerID = iPlayerID;
+	netData->m_data.Write(remainingData);
+	
+	//Call other function to add it to the vector
+	AddReceivedNetworkData(netData);
 }
 
 /// <summary>
-/// Send Player Input Data to the server
+/// Add received network data to the blackboard
 /// </summary>
-/// <param name="a_data">Data to send</param>
-void NetworkDataBlackboard::SendPlayerInputNetworkData(PlayerInputNetworkData* a_data)
+/// <param name="a_pBlackboardData">Data to add</param>
+void NetworkDataBlackboard::AddReceivedNetworkData(NetworkData* a_pBlackboardData)
 {
-	//Make sure we are the client - server will never send this
-	if(TestProject::isServer)
-	{
-		return;
-	}
-
-	//Create a bitstream with the correct message id, add the data and
-	//send it to the server
-	RakNet::BitStream bsToSend;
-	bsToSend.Write((RakNet::MessageID)CSGameMessages::CLIENT_PLAYER_INPUT_DATA);
-	bsToSend.Write(a_data->iPlayerID);
-	bsToSend.Write(a_data->v2MovementInputs);
-
-	NetworkClient::instance->SendMessageToServer(bsToSend,PacketPriority::IMMEDIATE_PRIORITY, PacketReliability::RELIABLE);
+	m_vUnreadMessages.push_back(a_pBlackboardData);
 }
+
+
+/// <summary>
+/// Send network data to the sever
+/// </summary>
+/// <param name="a_dataType">Type of data to send</param>
+/// <param name="a_iPlayerID">ID of the player that is data is for</param>
+/// <param name="a_data">Data (without type and player ID)</param>
+void NetworkDataBlackboard::SendBlackboardDataToServer(RakNet::MessageID a_dataType, int a_iPlayerID, RakNet::BitStream& a_data)
+{
+	//Encode data in to a bitstream to send
+	RakNet::BitStream bsToSend;
+	bsToSend.Write((RakNet::MessageID)a_dataType);
+	bsToSend.Write(a_iPlayerID);
+	bsToSend.Write(a_data);
+
+	NetworkClient::instance->SendMessageToServer(bsToSend, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+}
+

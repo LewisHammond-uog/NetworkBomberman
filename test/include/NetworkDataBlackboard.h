@@ -1,18 +1,24 @@
 #ifndef __NETWORK_DATA_BLACKBOARD_H__
 #define __NETWORK_DATA_BLACKBOARD_H__
+
+//C++ Includes
 #include <vector>
 
 //RakNet Includes
 #include "BitStream.h"
 
-//todo - move to a different file?
-struct PlayerInputNetworkData
+//Struct for data that we get send to
+//the blackboard
+class NetworkData
 {
-	int iPlayerID;
-	glm::vec2 v2MovementInputs;
+public:
+	NetworkData() = default;
+	
+	RakNet::MessageID m_dataType; //Type of Data
+	int m_iPlayerID; //ID of the player this data is intended for
+	RakNet::BitStream m_data; //Remaining Data after data type and player ID have been stripped
 };
 
-//todo - More Generic Functions?
 /// <summary>
 /// Class for network data that is not dealt with by the ReplicaManager to be
 /// black-boarded to so that server/client code can interact with other
@@ -31,20 +37,19 @@ public:
 	static NetworkDataBlackboard* GetInstance();
 
 	//Server Functions
-	std::vector<PlayerInputNetworkData*> GetPlayerInputNetworkData(int a_iPlayerID);
+	std::vector<NetworkData*> GetNetworkData(RakNet::MessageID a_dataType, int a_iPlayerID);
 	void AddReceivedNetworkData(RakNet::BitStream& a_data);
-	
+	void AddReceivedNetworkData(NetworkData* a_pBlackboardData);
+
 	//Client Functions
-	void SendPlayerInputNetworkData(PlayerInputNetworkData* a_data);
+	void SendBlackboardDataToServer(RakNet::MessageID a_dataType, int a_iPlayerID, RakNet::BitStream& a_data);
 
-
-	
 private:
 	//Private Constructor
 	NetworkDataBlackboard() = default;
 
 	//List of unread input messages
-	std::vector<PlayerInputNetworkData*> m_vUnreadInputMessages;
+	std::vector<NetworkData*> m_vUnreadMessages;
 
 	//Store the instance of the blackboard
 	static NetworkDataBlackboard* m_pInstance;

@@ -48,34 +48,37 @@ void PlayerControlComponent::Update(float a_fDeltaTime)
 	}else
 	{
 		ClientUpdatePlayer(a_fDeltaTime);
-	}	
+	}
+
+	//Get our owners transform
+	//todo store this?
+	if (!m_pOwnerEntity) { return; }
+	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
+	if (!pTransform) { return; }
+
+	//Update based on velocity
+	glm::vec3 v3CurrentPos = pTransform->GetEntityMatrixRow(POSTION_VECTOR);
+	glm::vec3 v3NewPos = v3CurrentPos + m_v3CurrentVelocity;
+	pTransform->SetEntityMatrixRow(POSTION_VECTOR, v3NewPos);
+	
 }
 
 void PlayerControlComponent::Draw(Shader* a_pShader)
 {
 }
 
+
 void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 {
-	//Get our owners transform
-	if (!m_pOwnerEntity) { return; }
-	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
-	if (!pTransform) { return; }
-
 	//Get the inputs off the blackboard
 	const std::vector<PlayerInputNetworkData*> latestNetworkInputs = NetworkDataBlackboard::GetInstance()->GetPlayerInputNetworkData(m_iPlayerID);
-	if (latestNetworkInputs.size() > 0) {
+	if (!latestNetworkInputs.empty()) {
 		
 		const glm::vec2 v2ClientInput = latestNetworkInputs[0]->v2MovementInputs;
 
 		//Take our inputs and mutiply then by the movement speed and delta time
 		//to get our velocity
 		m_v3CurrentVelocity = glm::vec3(v2ClientInput.y, 0.f, v2ClientInput.x) * mc_fMovementSpeed * a_fDeltaTime;
-
-		//Move the entity in the directions that the user has specified
-		glm::vec3 v3CurrentPos = pTransform->GetEntityMatrixRow(POSTION_VECTOR);
-		glm::vec3 v3NewPos = v3CurrentPos + m_v3CurrentVelocity;
-		pTransform->SetEntityMatrixRow(POSTION_VECTOR, v3NewPos);
 	}
 }
 
@@ -92,6 +95,8 @@ void PlayerControlComponent::ClientUpdatePlayer(float a_fDeltaTime)
 		pData->v2MovementInputs = v2PlayerInput;
 		
 		NetworkDataBlackboard::GetInstance()->SendPlayerInputNetworkData(pData);
+
+		m_v2LastSentMovementInputs = v2PlayerInput;
 	}
 }
 

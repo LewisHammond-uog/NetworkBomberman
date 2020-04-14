@@ -41,20 +41,23 @@ std::vector<PlayerInputNetworkData*> NetworkDataBlackboard::GetPlayerInputNetwor
 		std::vector<PlayerInputNetworkData*>::const_iterator xIter;
 		for (xIter = m_vUnreadInputMessages.begin(); xIter < m_vUnreadInputMessages.end();)
 		{
-			//todo add explaination of xiter increment - https://stackoverflow.com/questions/9927163/erase-element-in-vector-while-iterating-the-same-vector
-			//todo nullcheck current message
 			PlayerInputNetworkData* pCurrentMessage = *xIter;
 			//If the player ID of the unread message matches the requested player id
 			//add it to the vector we are going to return and remove it from the unread vector
-			if (pCurrentMessage->iPlayerID == a_iPlayerID)
-			{
-				//Add to vector to return
-				vInputDataVector.push_back(pCurrentMessage);
-				xIter = m_vUnreadInputMessages.erase(xIter);
-			}else
-			{
-				++xIter;
+			if (pCurrentMessage != nullptr) {
+				if (pCurrentMessage->iPlayerID == a_iPlayerID)
+				{
+					//Add to vector to return
+					vInputDataVector.push_back(pCurrentMessage);
+
+					//Remove this from unread messages and set the Iterator to know about this
+					xIter = m_vUnreadInputMessages.erase(xIter);
+					continue;
+				}
 			}
+
+			//We didn't remove anything so increment the Iterator
+			++xIter;
 		}
 	}
 
@@ -85,7 +88,7 @@ void NetworkDataBlackboard::AddReceivedNetworkData(RakNet::BitStream& a_data)
 
 	//Create input data struct and read data in
 	//PlayerID
-	// Movement Inputs
+	//Movement Inputs
 	PlayerInputNetworkData* pReceivedData = new PlayerInputNetworkData();
 	a_data.Read(pReceivedData->iPlayerID);
 	a_data.Read(pReceivedData->v2MovementInputs);

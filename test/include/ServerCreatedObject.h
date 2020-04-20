@@ -1,14 +1,10 @@
 #ifndef __TEST_OBJECT_H__
 #define __TEST_OBJECT_H__
 
-#include "RakPeerInterface.h"
+//Raknet Includes
 #include "ReplicaManager3.h"
-#include "ReplicaEnums.h"
 #include "VariableDeltaSerializer.h"
-#include "BitStream.h"
 #include "RakString.h"
-
-#include <string.h>
 
 /// <summary>
 /// Abstract Class for Server Created Objects. Does not contain Serialize/Deserialize, Serialize/DeserializeConstructoion or Destruction

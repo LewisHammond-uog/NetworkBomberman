@@ -20,7 +20,7 @@ BombComponent::BombComponent(Entity* a_pOwner) :
 /// Update the bomb. Counting down until an explosion
 /// </summary>
 /// <param name="a_fDeltaTime"></param>
-void BombComponent::Update(float a_fDeltaTime)
+void BombComponent::Update(const float a_fDeltaTime)
 {
 	//Only run update on server
 	if(!TestProject::isServer)
@@ -43,7 +43,7 @@ void BombComponent::Draw(Shader* a_pShader)
 {
 }
 
-void BombComponent::ExplodeBomb()
+void BombComponent::ExplodeBomb() const
 {
 	//todo explosion
 

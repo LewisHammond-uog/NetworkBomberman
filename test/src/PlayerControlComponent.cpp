@@ -6,7 +6,7 @@
 //Project Includes
 #include "NetworkBlackboard.h"
 
-//todo remove
+//Project includes
 #include "ServerClientBase.h"
 #include "TransformComponent.h"
 #include "Entity.h"
@@ -19,8 +19,8 @@ typedef Component PARENT;
 PlayerControlComponent::PlayerControlComponent(Entity* a_pOwner) :
 	PARENT(a_pOwner),
 	m_iPlayerID(-1),//Init to -1 so we know that this is not initalised
-	m_v3CurrentVelocity(glm::vec3(0,0,0)),
-	m_v2LastSentMovementInputs(0,0)
+	m_v2LastSentMovementInputs(0,0),
+	m_v3CurrentVelocity(glm::vec3(0, 0, 0))
 {
 	//Set Component Type
 	m_eComponentType = COMPONENT_TYPE::PLAYER_CONTROL;
@@ -51,7 +51,6 @@ void PlayerControlComponent::Update(float a_fDeltaTime)
 	}
 
 	//Get our owners transform
-	//todo store this?
 	if (!m_pOwnerEntity) { return; }
 	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
 	if (!pTransform) { return; }

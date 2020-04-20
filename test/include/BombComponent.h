@@ -21,7 +21,7 @@ public:
 
 private:
 
-	void ExplodeBomb();
+	void ExplodeBomb() const;
 	
 	float mc_fBombExplosionTime = 5.0f;
 	float m_fTimeSinceCreation;

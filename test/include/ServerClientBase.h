@@ -53,22 +53,13 @@ public:
 
 	static RakNet::NetworkIDManager* GetNetworkIDManager();
 	static NetworkReplicator* GetNetworkReplicator();
-	
-	//Function for Debug Log console message
-	//TODO - Move this somewhere else
-	static void LogConsoleMessage(const char* m_Message) {
-		Application_Log* log = Application_Log::Get();
 
-		if (log != nullptr) {
-			log->addLog(LOG_LEVEL::LOG_INFO, m_Message);
-		}
-	}
 
 protected:
 	
 	//Protected Constructor/Destructor so that this class cannot be created
 	//without it being a server or a client
-	ServerClientBase() = default;
+	ServerClientBase();
 	~ServerClientBase();
 	
 

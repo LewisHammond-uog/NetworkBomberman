@@ -5,6 +5,9 @@
 #include  "RakPeerInterface.h"
 #include "BitStream.h"
 
+//Project Includes
+#include "ConsoleLog.h"
+
 //TestIncludes
 #include "GameManager.h"
 #include <NetworkBlackboard.h>
@@ -22,13 +25,8 @@ NetworkServer::NetworkServer()
 
 NetworkServer::~NetworkServer()
 {
-	//Destory rakpeer
-	RakNet::RakPeerInterface::DestroyInstance(m_pRakPeer);
-
 	//Destroy Authenticator
-	if (m_oServerAuthenticator != nullptr) {
-		delete m_oServerAuthenticator;
-	}
+	delete m_oServerAuthenticator;
 }
 
 /// <summary>
@@ -52,7 +50,7 @@ void NetworkServer::Init()
 	//ServerClientBase
 	m_pRakPeer->AttachPlugin(GetNetworkReplicator());
 
-	LogConsoleMessage("SERVER :: Server Initalised");
+	ConsoleLog::LogConsoleMessage("SERVER :: Server initialized");
 }
 
 void NetworkServer::Update()
@@ -80,52 +78,47 @@ void NetworkServer::DoPreGameServerEvents()
 		{
 			case(ID_REMOTE_DISCONNECTION_NOTIFICATION):
 			{
-				LogConsoleMessage("SERVER :: A CLIENT HAS DISCONNECTED");
+				ConsoleLog::LogConsoleMessage("SERVER :: A CLIENT HAS DISCONNECTED");
 				break;
 			}
 			case(ID_REMOTE_CONNECTION_LOST):
 			{
-				LogConsoleMessage("SERVER :: A CLIENT HAS LOST CONNECTION");
-				break;
-			}
-			case(ID_REMOTE_NEW_INCOMING_CONNECTION):
-			{
-				LogConsoleMessage("SERVER :: NEW INCOMING CONNECTION REQUEST");
+				ConsoleLog::LogConsoleMessage("SERVER :: A CLIENT HAS LOST CONNECTION");
 				break;
 			}
 			case(ID_NEW_INCOMING_CONNECTION):
 			{
-				LogConsoleMessage("SERVER :: NEW INCOMING CONNECTION REQUEST");
+				ConsoleLog::LogConsoleMessage("SERVER :: NEW INCOMING CONNECTION REQUEST");
 				break;
 			}
 			case(ID_NO_FREE_INCOMING_CONNECTIONS):
 			{
-				LogConsoleMessage("SERVER :: A CLIENT ATTEMPTED TO CONNECT TO A FULL SERVER");
+				ConsoleLog::LogConsoleMessage("SERVER :: A CLIENT ATTEMPTED TO CONNECT TO A FULL SERVER");
 				break;
 			}
 			case(ID_REPLICA_MANAGER_SCOPE_CHANGE):
 			{
-				LogConsoleMessage("SERVER :: A REPLICA OBJECT HAS CHANGED SCOPE");
+				ConsoleLog::LogConsoleMessage("SERVER :: A REPLICA OBJECT HAS CHANGED SCOPE");
 				break;
 			}
 			case(ID_REPLICA_MANAGER_SERIALIZE):
 			{
-				LogConsoleMessage("SERVER :: A REPLICA OBJECT IS BEING SERIALIZED");
+				ConsoleLog::LogConsoleMessage("SERVER :: A REPLICA OBJECT IS BEING SERIALIZED");
 				break;
 			}
 			case(ID_REPLICA_MANAGER_CONSTRUCTION):
 			{
-				LogConsoleMessage("SERVER :: A REPLICA OBJECT IS BEING CONSTRUCTED");
+				ConsoleLog::LogConsoleMessage("SERVER :: A REPLICA OBJECT IS BEING CONSTRUCTED");
 				break;
 			}
 			case(ID_REPLICA_MANAGER_DOWNLOAD_STARTED):
 			{
-				LogConsoleMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS STARTING");
+				ConsoleLog::LogConsoleMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS STARTING");
 				break;
 			}
 			case(ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE):
 			{
-				LogConsoleMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS COMPLETE");
+				ConsoleLog::LogConsoleMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS COMPLETE");
 				break;
 			}
 			case(CSNetMessages::CLIENT_REGISTER_DATA): {
@@ -136,7 +129,7 @@ void NetworkServer::DoPreGameServerEvents()
 				//if this is successful or not
 				if (m_oServerAuthenticator->LoginFromBitstream(incomingLoginData, true))
 				{
-					LogConsoleMessage("SERVER :: SENDING CLIENT REGISTER SUCCESS INFO");
+					ConsoleLog::LogConsoleMessage("SERVER :: SENDING CLIENT REGISTER SUCCESS INFO");
 					//Send success message to client
 					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
 
@@ -151,7 +144,7 @@ void NetworkServer::DoPreGameServerEvents()
 
 					//Send fail message to client
 					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
-					LogConsoleMessage("SERVER :: SENDING CLIENT REGISTER FAIL INFO");
+					ConsoleLog::LogConsoleMessage("SERVER :: SENDING CLIENT REGISTER FAIL INFO");
 				}
 
 				break;
@@ -164,7 +157,7 @@ void NetworkServer::DoPreGameServerEvents()
 				//if this is successfull or not
 				if (m_oServerAuthenticator->LoginFromBitstream(incomingLoginData, false))
 				{
-					LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
+					ConsoleLog::LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
 					//Send success message to client
 					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
 
@@ -181,13 +174,13 @@ void NetworkServer::DoPreGameServerEvents()
 
 					//Send fail message to client
 					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
-					LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN FAIL INFO");
+					ConsoleLog::LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN FAIL INFO");
 				}
 
 				break;
 			}
 			case(CSNetMessages::CLIENT_READY_TO_PLAY): {
-				LogConsoleMessage("SERVER :: A CLIENT IS READY TO PLAY");
+				ConsoleLog::LogConsoleMessage("SERVER :: A CLIENT IS READY TO PLAY");
 
 				//Add to our ready clients count
 				++m_iReadyClients;
@@ -195,8 +188,6 @@ void NetworkServer::DoPreGameServerEvents()
 				//Check if game is ready to start
 				if (m_iReadyClients >= requiredPlayerCount) {
 
-					//todo - Create the player objects
-					
 					//Create and send packet that game is ready to play
 					RakNet::BitStream readyMessage;
 					readyMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_STARTING);
@@ -209,14 +200,17 @@ void NetworkServer::DoPreGameServerEvents()
 					//Create Players
 					GameManager::CreatePlayers(1);
 					
-					LogConsoleMessage("SERVER :: GAME STARTING");
+					ConsoleLog::LogConsoleMessage("SERVER :: GAME STARTING");
 				}
 
 				break;
 			}
 			default:
 			{
-				LogConsoleMessage("SERVER :: UNKNOWN DATA RECEIVED");
+				//Log out unknown data and it's message ID
+				char errorBuffer[128];
+				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Get Connections Stage ID: %i", packet->data[0]);
+				ConsoleLog::LogConsoleMessage(errorBuffer);
 				break;
 			}
 		}
@@ -230,13 +224,14 @@ void NetworkServer::DoPreGameServerEvents()
 /// <summary>
 /// Do events relating to game playing (i.e processing movements, updating game objects)
 /// </summary>
-void NetworkServer::DoGamePlayingServerEvents()
+void NetworkServer::DoGamePlayingServerEvents() const
 {
 	RakNet::Packet* packet = m_pRakPeer->Receive();
 
 	while (packet != nullptr) {
 		switch(packet->data[0])
 		{
+		case(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB):
 		case(CSGameMessages::CLIENT_PLAYER_INPUT_DATA):
 			{
 				//Send Player Input Data to the Blackboard so that it can be processed by
@@ -244,16 +239,15 @@ void NetworkServer::DoGamePlayingServerEvents()
 				RakNet::BitStream incomingInputData(packet->data, packet->length, true);
 
 				NetworkBlackboard::GetInstance()->AddReceivedNetworkData(incomingInputData);
+				break;
 				
 			}
-		case(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB):
+		default:
 			{
-				//Send Player Input Data to the Blackboard so that it can be processed by
-				//individal players
-				RakNet::BitStream incomingInputData(packet->data, packet->length, true);
-
-				NetworkBlackboard::GetInstance()->AddReceivedNetworkData(incomingInputData);
-
+				//Log out unknown data and it's message ID
+				char errorBuffer[128];
+				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Play Stage ID: %i", packet->data[0]);
+				ConsoleLog::LogConsoleMessage(errorBuffer);
 			}
 		}
 
@@ -264,13 +258,13 @@ void NetworkServer::DoGamePlayingServerEvents()
 }
 
 
-void NetworkServer::SendMessageToClient(int a_iPlayerID, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability)
+void NetworkServer::SendMessageToClient(int a_iClientID, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability)
 {
 	//Loop through the vector and see if we have a client with the given player
 	//id, then get it's address and call the send message function
-	for (int i = 0; i < m_vConnectedClients.size(); ++i) {
-		if (m_vConnectedClients[i].m_playerId == a_iPlayerID) {
-			RakNet::SystemAddress clientAddress = m_vConnectedClients[i].m_clientAddress;
+	for (unsigned int i = 0; i < m_vConnectedClients.size(); ++i) {
+		if (m_vConnectedClients[i].m_playerId == a_iClientID) {
+			const RakNet::SystemAddress clientAddress = m_vConnectedClients[i].m_clientAddress;
 			SendMessageToClient(clientAddress, a_data, a_priority, a_reliability);
 		}
 
@@ -280,25 +274,26 @@ void NetworkServer::SendMessageToClient(int a_iPlayerID, RakNet::BitStream& a_da
 /// <summary>
 /// Send a BitStream Message to a client with a given IP address
 /// </summary>
-/// <param name="a_sClientAddress">Address to send message to</param>
+/// <param name="a_clientAddress">Address to send message to</param>
 /// <param name="a_data">Bitstream Data to send to</param>
 /// <param name="a_priority">Priotity to Send this message as</param>
 /// <param name="a_reliability">Reliability to send this message as</param>
-void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability)
+void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, const PacketPriority a_priority, const PacketReliability a_reliability) const
 {
 	//Send Message over rak peer
 	m_pRakPeer->Send(&a_data, a_priority, a_reliability, 0, a_clientAddress, false);
 }
 
+
 /// <summary>
 /// Send just a Net Message to a client and no other data
 /// (e.g sending that a client has been successfully authenticated, SERVER_AUTHENTICATE_SUCCESS)
 /// </summary>
-/// <param name="a_clientAddress"></param>
-/// <param name="a_data"></param>
-/// <param name="a_priority"></param>
-/// <param name="a_reliability"></param>
-void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability)
+/// <param name="a_clientAddress">System address to send the data to</param>
+/// <param name="a_eMessage">Message to send</param>
+/// <param name="a_priority">Message priority</param>
+/// <param name="a_reliability">Message reliability</param>
+void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddress, const RakNet::MessageID a_eMessage, const PacketPriority a_priority, const PacketReliability a_reliability)
 {
 	//Create a bit stream and write
 	//the message ID
@@ -315,10 +310,10 @@ void NetworkServer::SendMessageToClient(RakNet::SystemAddress a_clientAddress, R
 /// <param name="a_data">Message to Send</param>
 /// <param name="a_priority">Priotity to Send this message as</param>
 /// <param name="a_reliability">Reliability to send this message as</param>
-void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability)
+void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, const PacketPriority a_priority, const PacketReliability a_reliability)
 {
 	//Loop though all of the clients and call the send message function
-	for (int i = 0; i < m_vConnectedClients.size(); ++i) {
+	for (unsigned int i = 0; i < m_vConnectedClients.size(); ++i) {
 		
 		//Get the server address of the client
 		const RakNet::SystemAddress sClientAddress = m_vConnectedClients[i].m_clientAddress;

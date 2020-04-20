@@ -1,14 +1,28 @@
 #include "stdafx.h"
 #include "ServerClientBase.h"
 
+//RakNet Includes
+#include <RakPeerInterface.h>
+
 //Declare Static Variables
 NetworkReplicator* ServerClientBase::s_pReplicaManager = nullptr;
 RakNet::NetworkIDManager* ServerClientBase::s_pNetworkIdManager = nullptr;
 
+//Constructor for Client/Server
+ServerClientBase::ServerClientBase()
+{
+	m_pRakPeer = nullptr; //Set RakPeer to null
+	m_serverAddress = RakNet::UNASSIGNED_SYSTEM_ADDRESS; //We are not connected to the server, set no address
+}
 
 //Destructor for deleting objects we have created
 ServerClientBase::~ServerClientBase()
 {
+	//Destroy RakPeer
+	if (m_pRakPeer != nullptr) {
+		RakNet::RakPeerInterface::DestroyInstance(m_pRakPeer);
+	}
+	
 	//Delete NetworkID and Replica Manager
 	delete s_pReplicaManager;
 	delete s_pNetworkIdManager;

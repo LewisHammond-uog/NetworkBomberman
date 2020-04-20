@@ -32,12 +32,6 @@ protected:
 	{
 		SPHERE,
 		BOX,
-
-		//todo - implement or remove
-		/*
-		LINE,
-		CYLINDER
-		*/
 	};
 
 	//Type of Primitive that we are

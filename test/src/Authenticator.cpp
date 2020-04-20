@@ -22,7 +22,7 @@ Authenticator::~Authenticator()
 /// <param name="a_loginData">Bitstream Login Data</param>
 /// <param name="a_bRegisterNewUser">Whether to register as a new user</param>
 /// <returns>If login details are correct</returns>
-bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, bool a_bRegisterNewUser = false)
+bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, const bool a_bRegisterNewUser = false)
 {
 	//Strip Message ID From Bitstream
 	a_loginData.IgnoreBytes(sizeof(RakNet::MessageID));
@@ -48,8 +48,8 @@ bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, bool a_bR
 /// <summary>
 /// Authenticates if a username/password exists within the username/password file
 /// </summary>
-/// <param name="a_username">Username to check</param>
-/// <param name="a_password">Password to check</param>
+/// <param name="a_szUsername">Username to check</param>
+/// <param name="a_szPassword">Password to check</param>
 /// <returns>If login details are correct</returns>
 bool Authenticator::AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword)
 {
@@ -100,10 +100,9 @@ bool Authenticator::RegisterNewUser(const char* a_szUsername, const char* a_szPa
 /// Checks if a username already exists within the auth details file
 /// Assumes that username is not over max limits
 /// </summary>
-/// <param name="a_username">Username to check</param>
-/// <param name="a_fStream">File stream of file to check</param>
+/// <param name="a_szUsername">Username to check</param>
 /// <returns>If username exists</returns>
-bool Authenticator::UsernameExists(const char* a_szUsername)
+bool Authenticator::UsernameExists(const char* a_szUsername) const
 {
 	//Open auth details file
 	std::fstream sLoginDetailsFile = std::fstream(mc_LoginDetailsFileName, std::ios_base::in);
@@ -140,7 +139,7 @@ bool Authenticator::UsernameExists(const char* a_szUsername)
 	return false;
 }
 
-bool Authenticator::ValidUsernameAndPassword(const char* a_szUsername, const char* a_szPassword)
+bool Authenticator::ValidUsernameAndPassword(const char* a_szUsername, const char* a_szPassword) const
 {
 
 	//Open auth details file

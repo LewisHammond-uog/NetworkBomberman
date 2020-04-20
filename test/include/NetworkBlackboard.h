@@ -7,6 +7,8 @@
 //RakNet Includes
 #include "BitStream.h"
 
+class NetworkClient;
+
 //Struct for data that we get send to
 //the blackboard
 class NetworkData
@@ -30,7 +32,6 @@ class NetworkBlackboard
 public:
 	
 	//Destructor
-	//todo destructor should remove all unread messages
 	~NetworkBlackboard();
 	
 	//Singleton Function
@@ -43,6 +44,7 @@ public:
 
 	//Client Functions
 	void SendBlackboardDataToServer(RakNet::MessageID a_dataType, int a_iPlayerID, RakNet::BitStream& a_data);
+	void SetNetworkClient(NetworkClient* a_networkClient);
 
 private:
 	//Private Constructor
@@ -51,8 +53,14 @@ private:
 	//List of unread input messages
 	std::vector<NetworkData*> m_vUnreadMessages;
 
+	//Client so that we can send messages to the client
+	NetworkClient* m_netClient;
+	
 	//Store the instance of the blackboard
 	static NetworkBlackboard* m_pInstance;
+
+
+	
 	
 };
 

@@ -28,7 +28,7 @@ BombSpawnerComponent::BombSpawnerComponent(Entity* a_pOwner) :
 /// Update the Bomb Spawner Component
 /// </summary>
 /// <param name="a_fDeltaTime">Delta Time</param>
-void BombSpawnerComponent::Update(float a_fDeltaTime)
+auto BombSpawnerComponent::Update(float a_fDeltaTime) -> void
 {
 	if(TestProject::isServer)
 	{
@@ -60,11 +60,11 @@ void BombSpawnerComponent::ServerUpdateSpawner(float a_fDeltaTime)
 		//Get our transform because this is where we are going to
 		//create our bombs at our current position
 		if (m_pOwnerEntity == nullptr) { return; }
-		TransformComponent* pTransform = static_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
+		TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
 		if (pTransform == nullptr) { return; }
 		const glm::vec3 bombCreatePos = pTransform->GetCurrentPosition();
 		
-		for(int i = 0; i < vBombCreationRequests.size(); ++i)
+		for(unsigned int i = 0; i < vBombCreationRequests.size(); ++i)
 		{
 			SpawnBomb(bombCreatePos);
 		}
@@ -76,14 +76,13 @@ void BombSpawnerComponent::ClientUpdateSpawner(float a_fDeltaTime)
 {
 	GLFWwindow* pActiveWindow = glfwGetCurrentContext();
 
-	bool bBombSpawnKeyPressed = (glfwGetKey(pActiveWindow, mc_iBombSpawnKey) == GLFW_PRESS);
+	const bool bBombSpawnKeyPressed = (glfwGetKey(pActiveWindow, mc_iBombSpawnKey) == GLFW_PRESS);
 	
 	//Check for key press to spawn a bomb
 	if (bBombSpawnKeyPressed && !m_bSpawnKeyPressedLastFrame)
 	{
 		//Send the server that we want to create a bomb
 		//todo - remove -1 get the player id properly
-		//todo - change passing RakNet::BitStream()
 		NetworkBlackboard::GetInstance()->SendBlackboardDataToServer(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB, -1, RakNet::BitStream());
 	}
 

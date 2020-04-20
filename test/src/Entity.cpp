@@ -1,9 +1,8 @@
 #include "stdafx.h"
 #include "Entity.h"
 
-//todo remove
+//Project Includes
 #include "ServerClientBase.h"
-#include "TestProject.h"
 
 //Typedefs
 typedef std::pair<const unsigned int, Entity*> EntityPair;
@@ -26,7 +25,7 @@ Entity::Entity()
 Entity::~Entity()
 {	
 	//Loop all of the components that this object owns and remove them
-	for (int i = 0; i < m_apComponentList.size(); i++)
+	for (unsigned int i = 0; i < m_apComponentList.size(); i++)
 	{
 		m_apComponentList[i]->RemoveOwnerEntity();
 		delete m_apComponentList[i];
@@ -35,9 +34,10 @@ Entity::~Entity()
 
 	//Remove this entity from the entity map and
 	//reduce entity count
-	//TODO - Check that the entity is in the list?
-	s_xEntityMap.erase(m_uEntityID);
-	--s_uEntityCount;
+	if (s_xEntityMap.count(m_uEntityID) > 0) {
+		s_xEntityMap.erase(m_uEntityID);
+		--s_uEntityCount;
+	}
 
 	//Broadcast we have been destroyed
 	//RakNet::UNASSIGNED_SYSTEM_ADDRESS means we exclude no systems
@@ -90,7 +90,7 @@ void Entity::AddComponent(Component* a_pComponent)
 /// Remove a component from this entity 
 /// </summary>
 /// <param name="a_pComponentToRemove">Component to Remove</param>
-/// <param name="deleteComponent">If we should delete this component after it is removed</param>
+/// <param name="a_bDeleteComponent">If we should delete this component after it is removed</param>
 void Entity::RemoveComponent(Component* a_pComponentToRemove, const bool a_bDeleteComponent /*= false*/)
 {
 	//Loop through all of the components and check to see if we
@@ -116,7 +116,7 @@ void Entity::RemoveComponent(Component* a_pComponentToRemove, const bool a_bDele
 	}
 }
 
-Component* Entity::GetComponent(COMPONENT_TYPE a_eComponentType) const
+Component* Entity::GetComponent(const COMPONENT_TYPE a_eComponentType) const
 {
 	//Loop through all of the components see if they have a component
 	std::vector<Component*>::const_iterator xIter;

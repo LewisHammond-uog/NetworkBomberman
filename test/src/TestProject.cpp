@@ -7,13 +7,7 @@
 //Project Includes
 #include "NetworkClient.h"
 #include "NetworkServer.h"
-
-//todo remove
 #include "GameManager.h"
-#include "Entity.h"
-#include "TransformComponent.h"
-#include "SpherePrimitiveComponent.h"
-#include "PlayerControlComponent.h"
 
 bool TestProject::isServer = false;
 

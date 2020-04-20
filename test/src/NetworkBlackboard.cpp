@@ -4,12 +4,15 @@
 //Project Includes
 #include "ServerClientBase.h"
 #include "NetworkClient.h"
-#include "TestProject.h"
 
 //Initalise static instance
 NetworkBlackboard* NetworkBlackboard::m_pInstance = nullptr;
 
 
+/// <summary>
+/// Destructor of blackboard
+/// Removes all unread messages
+/// </summary>
 NetworkBlackboard::~NetworkBlackboard()
 {
 	//Delete all of the unread messages
@@ -40,7 +43,7 @@ NetworkBlackboard* NetworkBlackboard::GetInstance()
 /// <param name="a_dataType">Type of Data to Get</param>
 /// <param name="a_iPlayerID">ID of the Player to get the data for</param>
 /// <returns>List of data for the given</returns>
-std::vector<NetworkData*> NetworkBlackboard::GetNetworkData(RakNet::MessageID a_dataType, int a_iPlayerID)
+std::vector<NetworkData*> NetworkBlackboard::GetNetworkData(RakNet::MessageID a_dataType, const int a_iPlayerID)
 {
 	std::vector<NetworkData*> vReturnData;
 	
@@ -106,6 +109,17 @@ void NetworkBlackboard::AddReceivedNetworkData(NetworkData* a_pBlackboardData)
 	m_vUnreadMessages.push_back(a_pBlackboardData);
 }
 
+/// <summary>
+/// Set the Network Client for the blackboard
+/// </summary>
+/// <param name="a_networkClient"></param>
+void NetworkBlackboard::SetNetworkClient(NetworkClient* a_networkClient)
+{
+	if(a_networkClient != nullptr)
+	{
+		m_netClient = a_networkClient;
+	}
+}
 
 /// <summary>
 /// Send network data to the sever
@@ -113,7 +127,7 @@ void NetworkBlackboard::AddReceivedNetworkData(NetworkData* a_pBlackboardData)
 /// <param name="a_dataType">Type of data to send</param>
 /// <param name="a_iPlayerID">ID of the player that is data is for</param>
 /// <param name="a_data">Data (without type and player ID)</param>
-void NetworkBlackboard::SendBlackboardDataToServer(RakNet::MessageID a_dataType, int a_iPlayerID, RakNet::BitStream& a_data)
+void NetworkBlackboard::SendBlackboardDataToServer(const RakNet::MessageID a_dataType, const int a_iPlayerID, RakNet::BitStream& a_data)
 {
 	//Encode data in to a bitstream to send
 	RakNet::BitStream bsToSend;
@@ -121,6 +135,10 @@ void NetworkBlackboard::SendBlackboardDataToServer(RakNet::MessageID a_dataType,
 	bsToSend.Write(a_iPlayerID);
 	bsToSend.Write(a_data);
 
-	NetworkClient::instance->SendMessageToServer(bsToSend, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+	if (m_netClient) {
+		m_netClient->SendMessageToServer(bsToSend, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+	}
 }
+
+
 

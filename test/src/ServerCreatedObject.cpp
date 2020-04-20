@@ -12,7 +12,7 @@
 /// </summary>
 ServerCreatedObject::ServerCreatedObject()
 {
-	//ServerClientBase::LogConsoleMessage("Constructor of Server Created Object Called");
+
 }
 
 /// <summary>

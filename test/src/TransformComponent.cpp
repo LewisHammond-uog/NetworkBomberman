@@ -31,7 +31,7 @@ void TransformComponent::SetEntityMatrixRow(MATRIX_ROW a_eRow, glm::vec3 a_v3Vec
 /// </summary>
 /// <param name="a_eRow">Row of the matrix to get</param>
 /// <returns>Matrix Row as Vector 3</returns>
-glm::vec3 TransformComponent::GetEntityMatrixRow(MATRIX_ROW a_eRow)
+glm::vec3 TransformComponent::GetEntityMatrixRow(const MATRIX_ROW a_eRow)
 {
 	return m_m4EntityMatrix[a_eRow];
 }
@@ -45,7 +45,11 @@ glm::vec3 TransformComponent::GetCurrentPosition()
 	return GetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR);
 }
 
-
+/// <summary>
+/// Orthogonalize the matrix so that the forward, right and up vectors are facing in their respective
+/// directions.
+/// This uses the Gram-Schmidt process (https://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process)
+/// </summary>
 void TransformComponent::Orthogonalize()
 {
 	//Get the forward and up of the input vector

@@ -45,11 +45,11 @@ private:
 	//Functions for pre game connection of clients 
 	//to the server
 	void DoPreGameServerEvents();
-	void DoGamePlayingServerEvents();
+	void DoGamePlayingServerEvents() const;
 
 	//Sending Messages Events
 	void SendMessageToClient(int a_iClientID, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability);
-	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability);
+	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability) const;
 	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability);
 	void SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability);
 

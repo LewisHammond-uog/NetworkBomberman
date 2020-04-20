@@ -15,6 +15,7 @@
     <ClInclude Include="include\BombComponent.h" />
     <ClInclude Include="include\BombSpawnerComponent.h" />
     <ClInclude Include="include\BoxPrimitiveComponent.h" />
+    <ClInclude Include="include\ConsoleLog.h" />
     <ClInclude Include="include\NetworkBlackboard.h" />
     <ClInclude Include="include\PlayerControlComponent.h" />
     <ClInclude Include="include\PrimitiveComponent.h" />
@@ -25,7 +26,6 @@
     <ClInclude Include="include\NetworkClient.h" />
     <ClInclude Include="include\NetworkReplicator.h" />
     <ClInclude Include="include\NetworkServer.h" />
-    <ClInclude Include="include\PacketTypes.h" />
     <ClInclude Include="include\SpherePrimitiveComponent.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\ServerCreatedObject.h" />

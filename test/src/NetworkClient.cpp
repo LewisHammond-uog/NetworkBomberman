@@ -2,31 +2,22 @@
 #include "NetworkClient.h"
 
 //Raknet Includes
-#include <RakPeerInterface.h>
 #include <BitStream.h>
+#include <RakPeerInterface.h>
 
 //Project Incldues
 #include "Authenticator.h"
-#include "NetworkReplicator.h"
+#include "NetworkBlackboard.h"
 #include "ServerCreatedObject.h"
+#include "ConsoleLog.h"
 
-NetworkClient* NetworkClient::instance = nullptr;
-
-//Default Client Contstructor
-NetworkClient::NetworkClient()
+//Default Client Constructor
+NetworkClient::NetworkClient() : ServerClientBase()
 {
-	//TODO JUST CALL PARENT EVENT
-	//Null out rakpeer
-	m_pRakPeer = nullptr;
-	m_serverAddress = RakNet::SystemAddress();
-	instance = this;
 }
 
 NetworkClient::~NetworkClient()
 {
-	//TODO JUST CALL PARENT EVENT
-	//Destory rakpeer
-	RakNet::RakPeerInterface::DestroyInstance(m_pRakPeer);
 }
 
 void NetworkClient::Init() {
@@ -45,6 +36,9 @@ void NetworkClient::Init() {
 	//We get the network replicator from the base class
 	//ServerClientBase
 	m_pRakPeer->AttachPlugin(GetNetworkReplicator());
+
+	//Set our network client for the blackboard
+	NetworkBlackboard::GetInstance()->SetNetworkClient(this);
 }
 
 void NetworkClient::Update()
@@ -63,6 +57,18 @@ void NetworkClient::Update()
 	}
 }
 
+/// <summary>
+/// Intalises the ImGUI window for client connection
+/// </summary>
+void NetworkClient::InitImguiWindow()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	ImVec2 windowSize = ImVec2(400.f, 250.f);
+	ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+}
+
 
 /// <summary>
 /// An update loop to get the client connected to the server
@@ -72,11 +78,7 @@ void NetworkClient::DoClientConnectionEvents()
 
 	//Setup window to display login details
 	static bool showConnectionWindow = true;
-	ImGuiIO& io = ImGui::GetIO();
-	ImVec2 windowSize = ImVec2(400.f, 250.f);
-	ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
-	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
-	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+	InitImguiWindow();
 
 	switch (m_eConnectionState) {
 		case(ClientConnectionState::CLIENT_START_CONNECTION):
@@ -97,12 +99,12 @@ void NetworkClient::DoClientConnectionEvents()
 
 			if (ImGui::Button("Connect")) {
 
-				LogConsoleMessage("CLIENT :: CLIENT CONNECTION STARTED");
+				ConsoleLog::LogConsoleMessage("CLIENT :: CLIENT CONNECTION STARTED");
 
 				//Get user inputed IP address and try and connect to the server
 				std::stringstream ss;
 				ss << ipAddress[0] << "." << ipAddress[1] << "." << ipAddress[2] << "." << ipAddress[3];
-				m_pRakPeer->Connect(ss.str().c_str(), SERVER_PORT, 0, 0);
+				m_pRakPeer->Connect(ss.str().c_str(), SERVER_PORT, nullptr, 0);
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_CONNECTION;
 			}
 
@@ -135,7 +137,7 @@ void NetworkClient::DoClientConnectionEvents()
 					case(ID_CONNECTION_REQUEST_ACCEPTED):
 					{
 						//Server has accepted our requrest
-						LogConsoleMessage("CLIENT :: CLIENT SUCCESSFULLY CONNECTED TO THE SERVER");
+						ConsoleLog::LogConsoleMessage("CLIENT :: CLIENT SUCCESSFULLY CONNECTED TO THE SERVER");
 						m_eConnectionState = ClientConnectionState::CLIENT_ENTER_AUTH_DETAILS;
 
 						//We have successfully connected to the server store it's ip to send all further
@@ -148,7 +150,7 @@ void NetworkClient::DoClientConnectionEvents()
 						//Server is full - reset to new connection window
 						ImGui::Text("Server Full");
 						m_pRakPeer->CloseConnection(packet->systemAddress, true);
-						LogConsoleMessage("CLIENT :: CLIENT CANNOT CONNECT TO A FULL SERVER");
+						ConsoleLog::LogConsoleMessage("CLIENT :: CLIENT CANNOT CONNECT TO A FULL SERVER");
 						m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
 						break;
 					}
@@ -191,7 +193,7 @@ void NetworkClient::DoClientConnectionEvents()
 				
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
 
-				LogConsoleMessage("CLIENT :: SENDING LOGIN DETAILS TO THE SERVER");
+				ConsoleLog::LogConsoleMessage("CLIENT :: SENDING LOGIN DETAILS TO THE SERVER");
 			}
 
 			//Send Registation Details and move to waiting for authorization
@@ -205,7 +207,7 @@ void NetworkClient::DoClientConnectionEvents()
 
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
 
-				LogConsoleMessage("CLIENT :: SENDING REGISTARTION DETAILS TO THE SERVER");
+				ConsoleLog::LogConsoleMessage("CLIENT :: SENDING REGISTRATION DETAILS TO THE SERVER");
 			}
 
 			ImGui::End();
@@ -231,7 +233,7 @@ void NetworkClient::DoClientConnectionEvents()
 					//TO DO - AUTHENTICATION
 					case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS):
 					{
-						LogConsoleMessage("CLIENT :: LOGIN SUCCESS");
+						ConsoleLog::LogConsoleMessage("CLIENT :: LOGIN SUCCESS");
 
 						//We have successfully connected and logged in to the server,
 						//move on to actually doing game stuff
@@ -242,7 +244,7 @@ void NetworkClient::DoClientConnectionEvents()
 					}
 					case(CSNetMessages::SERVER_AUTHENTICATE_FAIL):
 					{
-						LogConsoleMessage("CLIENT :: LOGIN FAILED");
+						ConsoleLog::LogConsoleMessage("CLIENT :: LOGIN FAILED");
 						//Reset to enter new login details
 						m_eConnectionState = ClientConnectionState::CLIENT_ENTER_AUTH_DETAILS;
 						break;
@@ -272,13 +274,8 @@ void NetworkClient::DoClientConnectionEvents()
 void NetworkClient::DoClientPreGameEvents()
 {
 	//Window 
-	//TODO, Create this as a seperate funct
 	static bool showConnectionWindow = true;
-	ImGuiIO& io = ImGui::GetIO();
-	ImVec2 windowSize = ImVec2(400.f, 250.f);
-	ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
-	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
-	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
+	InitImguiWindow();
 
 	switch (m_eConnectionState) {
 		case(ClientConnectionState::CLIENT_INIT_PREGAME): {
@@ -295,7 +292,7 @@ void NetworkClient::DoClientPreGameEvents()
 
 			//Set state to wait for the game to start
 			m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_GAME_START;
-			LogConsoleMessage("CLIENT :: SENT SERVER READY MESSAGE");
+			ConsoleLog::LogConsoleMessage("CLIENT :: SENT SERVER READY MESSAGE");
 
 			break;
 		}
@@ -315,7 +312,7 @@ void NetworkClient::DoClientPreGameEvents()
 			while (packet != nullptr) {
 				//Check if we have the game start message
 				if (packet->data[0] == CSGameMessages::SERVER_GAME_STARTING) {
-					LogConsoleMessage("CLIENT :: RECIEVED GAME START MESSAGES");
+					ConsoleLog::LogConsoleMessage("CLIENT :: RECEIVED GAME START MESSAGES");
 
 					//Change state to game playing
 					m_eClientGameState = ClientLocalState::GAME_PLAYING;
@@ -340,8 +337,8 @@ void NetworkClient::DoClientPreGameEvents()
 /// <param name="a_data">Bitstream of data to send, must include message id</param>
 /// <param name="a_priority">Priority of the message to send</param>
 /// <param name="a_reliability">Reliability of the message to send</param>
-void NetworkClient::SendMessageToServer(RakNet::BitStream& a_data, PacketPriority a_priority,
-	PacketReliability a_reliability) const
+void NetworkClient::SendMessageToServer(RakNet::BitStream& a_data, const PacketPriority a_priority,
+                                        const PacketReliability a_reliability) const
 {
 	m_pRakPeer->Send(&a_data, a_priority, a_reliability, 0, m_serverAddress, false);
 }

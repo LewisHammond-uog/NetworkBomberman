@@ -43,17 +43,17 @@ public:
 
 	//Constructor/Destructor
 	NetworkClient();
-	~NetworkClient();
+	virtual ~NetworkClient();
 
 	void Init();
 	void Update();
 
+	//Init Imgui Function
+	void InitImguiWindow();
+	
 	//Functions to send a message to the server
 	void SendMessageToServer(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability) const;
 	void SendMessageToServer(RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability) const;
-
-	//todo remove
-	static NetworkClient* instance;
 
 private:
 

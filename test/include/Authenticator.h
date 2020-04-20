@@ -25,9 +25,9 @@ public:
 private:
 
 	//Checks if a username exists within the login credentials file
-	bool UsernameExists(const char* a_szUsername);
+	bool UsernameExists(const char* a_szUsername) const;
 	//Checks if a username and password match an item within the file
-	bool ValidUsernameAndPassword(const char* a_szUsername, const char* a_szPassword);
+	bool ValidUsernameAndPassword(const char* a_szUsername, const char* a_szPassword) const;
 
 
 	//Const filename for the username/password file

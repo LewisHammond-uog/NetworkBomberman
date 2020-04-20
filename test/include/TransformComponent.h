@@ -18,13 +18,13 @@ public:
 	TransformComponent(Entity* a_pOwner);	
 	virtual ~TransformComponent();
 
-	virtual void Update(float a_fDeltaTime) {};
-	virtual void Draw(Shader* a_pShader) {};
+	virtual void Update(float a_fDeltaTime) {}
+	virtual void Draw(Shader* a_pShader) {}
 
 	void Orthogonalize();
 
 	//Get and set Matrix Row
-	const glm::mat4& GetEntityMatrix() { return m_m4EntityMatrix; }
+	const glm::mat4& GetEntityMatrix() const { return m_m4EntityMatrix; }
 	void SetEntityMatrixRow(MATRIX_ROW a_eRow, glm::vec3 a_v3Vec);
 	glm::vec3 GetEntityMatrixRow(MATRIX_ROW a_eRow);
 	glm::vec3 GetCurrentPosition();

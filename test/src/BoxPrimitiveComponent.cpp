@@ -33,7 +33,6 @@ void BoxPrimitiveComponent::SetDimensions(const glm::vec3 a_v3NewDimensions)
 
 void BoxPrimitiveComponent::Update(float a_fDeltaTime)
 {
-	//TODO - Implement this? 
 	//No Implementation
 }
 
@@ -44,7 +43,7 @@ void BoxPrimitiveComponent::Update(float a_fDeltaTime)
 void BoxPrimitiveComponent::Draw(Shader* a_pShader)
 {
 	//Get the transform component - so that we can create the box at our position
-	TransformComponent* pTransform = static_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(TRANSFORM));
+	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(TRANSFORM));
 	if (!pTransform) {
 		return;
 	}

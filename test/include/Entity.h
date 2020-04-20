@@ -26,7 +26,7 @@ public:
 
 	//Add/get components
 	void AddComponent(Component* a_pComponent);
-	void RemoveComponent(Component* a_pComponentToRemove, bool a_bDeleteComponent = false);;
+	void RemoveComponent(Component* a_pComponentToRemove, bool a_bDeleteComponent = false);
 	Component* GetComponent(COMPONENT_TYPE a_eComponentType) const;
 
 	//Get the ID of this entity

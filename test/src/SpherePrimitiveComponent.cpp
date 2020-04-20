@@ -9,7 +9,7 @@
 //Typedefs
 typedef PrimitiveComponent PARENT;
 
-SpherePrimitiveComponent::SpherePrimitiveComponent(Entity* a_pOwner, float a_fSphereRadius) :
+SpherePrimitiveComponent::SpherePrimitiveComponent(Entity* a_pOwner, const float a_fSphereRadius) :
 	PARENT(a_pOwner),
 	m_fSphereRadius(a_fSphereRadius)
 {
@@ -30,13 +30,12 @@ void SpherePrimitiveComponent::SetDimensions(const float a_fNewRadius)
 
 void SpherePrimitiveComponent::Update(float a_fDeltaTime)
 {
-	//todo - implement this
 }
 
 void SpherePrimitiveComponent::Draw(Shader* a_pShader)
 {
 	//Get the transform component - so that we can create the box at our position
-	TransformComponent* pTransform = static_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(TRANSFORM));
+	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(TRANSFORM));
 	if (!pTransform) {
 		return;
 	}

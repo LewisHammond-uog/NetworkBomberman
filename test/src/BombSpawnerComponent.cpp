@@ -6,7 +6,10 @@
 #include "NetworkBlackboard.h"
 #include "NetworkClient.h"
 #include "TestProject.h"
+//Components
 #include "TransformComponent.h"
+#include "SpherePrimitiveComponent.h"
+#include "BombComponent.h"
 
 //Typedefs
 typedef Component PARENT;
@@ -73,7 +76,7 @@ void BombSpawnerComponent::ClientUpdateSpawner(float a_fDeltaTime)
 {
 	GLFWwindow* pActiveWindow = glfwGetCurrentContext();
 
-	bool bBombSpawnKeyPressed = glfwGetKey(pActiveWindow, mc_iBombSpawnKey) == GLFW_PRESS;
+	bool bBombSpawnKeyPressed = (glfwGetKey(pActiveWindow, mc_iBombSpawnKey) == GLFW_PRESS);
 	
 	//Check for key press to spawn a bomb
 	if (bBombSpawnKeyPressed && !m_bSpawnKeyPressedLastFrame)
@@ -98,9 +101,25 @@ void BombSpawnerComponent::SpawnBomb(glm::vec3 a_v3SpawnPosition)
 	//Create Bomb Entity and add the approprite components
 	Entity* pBombEntity = new Entity();
 	TransformComponent* pTransform = new TransformComponent(pBombEntity);
+	BombComponent* pBombComponent = new BombComponent(pBombEntity);
+	SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pBombEntity);
 
+	//Set Transform position to be the inputted position
+	pTransform->SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, a_v3SpawnPosition);
+	
 	pBombEntity->AddComponent(pTransform);
+	pBombEntity->AddComponent(pBombComponent);
+	pBombEntity->AddComponent(pSphere);
 
-	//todo call network replicator so that we can reference stuff
+	//Add the new bomb to the network replicator so it is sent to all clients
+	NetworkReplicator* pNetworkReplicator = ServerClientBase::GetNetworkReplicator();
+	if (pNetworkReplicator == nullptr)
+	{
+		return;
+	}
+	pNetworkReplicator->Reference(pBombEntity);
+	pNetworkReplicator->Reference(pTransform);
+	pNetworkReplicator->Reference(pBombComponent);
+	pNetworkReplicator->Reference(pSphere);
 	
 }

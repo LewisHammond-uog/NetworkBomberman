@@ -1,3 +1,5 @@
+//For ReplicaManager3 functions
+// ReSharper disable CppInconsistentNaming
 #include "stdafx.h"
 #include "ServerCreatedObject.h"
 
@@ -18,15 +20,12 @@ ServerCreatedObject::ServerCreatedObject()
 /// </summary>
 ServerCreatedObject::~ServerCreatedObject()
 {
-
 }
 
 void ServerCreatedObject::WriteAllocationID(RakNet::Connection_RM3* destinationConnection, RakNet::BitStream* allocationIdBitstream) const
 {
 	allocationIdBitstream->Write(GetName());
 }
-
-
 
 RakNet::RM3ConstructionState ServerCreatedObject::QueryConstruction(RakNet::Connection_RM3* destinationConnection, RakNet::ReplicaManager3* replicaManager3)
 {

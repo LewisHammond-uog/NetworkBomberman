@@ -14,25 +14,65 @@
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
 
+//Init Statics
+GameManager* GameManager::s_pInstance = nullptr;
+
 GameManager::~GameManager()
 {
+}
+
+/// <summary>
+/// Get the instance of the game manager
+/// </summary>
+/// <returns></returns>
+GameManager* GameManager::GetInstance()
+{
+	if(s_pInstance == nullptr)
+	{
+		s_pInstance = new GameManager();
+	}
+
+	return s_pInstance;
 }
 
 void GameManager::Update(const float a_fDeltaTime)
 {
 	
 	//Get a list of and then update all of the entities
-	std::map<const unsigned int, Entity*>::const_iterator xIter;
-	for (xIter = Entity::GetEntityMap().begin(); xIter != Entity::GetEntityMap().end(); ++xIter)
+	std::map<const unsigned int, Entity*>::const_iterator xUpdateIter;
+	for (xUpdateIter = Entity::GetEntityMap().begin(); xUpdateIter != Entity::GetEntityMap().end(); ++xUpdateIter)
 	{
-		Entity* pEntity = xIter->second;
+		Entity* pEntity = xUpdateIter->second;
 		if (pEntity) {
 			pEntity->Update(a_fDeltaTime);
 			pEntity->Draw(nullptr);
 		}
 	}
-	
+
+	//Delete all entities that should be deleted after update
+	std::vector<Entity*>::const_iterator xDelIter;
+	for(xDelIter = m_vDeleteEntityQueue.begin(); xDelIter != m_vDeleteEntityQueue.end();)
+	{
+		Entity* pEntity = *xDelIter;
+		if(pEntity)
+		{
+			//Remove from vector and delete
+			xDelIter = m_vDeleteEntityQueue.erase(xDelIter);
+			delete pEntity;
+		}
+	}
 }
+
+/// <summary>
+/// Delete an entity after all other entities in the scene are updated
+/// </summary>
+/// <param name="a_pEntity"></param>
+void GameManager::DeleteEntityAfterUpdate(Entity* a_pEntity)
+{
+	//Add Entity to our delete queue
+	m_vDeleteEntityQueue.push_back(a_pEntity);
+}
+
 
 /// <summary>
 /// Creates a given number of players
@@ -61,6 +101,10 @@ void GameManager::CreatePlayers(const int a_iPlayerCount)
 		//that we send the player entity first as components rely on having
 		//an owner entity
 		NetworkReplicator* pNetworkReplicator = ServerClientBase::GetNetworkReplicator();
+		if(pNetworkReplicator == nullptr)
+		{
+			return;
+		}
 		pNetworkReplicator->Reference(pPlayerEntity);
 		pNetworkReplicator->Reference(pPlayerTransform);
 		pNetworkReplicator->Reference(pSphere);

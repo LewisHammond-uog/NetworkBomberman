@@ -23,7 +23,6 @@ Component::Component(Entity* a_pOwner) : m_pOwnerEntity(a_pOwner),
 
 Component::~Component()
 {
-	
 }
 
 

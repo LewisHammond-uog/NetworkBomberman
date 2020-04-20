@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Authenticator.h" />
+    <ClInclude Include="include\BombComponent.h" />
     <ClInclude Include="include\BombSpawnerComponent.h" />
     <ClInclude Include="include\BoxPrimitiveComponent.h" />
     <ClInclude Include="include\NetworkBlackboard.h" />
@@ -33,6 +34,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Authenticator.cpp" />
+    <ClCompile Include="src\BombComponent.cpp" />
     <ClCompile Include="src\BombSpawnerComponent.cpp" />
     <ClCompile Include="src\BoxPrimitiveComponent.cpp" />
     <ClCompile Include="src\Component.cpp" />

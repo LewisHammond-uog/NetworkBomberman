@@ -132,7 +132,7 @@ void TestProject::Update(float a_deltaTime)
 
 
 	//todo remove
-	GameManager::Update(a_deltaTime);
+	GameManager::GetInstance()->Update(a_deltaTime);
 	
 	static bool show_demo_window = true;
 

@@ -3,6 +3,7 @@
 
 //todo remove
 #include "ServerClientBase.h"
+#include "TestProject.h"
 
 //Typedefs
 typedef std::pair<const unsigned int, Entity*> EntityPair;
@@ -23,19 +24,23 @@ Entity::Entity()
 }
 
 Entity::~Entity()
-{
-	//Loop all of the components that this object owns and delete
-	//them
+{	
+	//Loop all of the components that this object owns and remove them
 	std::vector<Component*>::const_iterator xIter;
 	for (xIter = m_apComponentList.begin(); xIter < m_apComponentList.end(); ++xIter) {
-		delete *xIter;
+		delete* xIter;
 	}
+	m_apComponentList.clear();
 
 	//Remove this entity from the entity map and
 	//reduce entity count
 	//TODO - Check that the entity is in the list?
 	s_xEntityMap.erase(m_uEntityID);
 	--s_uEntityCount;
+
+	//Broadcast we have been destroyed
+	//RakNet::UNASSIGNED_SYSTEM_ADDRESS means we exclude no systems
+	ServerClientBase::GetNetworkReplicator()->BroadcastDestruction(this, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 }
 
 ///Update this entity
@@ -43,13 +48,14 @@ void Entity::Update(float a_fDeltaTime)
 {
 	//Loop through all of the components and update
 	std::vector<Component*>::iterator xIter;
-	for (xIter = m_apComponentList.begin(); xIter < m_apComponentList.end(); ++xIter) 
+	for (xIter = m_apComponentList.begin(); xIter < m_apComponentList.end(); ++xIter)
 	{
 		Component* pComponent = *xIter;
 		if (pComponent) {
 			pComponent->Update(a_fDeltaTime);
 		}
 	}
+	
 }
 
 ///Draw all elements of this entity
@@ -77,6 +83,25 @@ void Entity::AddComponent(Component* a_pComponent)
 
 	//Add component to our component list
 	m_apComponentList.push_back(a_pComponent);
+}
+
+/// <summary>
+/// Remove a component from this entity 
+/// </summary>
+/// <param name="a_pComponentToRemove">Component to Remove</param>
+void Entity::RemoveComponent(Component* a_pComponentToRemove)
+{
+	//Loop through all of the components and check to see if we
+	//have the component if we do the remove it
+	std::vector<Component*>::const_iterator xIter;
+	for (xIter = m_apComponentList.begin(); xIter < m_apComponentList.end(); ++xIter)
+	{
+		Component* pComponent = *xIter;
+		if (pComponent == a_pComponentToRemove) {
+			xIter = m_apComponentList.erase(xIter);
+			break;
+		}
+	}
 }
 
 Component* Entity::GetComponent(COMPONENT_TYPE a_eComponentType) const

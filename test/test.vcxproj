@@ -18,6 +18,7 @@
     <ClInclude Include="include\ConsoleLog.h" />
     <ClInclude Include="include\NetworkBlackboard.h" />
     <ClInclude Include="include\PlayerControlComponent.h" />
+    <ClInclude Include="include\PlayerDataComponent.h" />
     <ClInclude Include="include\PrimitiveComponent.h" />
     <ClInclude Include="include\ServerClientBase.h" />
     <ClInclude Include="include\Component.h" />

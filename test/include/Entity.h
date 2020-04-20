@@ -15,6 +15,10 @@
 //Forward Declare
 class Shader;
 
+/// <summary>
+/// Class for an entity within the world that has components
+/// attached
+/// </summary>
 class Entity : public ServerCreatedObject
 {
 public:

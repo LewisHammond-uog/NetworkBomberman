@@ -5,6 +5,10 @@
 //Project Includes
 #include "Component.h"
 
+/// <summary>
+/// Class to deal with Player Control, moving the player
+/// around the world
+/// </summary>
 class PlayerControlComponent : public Component
 {
 public:

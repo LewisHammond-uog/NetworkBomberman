@@ -4,6 +4,10 @@
 //Project Includes
 #include "Component.h"
 
+/// <summary>
+/// Class for dealing with a bomb in the world
+/// Countdown to and explosion
+/// </summary>
 class BombComponent : public Component
 {
 public:

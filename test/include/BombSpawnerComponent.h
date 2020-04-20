@@ -4,6 +4,9 @@
 //Project Includes
 #include "Component.h"
 
+/// <summary>
+/// Class to deal with spawning bombs when a key is pressed
+/// </summary>
 class BombSpawnerComponent : public Component
 {
 public:

@@ -3,6 +3,9 @@
 
 #include "Application_Log.h"
 
+/// <summary>
+/// Class for logging to the console
+/// </summary>
 class ConsoleLog
 {
 public:

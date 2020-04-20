@@ -4,6 +4,10 @@
 //Raknet Includes
 #include "BitStream.h"
 
+/// <summary>
+/// Class used for Authenticating the user with a username or password,
+/// or registering a new user
+/// </summary>
 class Authenticator {
 public:
 	//Constructors/Destructors

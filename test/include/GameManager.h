@@ -12,6 +12,10 @@ namespace RakNet
 	class NetworkIDManager;
 }
 
+/// <summary>
+/// Game Manager that is used to perform game functions such as creating players
+/// and updating all entities
+/// </summary>
 class GameManager
 {
 public:

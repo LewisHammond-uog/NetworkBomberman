@@ -5,6 +5,9 @@
 #include <glm/glm.hpp>
 #include "PrimitiveComponent.h"
 
+/// <summary>
+/// Class for a drawing a box primative
+/// </summary>
 class BoxPrimitiveComponent : public PrimitiveComponent
 {
 public:

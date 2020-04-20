@@ -12,6 +12,9 @@ enum MATRIX_ROW
 	POSTION_VECTOR
 };
 
+/// <summary>
+/// Class for a transform with a 4x4 Matrix
+/// </summary>
 class TransformComponent : public Component
 {
 public:

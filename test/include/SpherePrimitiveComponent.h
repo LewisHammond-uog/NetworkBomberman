@@ -6,6 +6,9 @@
 
 #include "PrimitiveComponent.h"
 
+/// <summary>
+/// Class for drawing a sphere primative
+/// </summary>
 class SpherePrimitiveComponent : public PrimitiveComponent
 {
 public:

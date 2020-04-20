@@ -26,9 +26,10 @@ Entity::Entity()
 Entity::~Entity()
 {	
 	//Loop all of the components that this object owns and remove them
-	std::vector<Component*>::const_iterator xIter;
-	for (xIter = m_apComponentList.begin(); xIter < m_apComponentList.end(); ++xIter) {
-		delete* xIter;
+	for (int i = 0; i < m_apComponentList.size(); i++)
+	{
+		m_apComponentList[i]->RemoveOwnerEntity();
+		delete m_apComponentList[i];
 	}
 	m_apComponentList.clear();
 
@@ -89,17 +90,28 @@ void Entity::AddComponent(Component* a_pComponent)
 /// Remove a component from this entity 
 /// </summary>
 /// <param name="a_pComponentToRemove">Component to Remove</param>
-void Entity::RemoveComponent(Component* a_pComponentToRemove)
+/// <param name="deleteComponent">If we should delete this component after it is removed</param>
+void Entity::RemoveComponent(Component* a_pComponentToRemove, const bool a_bDeleteComponent /*= false*/)
 {
 	//Loop through all of the components and check to see if we
 	//have the component if we do the remove it
-	std::vector<Component*>::const_iterator xIter;
-	for (xIter = m_apComponentList.begin(); xIter < m_apComponentList.end(); ++xIter)
-	{
-		Component* pComponent = *xIter;
-		if (pComponent == a_pComponentToRemove) {
-			xIter = m_apComponentList.erase(xIter);
-			break;
+	if (!m_apComponentList.empty()) {
+		std::vector<Component*>::const_iterator xIter;
+		for (xIter = m_apComponentList.begin(); xIter < m_apComponentList.end(); ++xIter)
+		{
+			Component* pComponent = *xIter;
+			if (pComponent == a_pComponentToRemove) {
+				xIter = m_apComponentList.erase(xIter);
+
+				//Unset the owner entity so that it doesn't think we are it's owner
+				pComponent->RemoveOwnerEntity();
+
+				if (a_bDeleteComponent)
+				{
+					delete* xIter;
+				}
+				break;
+			}
 		}
 	}
 }

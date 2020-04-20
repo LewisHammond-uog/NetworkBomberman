@@ -15,14 +15,21 @@ Component::Component(Entity* a_pOwner) : m_pOwnerEntity(a_pOwner),
 	//todo remove? - don't think we need this because we are a replica object and this is pre assigned by s_pReplicaManager->SetNetworkIDManager(GetNetworkIDManager()); in Client Server Base
 	//Set our network manager
 	NetworkIDObject::SetNetworkIDManager(ServerClientBase::GetNetworkIDManager());
-
-	//todo remove - this is just debug testing
-	ServerClientBase::LogConsoleMessage("Create Component");
 }
 
 
 Component::~Component()
 {
+	//When we are destroyed remove ourselves from our
+	//owners components
+	if (m_pOwnerEntity)
+	{
+		m_pOwnerEntity->RemoveComponent(this);
+	}
+	
+	//Broadcast we have been destroyed
+	//RakNet::UNASSIGNED_SYSTEM_ADDRESS means we exclude no systems
+	ServerClientBase::GetNetworkReplicator()->BroadcastDestruction(this, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 }
 
 

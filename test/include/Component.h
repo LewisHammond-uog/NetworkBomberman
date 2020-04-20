@@ -30,6 +30,7 @@ public:
 
 	Entity* GetOwnerEntity() const { return m_pOwnerEntity; }
 	COMPONENT_TYPE GetComponentType() const { return m_eComponentType; }
+	void RemoveOwnerEntity() { m_pOwnerEntity = nullptr; }
 
 #pragma region Replica Manager Functions
 	//Entity Name

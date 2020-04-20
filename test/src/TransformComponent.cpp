@@ -68,5 +68,64 @@ void TransformComponent::Orthogonalize()
 	//Set new Real Right and Forward Values
 	SetEntityMatrixRow(MATRIX_ROW::UP_VECTOR, v3RealUp); //Set Real UP
 	SetEntityMatrixRow(MATRIX_ROW::RIGHT_VECTOR, v3RealRight);
+}
+
+// ReSharper disable CppInconsistentNaming - for RakNet functions
+
+/// <summary>
+/// Serialize the construction of the transform component sending our starting position to clients
+/// </summary>
+/// <param name="constructionBitstream"></param>
+/// <param name="destinationConnection"></param>
+void TransformComponent::SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection)
+
+{
+	// variableDeltaSerializer is a helper class that tracks what variables were sent to what remote system
+	// This call adds another remote system to track
+	m_variableDeltaSerializer.AddRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
+
+	//Call base function
+	Component::SerializeConstruction(constructionBitstream, destinationConnection);
+
+	/*
+	 * CONSTRUCTION DATA LAYOUT
+	 * glm::vec3 StartPosition
+	 */
+	
+	//Serialize the position we have
+	glm::vec3 pos = GetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR);
+	constructionBitstream->Write(pos);
 
 }
+
+/// <summary>
+/// Serialize the construction of the transform component setting our start position to the one sent by the server
+/// </summary>
+/// <param name="constructionBitstream"></param>
+/// <param name="sourceConnection"></param>
+/// <returns></returns>
+bool TransformComponent::DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection)
+{
+	//If bitstream is empty then early out
+	if (constructionBitstream->GetNumberOfUnreadBits() == 0) {
+		return false;
+	}
+
+	/*
+	 * CONSTRUCTION DATA LAYOUT
+	 * glm::vec3 StartPosition
+	 */
+
+	//Call base function
+	Component::DeserializeConstruction(constructionBitstream, sourceConnection);
+
+	//Get position value
+	glm::vec3 receivedPosition;
+	constructionBitstream->Read(receivedPosition);
+	SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, receivedPosition);
+	
+	
+	return true;
+}
+
+// ReSharper restore CppInconsistentNaming - for RakNet functions

@@ -30,6 +30,8 @@ public:
 	glm::vec3 GetCurrentPosition();
 
 	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("TransformComponent"); }
+	virtual void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection);
+	virtual bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection);
 
 private:
 	glm::mat4 m_m4EntityMatrix;

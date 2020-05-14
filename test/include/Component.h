@@ -2,6 +2,10 @@
 #define __COMPONENT_H__
 
 //Project Includes
+#include <RakString.h>
+#include <ReplicaManager3.h>
+#include <VariableDeltaSerializer.h>
+
 #include "ServerCreatedObject.h"
 
 //Forward Declare
@@ -18,6 +22,11 @@ enum COMPONENT_TYPE {
 	PRIMITIVE_SPHERE
 };
 
+/// <summary>
+/// Abstract class for a component which is used so we can
+/// loop all components with Update() and Draw() functions
+/// genericly 
+/// </summary>
 class Component : public ServerCreatedObject
 {
 public:
@@ -28,9 +37,9 @@ public:
 	virtual void Update(float a_fDeltaTime) = 0; //Pure Virtual Function
 	virtual void Draw(Shader* a_pShader) = 0; //Pure Virtual Function
 
-	Entity* GetOwnerEntity() const { return m_pOwnerEntity; }
-	COMPONENT_TYPE GetComponentType() const { return m_eComponentType; }
-	void RemoveOwnerEntity() { m_pOwnerEntity = nullptr; }
+	Entity* GetOwnerEntity() const;
+	COMPONENT_TYPE GetComponentType() const;
+	void RemoveOwnerEntity();
 
 #pragma region Replica Manager Functions
 	//Entity Name

@@ -32,6 +32,7 @@
     <ClInclude Include="include\ServerCreatedObject.h" />
     <ClInclude Include="include\TestProject.h" />
     <ClInclude Include="include\TransformComponent.h" />
+    <ClInclude Include="include\TransformHistory.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Authenticator.cpp" />
@@ -56,6 +57,7 @@
     <ClCompile Include="src\ServerCreatedObject.cpp" />
     <ClCompile Include="src\TestProject.cpp" />
     <ClCompile Include="src\TransformComponent.cpp" />
+    <ClCompile Include="src\TransformHistory.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6A284C87-2398-4D96-B60B-CFB0922F695F}</ProjectGuid>

@@ -56,9 +56,11 @@ void PlayerControlComponent::Update(float a_fDeltaTime)
 	if (!pTransform) { return; }
 
 	//Update based on velocity
-	glm::vec3 v3CurrentPos = pTransform->GetEntityMatrixRow(POSTION_VECTOR);
-	glm::vec3 v3NewPos = v3CurrentPos + m_v3CurrentVelocity;
-	pTransform->SetEntityMatrixRow(POSTION_VECTOR, v3NewPos);
+	if (TestProject::isServer) {
+		glm::vec3 v3CurrentPos = pTransform->GetEntityMatrixRow(POSTION_VECTOR);
+		glm::vec3 v3NewPos = v3CurrentPos + m_v3CurrentVelocity;
+		pTransform->SetEntityMatrixRow(POSTION_VECTOR, v3NewPos);
+	}
 	
 }
 
@@ -149,8 +151,8 @@ RakNet::RM3SerializationResult PlayerControlComponent::Serialize(RakNet::Seriali
 	//Serialize Variables
 	m_variableDeltaSerializer.SerializeVariable(&serializationContext, m_v3CurrentVelocity);
 
-	//Return that we should always serialize
-	return RakNet::RM3SR_SERIALIZED_ALWAYS;
+	//Send only if the data has changed
+	return RakNet::RM3SR_BROADCAST_IDENTICALLY;
 }
 
 /// <summary>
@@ -165,6 +167,7 @@ void PlayerControlComponent::Deserialize(RakNet::DeserializeParameters* deserial
 	
 	//Deserialise the data
 	m_variableDeltaSerializer.BeginDeserialize(&deserializationContext, &deserializeParameters->serializationBitstream[0]);
+	
 	m_variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_v3CurrentVelocity);
 	
 	m_variableDeltaSerializer.EndDeserialize(&deserializationContext);

@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "Component.h"
 
+//RakNet Includes
+#include <NetworkIDManager.h>
+
 //Project Include
 #include "Entity.h"
 #include "ServerClientBase.h"
-
 
 Component::Component(Entity* a_pOwner) : m_pOwnerEntity(a_pOwner),
 											m_eComponentType(NONE)
@@ -29,6 +31,32 @@ Component::~Component()
 	ServerClientBase::GetNetworkReplicator()->BroadcastDestruction(this, RakNet::UNASSIGNED_SYSTEM_ADDRESS);
 }
 
+/// <summary>
+/// Get the entity that owns this componet
+/// </summary>
+/// <returns></returns>
+Entity* Component::GetOwnerEntity() const
+{
+	return m_pOwnerEntity;
+}
+
+/// <summary>
+/// Get the type of this component
+/// </summary>
+/// <returns></returns>
+COMPONENT_TYPE Component::GetComponentType() const
+{
+	return m_eComponentType;
+}
+
+/// <summary>
+/// Remove the owner entity from this component
+/// </summary>
+void Component::RemoveOwnerEntity()
+{
+	m_pOwnerEntity = nullptr;
+}
+
 
 RakNet::RM3SerializationResult Component::Serialize(RakNet::SerializeParameters* serializeParameters)
 {
@@ -44,9 +72,6 @@ RakNet::RM3SerializationResult Component::Serialize(RakNet::SerializeParameters*
 		&serializeParameters->outputBitstream[0]
 	);
 
-	//Serialize Variables
-	m_variableDeltaSerializer.SerializeVariable(&serializationContext, 0);
-	m_variableDeltaSerializer.SerializeVariable(&serializationContext, 0);
 
 	//Return that we should always serialize
 	return RakNet::RM3SR_SERIALIZED_ALWAYS;
@@ -56,12 +81,8 @@ void Component::Deserialize(RakNet::DeserializeParameters* deserializeParameters
 {
 	RakNet::VariableDeltaSerializer::DeserializationContext deserializationContext;
 
-
 	//Deserialise the data
 	m_variableDeltaSerializer.BeginDeserialize(&deserializationContext, &deserializeParameters->serializationBitstream[0]);
-	//m_variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_sObjName);
-	//m_variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_fHealth);
-
 	m_variableDeltaSerializer.EndDeserialize(&deserializationContext);
 }
 

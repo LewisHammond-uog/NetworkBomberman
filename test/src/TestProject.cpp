@@ -123,8 +123,7 @@ void TestProject::Update(float a_deltaTime)
 	}
 
 	#pragma endregion
-
-
+	
 	//todo remove
 	GameManager::GetInstance()->Update(a_deltaTime);
 	
@@ -153,6 +152,9 @@ void TestProject::Draw()
 
 	// get the view matrix from the world-space camera matrix
 	glm::mat4 viewMatrix = glm::inverse(m_cameraMatrix);
+
+	//todo remove
+	GameManager::GetInstance()->Draw();
 
 	// draw the gizmos from this frame
 	Gizmos::draw(viewMatrix, m_projectionMatrix);

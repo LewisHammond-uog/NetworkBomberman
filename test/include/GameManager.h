@@ -19,17 +19,18 @@ namespace RakNet
 class GameManager
 {
 public:
-
-
 	static GameManager* GetInstance();
 	
 	//Update/Draw Functions
 	void Update(float a_fDeltaTime);
+	void Draw();
+	
 	//Function to Create Player
 	static void CreatePlayers(int a_iPlayerCount);
 
 	//Function to an entity for safe deletion
 	void DeleteEntityAfterUpdate(Entity* a_pEntity);
+	void ProcessDeletions();
 	
 private:
 

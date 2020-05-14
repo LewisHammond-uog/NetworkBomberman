@@ -35,6 +35,10 @@ GameManager* GameManager::GetInstance()
 	return s_pInstance;
 }
 
+/// <summary>
+/// Update the game world
+/// </summary>
+/// <param name="a_fDeltaTime"></param>
 void GameManager::Update(const float a_fDeltaTime)
 {
 	
@@ -45,20 +49,25 @@ void GameManager::Update(const float a_fDeltaTime)
 		Entity* pEntity = xUpdateIter->second;
 		if (pEntity) {
 			pEntity->Update(a_fDeltaTime);
-			pEntity->Draw(nullptr);
 		}
 	}
 
-	//Delete all entities that should be deleted after update
-	std::vector<Entity*>::const_iterator xDelIter;
-	for(xDelIter = m_vDeleteEntityQueue.begin(); xDelIter != m_vDeleteEntityQueue.end();)
+	//Frame is over, delete objects that need to be deleted
+	ProcessDeletions();
+}
+
+/// <summary>
+/// Draw the Game World
+/// </summary>
+void GameManager::Draw()
+{
+	//Get a list of and then draw all of the entities
+	std::map<const unsigned int, Entity*>::const_iterator xUpdateIter;
+	for (xUpdateIter = Entity::GetEntityMap().begin(); xUpdateIter != Entity::GetEntityMap().end(); ++xUpdateIter)
 	{
-		Entity* pEntity = *xDelIter;
-		if(pEntity)
-		{
-			//Remove from vector and delete
-			xDelIter = m_vDeleteEntityQueue.erase(xDelIter);
-			delete pEntity;
+		Entity* pEntity = xUpdateIter->second;
+		if (pEntity) {
+			pEntity->Draw(nullptr);
 		}
 	}
 }
@@ -71,6 +80,25 @@ void GameManager::DeleteEntityAfterUpdate(Entity* a_pEntity)
 {
 	//Add Entity to our delete queue
 	m_vDeleteEntityQueue.push_back(a_pEntity);
+}
+
+/// <summary>
+/// Process the deletions of entities
+/// </summary>
+void GameManager::ProcessDeletions()
+{
+	//Delete all entities that should be deleted after update
+	std::vector<Entity*>::const_iterator xDelIter;
+	for (xDelIter = m_vDeleteEntityQueue.begin(); xDelIter != m_vDeleteEntityQueue.end();)
+	{
+		Entity* pEntity = *xDelIter;
+		if (pEntity)
+		{
+			//Remove from vector and delete
+			xDelIter = m_vDeleteEntityQueue.erase(xDelIter);
+			delete pEntity;
+		}
+	}
 }
 
 

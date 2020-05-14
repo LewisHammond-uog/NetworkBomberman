@@ -60,6 +60,9 @@ NetworkReplicator* ServerClientBase::GetNetworkReplicator()
 
 		//Set the network ID Manager of the Network Replicator
 		s_pReplicaManager->SetNetworkIDManager(GetNetworkIDManager());
+
+		//Set the default update time
+		s_pReplicaManager->SetAutoSerializeInterval(DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES);
 	}
 
 	//Return the Network Replicator, either the one that we have just created

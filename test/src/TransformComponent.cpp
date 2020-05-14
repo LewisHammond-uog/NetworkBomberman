@@ -1,6 +1,15 @@
 #include "stdafx.h"
 #include "TransformComponent.h"
 
+//Raknet Includes
+#include "GetTime.h"
+
+//Project Includes
+#include "ConsoleLog.h"
+#include "ServerClientBase.h"
+#include "TestProject.h"
+#include "TransformHistory.h"
+
 //Typedefs
 typedef Component PARENT;
 
@@ -9,10 +18,34 @@ TransformComponent::TransformComponent(Entity* a_pOwner) :
 	m_m4EntityMatrix(glm::mat4(1.0f))
 {
 	m_eComponentType = TRANSFORM;
+
+	//Intialise our Transform History
+	m_pTransformHistory = new TransformHistory();
+	m_pTransformHistory->Init(m_fMaxWriteInterval, m_fMaxHistoryTime);
 }
 
 TransformComponent::~TransformComponent()
 {
+	//Destroy our history
+	delete m_pTransformHistory;
+}
+
+/// <summary>
+/// Update the transform
+/// </summary>
+/// <param name="a_fDeltaTime"></param>
+void TransformComponent::Update(float a_fDeltaTime)
+{
+	//Read data from the transform history to interpolate between this and the 
+	if(!TestProject::isServer /*Is Client*/)
+	{
+		//Calculate our when time to be the current time minus DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES
+		//so the we get the position very slightly in the last, without this we wouldn't have a node to interpolate to,
+		//and wouldn't know where to go
+		//Matrix is passed by reference so it is updated by this function call
+		RakNet::TimeMS interpolateTime = RakNet::GetTimeMS() - DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES;
+		m_pTransformHistory->Read(m_m4EntityMatrix, interpolateTime, RakNet::GetTimeMS());
+	}
 }
 
 /// <summary>
@@ -44,6 +77,47 @@ glm::vec3 TransformComponent::GetCurrentPosition()
 {
 	return GetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR);
 }
+
+/// <summary>
+/// Serialise the Data
+/// </summary>
+/// <param name="serializeParameters"></param>
+/// <returns></returns>
+RakNet::RM3SerializationResult TransformComponent::Serialize(RakNet::SerializeParameters* serializeParameters)
+{
+	RakNet::VariableDeltaSerializer::SerializationContext serializationContext;
+
+	//Write reliability type
+	serializeParameters->pro[0].reliability = PacketReliability::RELIABLE;
+
+	//Begin Serialization of the data that we are going to send
+	m_variableDeltaSerializer.BeginIdenticalSerialize(
+		&serializationContext,
+		serializeParameters->whenLastSerialized == 0,
+		&serializeParameters->outputBitstream[0]
+	);
+
+	m_variableDeltaSerializer.SerializeVariable(&serializationContext, m_m4EntityMatrix);
+
+	//Send only if the data has changed
+	return RakNet::RM3SR_SERIALIZED_ALWAYS;
+}
+
+void TransformComponent::Deserialize(RakNet::DeserializeParameters* deserializeParameters)
+{
+	RakNet::VariableDeltaSerializer::DeserializationContext deserializationContext;
+
+	//Deserialise the data
+	m_variableDeltaSerializer.BeginDeserialize(&deserializationContext, &deserializeParameters->serializationBitstream[0]);
+
+	//Get the received matrix from the server and add to our transform history for interplotion
+	glm::mat4 m4ServerReceivedTransform = m_m4EntityMatrix;
+	m_variableDeltaSerializer.DeserializeVariable(&deserializationContext, m4ServerReceivedTransform);
+	m_pTransformHistory->Write(m4ServerReceivedTransform, RakNet::GetTimeMS());
+
+	m_variableDeltaSerializer.EndDeserialize(&deserializationContext);
+}
+
 
 /// <summary>
 /// Orthogonalize the matrix so that the forward, right and up vectors are facing in their respective

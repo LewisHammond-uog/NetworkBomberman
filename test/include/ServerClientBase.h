@@ -13,6 +13,9 @@
 #define SERVER_PORT 6000
 #define MAX_CLIENTS 8
 
+// How often the server sends position updates to the client (in milliseconds)
+static const int DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES = 10;
+
 //Custom Message Types for custom data that we are sending
 //over hte network, extend from RakNets Messages (i.e ID_CONNECTION_REQUEST_ACCEPTED)
 typedef enum CSNetMessages {
@@ -33,8 +36,6 @@ typedef enum CSGameMessages {
 	CLIENT_PLAYER_CREATE_BOMB,
 
 	SERVER_GAME_STARTING,
-	SERVER_VERIFIY_PLAYER_POS,
-	SERVER_OTHER_PLAYER_POS
 
 
 } CSGameMessages;

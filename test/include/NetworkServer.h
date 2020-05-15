@@ -8,6 +8,8 @@
 #include <NetworkIDManager.h>
 
 //Project Includes
+#include <PacketPriority.h>
+
 #include "ServerClientBase.h"
 #include "Authenticator.h"
 #include "NetworkReplicator.h"
@@ -16,18 +18,17 @@
 
 //Struct to store info about a connected client
 struct ConnectedClientInfo {
-	RakNet::SystemAddress m_clientAddress;
-	int m_playerId;
+	RakNet::RakNetGUID m_clientGUID; //GUID is used as it is unique to a system (not a IP address as it may not be unique (i.e LAN connections))
+	unsigned int m_playerId;
 };
 
-class NetworkServer : public ServerClientBase
+class NetworkServer final : public ServerClientBase
 {
 public:
 	//Server Connection States
 	typedef enum ServerGameStates {
 		SERVER_CLIENTS_CONNECTING,
 		SERVER_PROCESSING_EVENTS,
-		SERVER_HANDLE_CLIENT_DISCONNECT,
 
 		SERVER_MAX_CONNECTION_STATES
 	} ServerConnectionState;
@@ -38,8 +39,8 @@ public:
 	virtual ~NetworkServer();
 
 	//Update and Init
-	void Init();
-	void Update();
+	void Init() override;
+	void Update() override;
 
 private:
 	//Functions for pre game connection of clients 
@@ -50,7 +51,7 @@ private:
 	//Sending Messages Events
 	void SendMessageToClient(int a_iClientID, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability);
 	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability) const;
-	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability);
+	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability) const;
 	void SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability);
 
 	//Server Authenticator - used to verify usernames/passwords

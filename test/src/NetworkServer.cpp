@@ -135,7 +135,7 @@ void NetworkServer::DoPreGameServerEvents()
 
 					//Add to list of connected clients
 					ConnectedClientInfo newClientInfo{
-						packet->systemAddress, //Store Sys address
+						packet->guid, //Store Sys identifier
 						++m_iConnectedClients //Store Client ID
 					};
 					m_vConnectedClients.push_back(newClientInfo);
@@ -163,7 +163,7 @@ void NetworkServer::DoPreGameServerEvents()
 
 					//Add to list of connected clients
 					ConnectedClientInfo newClientInfo{
-						packet->systemAddress, //Store Sys address
+						packet->guid, //Store Sys addres
 						++m_iConnectedClients //Store Client ID
 					};
 					m_vConnectedClients.push_back(newClientInfo);
@@ -208,8 +208,8 @@ void NetworkServer::DoPreGameServerEvents()
 			default:
 			{
 				//Log out unknown data and it's message ID
-				char errorBuffer[128];
-				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Get Connections Stage ID: %i", packet->data[0]);
+				char errorBuffer[sizeof(unsigned char*)];
+				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Get Connections Stage. ID: %i", packet->data[0]);
 				ConsoleLog::LogConsoleMessage(errorBuffer);
 				break;
 			}
@@ -245,8 +245,8 @@ void NetworkServer::DoGamePlayingServerEvents() const
 		default:
 			{
 				//Log out unknown data and it's message ID
-				char errorBuffer[128];
-				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Play Stage ID: %i", packet->data[0]);
+				char errorBuffer[sizeof(unsigned char*)];
+				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Play Stage. ID: %i", packet->data[0]);
 				ConsoleLog::LogConsoleMessage(errorBuffer);
 			}
 		}
@@ -263,8 +263,9 @@ void NetworkServer::SendMessageToClient(int a_iClientID, RakNet::BitStream& a_da
 	//Loop through the vector and see if we have a client with the given player
 	//id, then get it's address and call the send message function
 	for (unsigned int i = 0; i < m_vConnectedClients.size(); ++i) {
-		if (m_vConnectedClients[i].m_playerId == a_iClientID) {
-			const RakNet::SystemAddress clientAddress = m_vConnectedClients[i].m_clientAddress;
+		ConnectedClientInfo* currentClientInfo = &m_vConnectedClients[i];
+		if (currentClientInfo->m_playerId == a_iClientID) {
+			const RakNet::SystemAddress clientAddress = m_pRakPeer->GetSystemAddressFromGuid(currentClientInfo->m_clientGUID);
 			SendMessageToClient(clientAddress, a_data, a_priority, a_reliability);
 		}
 
@@ -293,7 +294,7 @@ void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddr
 /// <param name="a_eMessage">Message to send</param>
 /// <param name="a_priority">Message priority</param>
 /// <param name="a_reliability">Message reliability</param>
-void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddress, const RakNet::MessageID a_eMessage, const PacketPriority a_priority, const PacketReliability a_reliability)
+void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddress, const RakNet::MessageID a_eMessage, const PacketPriority a_priority, const PacketReliability a_reliability) const
 {
 	//Create a bit stream and write
 	//the message ID
@@ -316,7 +317,7 @@ void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, const Pac
 	for (unsigned int i = 0; i < m_vConnectedClients.size(); ++i) {
 		
 		//Get the server address of the client
-		const RakNet::SystemAddress sClientAddress = m_vConnectedClients[i].m_clientAddress;
+		const RakNet::SystemAddress sClientAddress = m_pRakPeer->GetSystemAddressFromGuid(m_vConnectedClients[i].m_clientGUID);
 
 		//Call Send Message Function on the selected client
 		SendMessageToClient(sClientAddress, a_data, a_priority, a_reliability);

@@ -49,19 +49,6 @@ void PlayerControlComponent::Update(float a_fDeltaTime)
 	{
 		ClientUpdatePlayer(a_fDeltaTime);
 	}
-
-	//Get our owners transform
-	if (!m_pOwnerEntity) { return; }
-	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
-	if (!pTransform) { return; }
-
-	//Update based on velocity
-	if (TestProject::isServer) {
-		glm::vec3 v3CurrentPos = pTransform->GetEntityMatrixRow(POSTION_VECTOR);
-		glm::vec3 v3NewPos = v3CurrentPos + m_v3CurrentVelocity;
-		pTransform->SetEntityMatrixRow(POSTION_VECTOR, v3NewPos);
-	}
-	
 }
 
 void PlayerControlComponent::Draw(Shader* a_pShader)
@@ -82,6 +69,19 @@ void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 		//Take our inputs and mutiply then by the movement speed and delta time
 		//to get our velocity
 		m_v3CurrentVelocity = glm::vec3(v2ClientInput.y, 0.f, v2ClientInput.x) * mc_fMovementSpeed * a_fDeltaTime;
+	}
+
+
+	//Get our owners transform
+	if (!m_pOwnerEntity) { return; }
+	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
+	if (!pTransform) { return; }
+
+	//Update based on velocity
+	if (TestProject::isServer) {
+		glm::vec3 v3CurrentPos = pTransform->GetEntityMatrixRow(POSTION_VECTOR);
+		glm::vec3 v3NewPos = v3CurrentPos + m_v3CurrentVelocity;
+		pTransform->SetEntityMatrixRow(POSTION_VECTOR, v3NewPos);
 	}
 }
 

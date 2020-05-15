@@ -48,25 +48,22 @@ Entity::~Entity()
 void Entity::Update(float a_fDeltaTime)
 {
 	//Loop through all of the components and update
-	std::vector<Component*>::iterator xIter;
-	for (xIter = m_apComponentList.begin(); xIter < m_apComponentList.end(); ++xIter)
+	for (int i = 0; i < m_apComponentList.size(); ++i)
 	{
-		Component* pComponent = *xIter;
+		Component* pComponent = m_apComponentList[i];
 		if (pComponent) {
 			pComponent->Update(a_fDeltaTime);
 		}
 	}
-	
 }
 
 ///Draw all elements of this entity
 void Entity::Draw(Shader* a_pShader)
 {
 	//Loop through all of the components and draw
-	std::vector<Component*>::const_iterator xIter;
-	for (xIter = m_apComponentList.begin(); xIter < m_apComponentList.end(); ++xIter)
+	for (int i = 0; i < m_apComponentList.size(); ++i)
 	{
-		Component* pComponent = *xIter;
+		Component* pComponent = m_apComponentList[i];
 		if (pComponent) {
 			pComponent->Draw(a_pShader);
 		}

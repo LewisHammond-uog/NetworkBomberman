@@ -12,7 +12,7 @@
 class Entity;
 class Shader;
 
-enum COMPONENT_TYPE {
+enum class COMPONENT_TYPE {
 	NONE,
 	TRANSFORM,
 	MODEL,

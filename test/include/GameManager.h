@@ -27,6 +27,7 @@ public:
 	
 	//Function to Create Player
 	static void CreatePlayers(int a_iPlayerCount);
+	static void CreatePlayer();
 
 	//Function to an entity for safe deletion
 	void DeleteEntityAfterUpdate(Entity* a_pEntity);

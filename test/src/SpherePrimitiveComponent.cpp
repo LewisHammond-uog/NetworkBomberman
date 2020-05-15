@@ -14,7 +14,7 @@ SpherePrimitiveComponent::SpherePrimitiveComponent(Entity* a_pOwner, const float
 	m_fSphereRadius(a_fSphereRadius)
 {
 	//Set our Component Type
-	m_eComponentType = PRIMITIVE_SPHERE;
+	m_eComponentType = COMPONENT_TYPE::PRIMITIVE_SPHERE;
 	//Set our Primitive type
 	m_ePrimitiveType = PrimitiveTypes::SPHERE;
 }
@@ -35,7 +35,7 @@ void SpherePrimitiveComponent::Update(float a_fDeltaTime)
 void SpherePrimitiveComponent::Draw(Shader* a_pShader)
 {
 	//Get the transform component - so that we can create the box at our position
-	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(TRANSFORM));
+	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
 	if (!pTransform) {
 		return;
 	}

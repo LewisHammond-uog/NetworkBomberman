@@ -74,8 +74,7 @@ void NetworkClient::InitImguiWindow()
 /// An update loop to get the client connected to the server
 /// </summary>
 void NetworkClient::DoClientConnectionEvents()
-{
-
+{	
 	//Setup window to display login details
 	static bool showConnectionWindow = true;
 	InitImguiWindow();

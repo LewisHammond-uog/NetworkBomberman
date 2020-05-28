@@ -16,7 +16,7 @@
 struct TransformHistoryItem
 {
 	TransformHistoryItem() = default;
-	TransformHistoryItem(RakNet::TimeMS a_fTime, glm::mat4 a_m4Transform) : m_timeReceived(a_fTime), m_m4Transform(a_m4Transform) {};
+	TransformHistoryItem(const RakNet::TimeMS a_fTime, const glm::mat4 a_m4Transform) : m_timeReceived(a_fTime), m_m4Transform(a_m4Transform) {};
 	
 	RakNet::TimeMS m_timeReceived;
 	glm::mat4 m_m4Transform;
@@ -32,7 +32,7 @@ class TransformHistory
 {
 public:
 	//Enum for which method we used for read interpolation
-	enum ReadResult
+	enum class ReadResult
 	{
 		READ_OLDEST, //No data yet to interplate so chose the 1st queue item
 		VALUES_UNCHANGED, //Values were not changed
@@ -47,12 +47,9 @@ public:
 
 	//Read/Write Functions
 	void Write(glm::mat4 a_m4TransformMatrix, RakNet::TimeMS a_fCurTimeMs);
-	ReadResult Read(glm::mat4& a_pm4TransformMatrix, RakNet::TimeMS a_when, RakNet::TimeMS a_curTime);
+	ReadResult Read(glm::mat4& a_pm4TransformMatrix, RakNet::TimeMS a_when, RakNet::TimeMS a_curTime) const;
 
 	void Clear();
-
-
-
 private:
 	DataStructures::Queue<TransformHistoryItem> m_qTransformHistory;
 	unsigned int m_iMaxHistoryLength; //Maximum number of allowed histroy items

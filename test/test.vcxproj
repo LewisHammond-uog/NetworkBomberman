@@ -48,6 +48,7 @@
     <ClCompile Include="src\NetworkReplicator.cpp" />
     <ClCompile Include="src\NetworkServer.cpp" />
     <ClCompile Include="src\PlayerControlComponent.cpp" />
+    <ClCompile Include="src\PlayerDataComponent.cpp" />
     <ClCompile Include="src\PrimitiveComponent.cpp" />
     <ClCompile Include="src\ServerClientBase.cpp" />
     <ClCompile Include="src\SpherePrimitiveComponent.cpp" />

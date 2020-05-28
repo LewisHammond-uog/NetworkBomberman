@@ -19,7 +19,6 @@
 //Struct to store info about a connected client
 struct ConnectedClientInfo {
 	RakNet::RakNetGUID m_clientGUID; //GUID is used as it is unique to a system (not a IP address as it may not be unique (i.e LAN connections))
-	unsigned int m_playerId;
 };
 
 class NetworkServer final : public ServerClientBase

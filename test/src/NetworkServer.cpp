@@ -69,7 +69,6 @@ void NetworkServer::Update()
 /// </summary>
 void NetworkServer::DoPreGameServerEvents()
 {
-
 	RakNet::Packet* packet = m_pRakPeer->Receive();
 
 	while (packet != nullptr) {
@@ -136,7 +135,6 @@ void NetworkServer::DoPreGameServerEvents()
 					//Add to list of connected clients
 					ConnectedClientInfo newClientInfo{
 						packet->guid, //Store Sys identifier
-						++m_iConnectedClients //Store Client ID
 					};
 					m_vConnectedClients.push_back(newClientInfo);
 					
@@ -164,7 +162,6 @@ void NetworkServer::DoPreGameServerEvents()
 					//Add to list of connected clients
 					ConnectedClientInfo newClientInfo{
 						packet->guid, //Store Sys addres
-						++m_iConnectedClients //Store Client ID
 					};
 					m_vConnectedClients.push_back(newClientInfo);
 
@@ -254,21 +251,6 @@ void NetworkServer::DoGamePlayingServerEvents() const
 		//Deallocate Packet and get the next packet
 		m_pRakPeer->DeallocatePacket(packet);
 		packet = m_pRakPeer->Receive();
-	}
-}
-
-
-void NetworkServer::SendMessageToClient(int a_iClientID, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability)
-{
-	//Loop through the vector and see if we have a client with the given player
-	//id, then get it's address and call the send message function
-	for (unsigned int i = 0; i < m_vConnectedClients.size(); ++i) {
-		ConnectedClientInfo* currentClientInfo = &m_vConnectedClients[i];
-		if (currentClientInfo->m_playerId == a_iClientID) {
-			const RakNet::SystemAddress clientAddress = m_pRakPeer->GetSystemAddressFromGuid(currentClientInfo->m_clientGUID);
-			SendMessageToClient(clientAddress, a_data, a_priority, a_reliability);
-		}
-
 	}
 }
 

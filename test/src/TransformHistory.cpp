@@ -12,7 +12,7 @@ TransformHistory::TransformHistory() :
 /// </summary>
 /// <param name="a_fMaxWriteInterval">Min time between new data points being added</param>
 /// <param name="a_fMaxHistoryTime">How long to store data points for</param>
-void TransformHistory::Init(RakNet::TimeMS a_fMaxWriteInterval, RakNet::TimeMS a_fMaxHistoryTime)
+void TransformHistory::Init(const RakNet::TimeMS a_fMaxWriteInterval, const RakNet::TimeMS a_fMaxHistoryTime)
 {
 	//Set variables
 	m_fWriteInterval = a_fMaxWriteInterval;
@@ -28,7 +28,7 @@ void TransformHistory::Init(RakNet::TimeMS a_fMaxWriteInterval, RakNet::TimeMS a
 /// </summary>
 /// <param name="a_m4TransformMatrix"></param>
 /// <param name="a_fCurTimeMs"></param>
-void TransformHistory::Write(glm::mat4 a_m4TransformMatrix, RakNet::TimeMS a_fCurTimeMs)
+void TransformHistory::Write(const glm::mat4 a_m4TransformMatrix, const RakNet::TimeMS a_fCurTimeMs)
 {
 	//If this is our first data just push it ignoring the inverval
 	if(m_qTransformHistory.Size() == 0)
@@ -60,7 +60,7 @@ void TransformHistory::Write(glm::mat4 a_m4TransformMatrix, RakNet::TimeMS a_fCu
 /// <param name="a_pm4TransformMatrix">[INPUT] the current position of the object [OUTPUT] the position of the out point at *WHEN*</param>
 /// <param name="a_when">Time we want the transform for</param>
 /// <param name="a_curTime">Current Network Time</param>
-TransformHistory::ReadResult TransformHistory::Read(glm::mat4& a_pm4TransformMatrix, RakNet::TimeMS a_when, RakNet::TimeMS a_curTime)
+TransformHistory::ReadResult TransformHistory::Read(glm::mat4& a_pm4TransformMatrix, const RakNet::TimeMS a_when, const RakNet::TimeMS a_curTime) const
 {
 	const int historySize = m_qTransformHistory.Size();
 
@@ -110,7 +110,7 @@ TransformHistory::ReadResult TransformHistory::Read(glm::mat4& a_pm4TransformMat
 	//No value found just return the oldest item in the queue
 	const TransformHistoryItem& oldestItem = m_qTransformHistory.Peek();
 	a_pm4TransformMatrix = oldestItem.m_m4Transform;
-	return READ_OLDEST;
+	return ReadResult::READ_OLDEST;
 }
 
 /// <summary>

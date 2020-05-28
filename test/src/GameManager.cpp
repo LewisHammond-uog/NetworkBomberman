@@ -11,6 +11,7 @@
 //Components
 #include "BombSpawnerComponent.h"
 #include "PlayerControlComponent.h"
+#include "PlayerDataComponent.h"
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
 
@@ -103,40 +104,53 @@ void GameManager::ProcessDeletions()
 
 
 /// <summary>
-/// Creates a given number of players
+/// Creates players for all of the clients connected
 /// </summary>
-/// <param name="a_iPlayerCount">Given Number of Players</param>
-void GameManager::CreatePlayers(const int a_iPlayerCount)
+/// <param name="a_vConnectedClients">A list of clients that are connected to the server</param>
+void GameManager::CreatePlayersForAllClients(const std::vector<ConnectedClientInfo>& a_vConnectedClients)
 {
-	//Loop through the required number of players
-	for(int i = 0; i < a_iPlayerCount; ++i)
+	//Loop through all of the connected clients and create a player for them
+	const int iClientCount = a_vConnectedClients.size();
+	for(int i = 0; i < iClientCount; ++i)
 	{
-		//Create Player Entities with the required components
-		Entity* pPlayerEntity = new Entity(); //This is added to a static entity list when created so we don't need to worry about storing it here
-		TransformComponent* pPlayerTransform = new TransformComponent(pPlayerEntity); //This is the same for components
-		SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pPlayerEntity);
-		PlayerControlComponent* pPlayerControl = new PlayerControlComponent(pPlayerEntity);
-		BombSpawnerComponent* pBombSpawner = new BombSpawnerComponent(pPlayerEntity);
-			
-		
-		//Add these components to the player entity
-		pPlayerEntity->AddComponent(pPlayerTransform);
-		pPlayerEntity->AddComponent(pSphere);
-		pPlayerEntity->AddComponent(pPlayerControl);
-		pPlayerEntity->AddComponent(pBombSpawner);
-
-		//Send the entity and components to the replica manager, it is important
-		//that we send the player entity first as components rely on having
-		//an owner entity
-		NetworkReplicator* pNetworkReplicator = ServerClientBase::GetNetworkReplicator();
-		if(pNetworkReplicator == nullptr)
-		{
-			return;
-		}
-		pNetworkReplicator->Reference(pPlayerEntity);
-		pNetworkReplicator->Reference(pPlayerTransform);
-		pNetworkReplicator->Reference(pSphere);
-		pNetworkReplicator->Reference(pPlayerControl);
-		pNetworkReplicator->Reference(pBombSpawner);
+		//Create player with GUID of the connected client
+		CreatePlayer(a_vConnectedClients[i].m_clientGUID);
 	}
+}
+
+/// <summary>
+/// Creates a player entity
+/// </summary>
+/// <param name="a_ownerGUID">System that owns the player we are creating</param>
+void GameManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID)
+{
+	//Create Player Entities with the required components
+	Entity* pPlayerEntity = new Entity(); //This is added to a static entity list when created so we don't need to worry about storing it here
+	TransformComponent* pPlayerTransform = new TransformComponent(pPlayerEntity); //This is the same for components
+	SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pPlayerEntity);
+	PlayerControlComponent* pPlayerControl = new PlayerControlComponent(pPlayerEntity);
+	BombSpawnerComponent* pBombSpawner = new BombSpawnerComponent(pPlayerEntity);
+	PlayerDataComponent* pPlayerData = new PlayerDataComponent(pPlayerEntity, a_ownerGUID);
+
+	//Add these components to the player entity
+	pPlayerEntity->AddComponent(pPlayerTransform);
+	pPlayerEntity->AddComponent(pSphere);
+	pPlayerEntity->AddComponent(pPlayerControl);
+	pPlayerEntity->AddComponent(pBombSpawner);
+	pPlayerEntity->AddComponent(pPlayerData);
+
+	//Send the entity and components to the replica manager, it is important
+	//that we send the player entity first as components rely on having
+	//an owner entity
+	NetworkReplicator* pNetworkReplicator = ServerClientBase::GetNetworkReplicator();
+	if (pNetworkReplicator == nullptr)
+	{
+		return;
+	}
+	pNetworkReplicator->Reference(pPlayerEntity);
+	pNetworkReplicator->Reference(pPlayerTransform);
+	pNetworkReplicator->Reference(pSphere);
+	pNetworkReplicator->Reference(pPlayerControl);
+	pNetworkReplicator->Reference(pBombSpawner);
+	pNetworkReplicator->Reference(pPlayerData);
 }

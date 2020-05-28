@@ -15,14 +15,14 @@ class NetworkClient : public ServerClientBase
 public:
 
 	//Client Running State
-	typedef enum ClientLocalState {
+	typedef enum class ClientLocalState {
 		NOT_CONNECTED,
 		PRE_GAME,
 		GAME_PLAYING
 	} ClientLocalState;
 
 	//Client Connection States
-	typedef enum ClientConnectionState {
+	typedef enum class ClientConnectionState {
 		//Setup Connection to the server
 		CLIENT_START_CONNECTION,
 		CLIENT_WAITING_FOR_CONNECTION,

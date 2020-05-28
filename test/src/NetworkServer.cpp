@@ -195,7 +195,7 @@ void NetworkServer::DoPreGameServerEvents()
 
 					//todo move?
 					//Create Players
-					GameManager::CreatePlayers(1);
+					GameManager::CreatePlayersForAllClients(m_vConnectedClients);
 					
 					ConsoleLog::LogConsoleMessage("SERVER :: GAME STARTING");
 				}

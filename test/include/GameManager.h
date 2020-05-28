@@ -4,6 +4,10 @@
 //C++ Includes
 #include <queue>
 
+//RakNet Includes
+#include "NetworkServer.h"
+#include "RakNetTypes.h"
+
 //Forward Declares
 class NetworkReplicator;
 class Entity;
@@ -26,8 +30,8 @@ public:
 	void Draw();
 	
 	//Function to Create Player
-	static void CreatePlayers(int a_iPlayerCount);
-	static void CreatePlayer();
+	static void CreatePlayersForAllClients(const std::vector<ConnectedClientInfo>& a_vConnectedClients);
+	static void CreatePlayer(RakNet::RakNetGUID a_ownerGUID);
 
 	//Function to an entity for safe deletion
 	void DeleteEntityAfterUpdate(Entity* a_pEntity);
@@ -44,7 +48,6 @@ private:
 	
 	//Instance of this sigleton
 	static GameManager* s_pInstance;
-
 };
 
 #endif //__GAME_MANAGER_H__

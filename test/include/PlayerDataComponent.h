@@ -20,6 +20,11 @@ public:
 
 	RakNet::RakNetGUID GetPlayerID() const;
 
+#pragma region RakNet Functions
+	void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection) override;
+	bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection) override;
+#pragma  endregion 
+
 private:
 	RakNet::RakNetGUID m_playerID; //Player ID of this component, uses RakNetGUID
 };

@@ -10,7 +10,7 @@ namespace RakNet {
 	class Connection_RM3;
 }
 
-enum MATRIX_ROW 
+enum class MATRIX_ROW 
 {
 	RIGHT_VECTOR,
 	UP_VECTOR,
@@ -43,12 +43,14 @@ public:
 	const RakNet::TimeMS m_fMaxHistoryTime = 3000.f; //Max time to keep the transform history for
 	TransformHistory* m_pTransformHistory;
 
+#pragma region RakNet Functions
 	//RakNet Functions
 	RakNet::RakString GetName(void) const override { return RakNet::RakString("TransformComponent"); }
 	RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters* serializeParameters) override;
 	void Deserialize(RakNet::DeserializeParameters* deserializeParameters) override;
 	void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection) override;
 	bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection) override;
+#pragma endregion
 
 private:
 	glm::mat4 m_m4EntityMatrix;

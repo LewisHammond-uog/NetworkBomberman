@@ -43,7 +43,7 @@ void TransformComponent::Update(float a_fDeltaTime)
 		//so the we get the position very slightly in the last, without this we wouldn't have a node to interpolate to,
 		//and wouldn't know where to go
 		//Matrix is passed by reference so it is updated by this function call
-		RakNet::TimeMS interpolateTime = RakNet::GetTimeMS() - DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES;
+		const RakNet::TimeMS interpolateTime = RakNet::GetTimeMS() - DEFAULT_SERVER_MILLISECONDS_BETWEEN_UPDATES;
 		m_pTransformHistory->Read(m_m4EntityMatrix, interpolateTime, RakNet::GetTimeMS());
 	}
 }
@@ -55,8 +55,8 @@ void TransformComponent::Update(float a_fDeltaTime)
 /// <param name="a_v3Vec">Vector 3 to fill row with</param>
 void TransformComponent::SetEntityMatrixRow(MATRIX_ROW a_eRow, glm::vec3 a_v3Vec)
 {
-	float finalVec4Value = a_eRow == POSTION_VECTOR ? 1.f : 0.0f;
-	m_m4EntityMatrix[a_eRow] = glm::vec4(a_v3Vec, finalVec4Value);
+	float finalVec4Value = a_eRow == MATRIX_ROW::POSTION_VECTOR ? 1.f : 0.0f;
+	m_m4EntityMatrix[(int)a_eRow] = glm::vec4(a_v3Vec, finalVec4Value);
 }
 
 /// <summary>
@@ -66,7 +66,7 @@ void TransformComponent::SetEntityMatrixRow(MATRIX_ROW a_eRow, glm::vec3 a_v3Vec
 /// <returns>Matrix Row as Vector 3</returns>
 glm::vec3 TransformComponent::GetEntityMatrixRow(const MATRIX_ROW a_eRow)
 {
-	return m_m4EntityMatrix[a_eRow];
+	return m_m4EntityMatrix[(int)a_eRow];
 }
 
 ///<summary>
@@ -158,9 +158,6 @@ void TransformComponent::Orthogonalize()
 void TransformComponent::SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection)
 
 {
-	// variableDeltaSerializer is a helper class that tracks what variables were sent to what remote system
-	// This call adds another remote system to track
-	m_variableDeltaSerializer.AddRemoteSystemVariableHistory(destinationConnection->GetRakNetGUID());
 
 	//Call base function
 	Component::SerializeConstruction(constructionBitstream, destinationConnection);

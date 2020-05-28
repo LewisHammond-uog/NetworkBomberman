@@ -79,9 +79,9 @@ void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 
 	//Update based on velocity
 	if (TestProject::isServer) {
-		glm::vec3 v3CurrentPos = pTransform->GetEntityMatrixRow(POSTION_VECTOR);
+		glm::vec3 v3CurrentPos = pTransform->GetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR);
 		glm::vec3 v3NewPos = v3CurrentPos + m_v3CurrentVelocity;
-		pTransform->SetEntityMatrixRow(POSTION_VECTOR, v3NewPos);
+		pTransform->SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, v3NewPos);
 	}
 }
 

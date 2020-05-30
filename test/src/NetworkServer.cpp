@@ -12,6 +12,8 @@
 #include "GameManager.h"
 #include <NetworkBlackboard.h>
 
+constexpr int ERROR_BUFFER_SIZE = 128;
+
 NetworkServer::NetworkServer()
 {
 	//Null out ptrs and network values
@@ -61,6 +63,10 @@ void NetworkServer::Update()
 	{
 		DoGamePlayingServerEvents();
 	}
+}
+
+void NetworkServer::DeInit()
+{
 }
 
 /// <summary>
@@ -205,7 +211,7 @@ void NetworkServer::DoPreGameServerEvents()
 			default:
 			{
 				//Log out unknown data and it's message ID
-				char errorBuffer[sizeof(unsigned char*)];
+				char errorBuffer[ERROR_BUFFER_SIZE];
 				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Get Connections Stage. ID: %i", packet->data[0]);
 				ConsoleLog::LogConsoleMessage(errorBuffer);
 				break;
@@ -228,6 +234,7 @@ void NetworkServer::DoGamePlayingServerEvents() const
 	while (packet != nullptr) {
 		switch(packet->data[0])
 		{
+			//Creation Requests
 		case(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB):
 		case(CSGameMessages::CLIENT_PLAYER_INPUT_DATA):
 			{
@@ -242,7 +249,7 @@ void NetworkServer::DoGamePlayingServerEvents() const
 		default:
 			{
 				//Log out unknown data and it's message ID
-				char errorBuffer[sizeof(unsigned char*)];
+				char errorBuffer[ERROR_BUFFER_SIZE];
 				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Play Stage. ID: %i", packet->data[0]);
 				ConsoleLog::LogConsoleMessage(errorBuffer);
 			}

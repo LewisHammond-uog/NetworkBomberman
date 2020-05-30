@@ -40,6 +40,7 @@ public:
 	//Update and Init
 	void Init() override;
 	void Update() override;
+	void DeInit() override;
 
 private:
 	//Functions for pre game connection of clients 
@@ -67,7 +68,7 @@ private:
 	std::vector<ConnectedClientInfo> m_vConnectedClients;
 
 	//Number of players required to start the game
-	const int requiredPlayerCount = 2;
+	const int requiredPlayerCount = 1;
 };
 
 #endif // !__NETWORK_SERVER_H__

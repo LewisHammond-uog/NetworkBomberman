@@ -51,6 +51,7 @@ public:
 	//an init and update funciton
 	virtual void Init() = 0;
 	virtual void Update() = 0;
+	virtual void DeInit() = 0;
 
 	static RakNet::NetworkIDManager* GetNetworkIDManager();
 	static NetworkReplicator* GetNetworkReplicator();

@@ -33,6 +33,10 @@ public:
 	static void CreatePlayersForAllClients(const std::vector<ConnectedClientInfo>& a_vConnectedClients);
 	static void CreatePlayer(RakNet::RakNetGUID a_ownerGUID);
 
+	//Functions to Destory Player
+	static void DestroyPlayer(Entity* a_pPlayer);
+	static void DestroyPlayer(RakNet::RakNetGUID a_playerGUID);
+
 	//Function to an entity for safe deletion
 	void DeleteEntityAfterUpdate(Entity* a_pEntity);
 	void ProcessDeletions();

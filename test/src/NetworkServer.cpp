@@ -246,6 +246,15 @@ void NetworkServer::DoGamePlayingServerEvents() const
 				break;
 				
 			}
+			//Disonnections
+		case(ID_CONNECTION_LOST):
+		case(ID_DISCONNECTION_NOTIFICATION):
+			{
+				//Process the fact that this client has disconnected by destroying their player
+				//and removing them from our connected client list
+				GameManager::DestroyPlayer(packet->guid);
+				break;
+			}
 		default:
 			{
 				//Log out unknown data and it's message ID

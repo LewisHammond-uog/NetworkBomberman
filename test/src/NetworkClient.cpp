@@ -14,6 +14,7 @@
 //Default Client Constructor
 NetworkClient::NetworkClient() : ServerClientBase()
 {
+	
 }
 
 NetworkClient::~NetworkClient()
@@ -31,6 +32,9 @@ void NetworkClient::Init() {
 	RakNet::SocketDescriptor sd;
 	s_pRakPeer->Startup(1, &sd, 1);
 
+	//Set Server Address to undefined
+	m_serverAddress = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
+	
 	//Attach the network replicator to our Rak Peer
 	//so that it runs automatically
 	//We get the network replicator from the base class
@@ -47,14 +51,30 @@ void NetworkClient::Update()
 	switch (m_eClientGameState) {
 		case(ClientLocalState::NOT_CONNECTED): {
 			DoClientConnectionEvents();
+			break;
 		}
 		case(ClientLocalState::PRE_GAME): {
 			DoClientPreGameEvents();
+			break;
+		}
+		case(ClientLocalState::GAME_PLAYING): {
+			s_pRakPeer->CloseConnection(m_serverAddress, true);
+			DoClientGameEvents();
 		}
 		default: {
 			m_eClientGameState = ClientLocalState::NOT_CONNECTED;
 		}
 	}
+}
+
+
+
+/// <summary>
+/// Deinititilises the Client, disconnecting it from the server if we are connected to one
+/// </summary>
+void NetworkClient::DeInit()
+{
+	
 }
 
 /// <summary>
@@ -126,7 +146,7 @@ void NetworkClient::DoClientConnectionEvents()
 			//Wait for a packet to be recieved
 			RakNet::Packet* packet = s_pRakPeer->Receive();
 
-
+			
 			//While we still have packets to proccess keep processing them
 			while (packet != nullptr) {
 
@@ -328,6 +348,33 @@ void NetworkClient::DoClientPreGameEvents()
 			break;
 	}
 
+}
+
+/// <summary>
+/// Procceses packes received during gameplay
+/// </summary>
+void NetworkClient::DoClientGameEvents()
+{
+	//Wait for a packet to be recieved
+	RakNet::Packet* packet = s_pRakPeer->Receive();
+	//Wait for us to receive the game start message
+	while (packet != nullptr) {
+		//Do Nothing Yet
+
+		//Deallocate Packet and get the next packet
+		s_pRakPeer->DeallocatePacket(packet);
+		packet = s_pRakPeer->Receive();
+	}
+}
+
+/// <summary>
+/// Disconnect from the server that we are connected to
+/// </summary>
+void NetworkClient::DisconnectFromServer()
+{
+	//Send message to server that we are disconnecting
+	s_pRakPeer->CloseConnection(m_serverAddress, true);
+	m_serverAddress = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 }
 
 /// <summary>

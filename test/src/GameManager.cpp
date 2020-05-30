@@ -154,3 +154,64 @@ void GameManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID)
 	pNetworkReplicator->Reference(pBombSpawner);
 	pNetworkReplicator->Reference(pPlayerData);
 }
+
+/// <summary>
+/// Destroy a player entity
+/// </summary>
+/// <param name="a_pPlayer">Player Entity</param>
+void GameManager::DestroyPlayer(Entity* a_pPlayer)
+{
+	//Check that the entity we have been passed is valid
+	if(!a_pPlayer)
+	{
+		return;
+	}
+	
+	//Check that this entity is a player
+	PlayerDataComponent* pPlayerData = dynamic_cast<PlayerDataComponent*>(a_pPlayer->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+	if(!pPlayerData)
+	{
+		return;
+	}
+
+	//todo - request that we delete all of the objects that we have created
+
+	//Destory the player entity
+	delete a_pPlayer;
+}
+
+/// <summary>
+/// Destroy a player that is assigned to a specific GUID
+/// </summary>
+/// <param name="a_playerGUID">GUID that owns the player</param>
+void GameManager::DestroyPlayer(RakNet::RakNetGUID a_playerGUID)
+{
+	//Attempt to find an entity that has the player ID of the player
+	//we want to destroy
+	std::map<const unsigned int, Entity*>::const_iterator xPlayerIter;
+	for (xPlayerIter = Entity::GetEntityMap().begin(); xPlayerIter != Entity::GetEntityMap().end(); ++xPlayerIter)
+	{
+		Entity* pEntity = xPlayerIter->second;
+		if(!pEntity)
+		{
+			break;
+		}
+		
+		//Check if entity is a player and has data component
+		PlayerDataComponent* pPlayerData = dynamic_cast<PlayerDataComponent*>(pEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+		if(!pPlayerData)
+		{
+			break;;
+		}
+
+		RakNet::RakNetGUID guid = pPlayerData->GetPlayerID();
+		
+		//We know that we have a player check if the ID is the one we are looking for
+		if(a_playerGUID == guid)
+		{
+			//We have found the player, delete them
+			DestroyPlayer(pEntity);
+			return;
+		}
+	}
+}

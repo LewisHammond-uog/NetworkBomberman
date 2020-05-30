@@ -45,8 +45,9 @@ public:
 	NetworkClient();
 	virtual ~NetworkClient();
 
-	void Init();
-	void Update();
+	void Init() override;
+	void Update() override;
+	void DeInit() override;
 
 	//Init Imgui Function
 	void InitImguiWindow();
@@ -61,6 +62,10 @@ private:
 	//the current game state
 	void DoClientConnectionEvents();
 	void DoClientPreGameEvents();
+	void DoClientGameEvents();
+
+	//Funnction to disconnect to the server
+	void DisconnectFromServer();
 
 	//Local (i.e game running, loading) & Connection State
 	ClientLocalState m_eClientGameState;

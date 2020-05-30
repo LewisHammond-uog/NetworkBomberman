@@ -77,8 +77,8 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)deps\glfw\lib-vc2015\$(Platform)\$(Configuration);$(SolutionDir)deps\imgui\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OpenGL32.lib;glfw3.lib;Imgui_$(Configuration)_$(Platform).lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)deps\glfw\lib-vc2015\$(Platform)\$(Configuration);$(SolutionDir)deps\imgui\lib;$(SolutionDir)deps\ReactPhysics3D\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>OpenGL32.lib;glfw3.lib;Imgui_$(Configuration)_$(Platform).lib;reactphysics3d.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

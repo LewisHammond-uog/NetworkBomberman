@@ -10,6 +10,7 @@
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
 #include "BombComponent.h"
+#include "PlayerDataComponent.h"
 
 //Typedefs
 typedef Component PARENT;
@@ -50,13 +51,19 @@ void BombSpawnerComponent::Draw(Shader* a_pShader)
 void BombSpawnerComponent::ServerUpdateSpawner(float a_fDeltaTime)
 {
 	//Check for messages that we should spawn a bomb
-	//todo - remove -1 get the player id properly
-	std::vector<NetworkData*> vBombCreationRequests = NetworkBlackboard::GetInstance()->GetNetworkData(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB, -1);
+	PlayerDataComponent* pPlayerData = dynamic_cast<PlayerDataComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+	if (!pPlayerData)
+	{
+		return;
+	}
+	
+	std::vector<NetworkData*> vBombCreationRequests = NetworkBlackboard::GetInstance()->GetNetworkData(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB, pPlayerData->GetPlayerID());
 
 	//If we have any messages to create bombs then we should just create them
 	//because this message has no other data attached
 	if(!vBombCreationRequests.empty())
 	{
+		//todo clean up, messy
 		//Get our transform because this is where we are going to
 		//create our bombs at our current position
 		if (m_pOwnerEntity == nullptr) { return; }
@@ -81,9 +88,10 @@ void BombSpawnerComponent::ClientUpdateSpawner(float a_fDeltaTime)
 	//Check for key press to spawn a bomb
 	if (bBombSpawnKeyPressed && !m_bSpawnKeyPressedLastFrame)
 	{
+
+		
 		//Send the server that we want to create a bomb
-		//todo - remove -1 get the player id properly
-		NetworkBlackboard::GetInstance()->SendBlackboardDataToServer(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB, -1, RakNet::BitStream());
+		NetworkBlackboard::GetInstance()->SendBlackboardDataToServer(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB, RakNet::BitStream());
 	}
 
 	m_bSpawnKeyPressedLastFrame = bBombSpawnKeyPressed;

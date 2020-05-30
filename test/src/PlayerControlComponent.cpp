@@ -10,6 +10,7 @@
 #include "ServerClientBase.h"
 #include "TransformComponent.h"
 #include "Entity.h"
+#include "PlayerDataComponent.h"
 #include "TestProject.h"
 
 //Typedefs
@@ -18,7 +19,6 @@ typedef Component PARENT;
 
 PlayerControlComponent::PlayerControlComponent(Entity* a_pOwner) :
 	PARENT(a_pOwner),
-	m_iPlayerID(-1),//Init to -1 so we know that this is not initalised
 	m_v2LastSentMovementInputs(0,0),
 	m_v3CurrentVelocity(glm::vec3(0, 0, 0))
 {
@@ -47,7 +47,11 @@ void PlayerControlComponent::Update(float a_fDeltaTime)
 		ServerUpdatePlayer(a_fDeltaTime);
 	}else
 	{
-		ClientUpdatePlayer(a_fDeltaTime);
+		//Only allow player updates if the player data (i.e the player that owns
+		//this component) is us so we can't control other players		
+		if (ServerClientBase::GetSystemGUID() == GetPlayerID()) {
+			ClientUpdatePlayer(a_fDeltaTime);
+		}
 	}
 }
 
@@ -55,11 +59,12 @@ void PlayerControlComponent::Draw(Shader* a_pShader)
 {
 }
 
-
 void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
-{
+{	
 	//Get the inputs off the blackboard
-	const std::vector<NetworkData*> latestNetworkInputs = NetworkBlackboard::GetInstance()->GetNetworkData(CSGameMessages::CLIENT_PLAYER_INPUT_DATA, m_iPlayerID);
+	const std::vector<NetworkData*> latestNetworkInputs = NetworkBlackboard::GetInstance()->GetNetworkData(
+		CSGameMessages::CLIENT_PLAYER_INPUT_DATA, GetPlayerID());
+	
 	if (!latestNetworkInputs.empty()) {
 		
 		//Get the movement amount
@@ -73,7 +78,6 @@ void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 
 
 	//Get our owners transform
-	if (!m_pOwnerEntity) { return; }
 	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
 	if (!pTransform) { return; }
 
@@ -97,7 +101,7 @@ void PlayerControlComponent::ClientUpdatePlayer(float a_fDeltaTime)
 		RakNet::BitStream moveData;
 		moveData.Write(v2PlayerInput);
 		
-		NetworkBlackboard::GetInstance()->SendBlackboardDataToServer(CSGameMessages::CLIENT_PLAYER_INPUT_DATA, m_iPlayerID, moveData);
+		NetworkBlackboard::GetInstance()->SendBlackboardDataToServer(CSGameMessages::CLIENT_PLAYER_INPUT_DATA, moveData);
 
 		m_v2LastSentMovementInputs = v2PlayerInput;
 	}
@@ -125,6 +129,23 @@ glm::vec2 PlayerControlComponent::GetPlayerKeyboardMovementInput() const
 	const int iHorizInput = glfwGetKey(pActiveWindow, mc_iMoveRightKey) | -glfwGetKey(pActiveWindow, mc_iMoveLeftKey);
 
 	return glm::vec2(iVertInput, iHorizInput);
+}
+
+/// <summary>
+/// Gets the Player ID from the player data component,
+/// simplifies calls and prevents null ptrs
+/// </summary>
+/// <returns></returns>
+RakNet::RakNetGUID PlayerControlComponent::GetPlayerID() const
+{
+	//Get player Data Component, if it null return a 'null' GUID
+	PlayerDataComponent* playerData = static_cast<PlayerDataComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+	if (!playerData)
+	{
+		return RakNet::RakNetGUID();
+	}
+
+	return playerData->GetPlayerID();
 }
 
 /// <summary>

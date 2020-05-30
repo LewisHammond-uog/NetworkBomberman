@@ -15,7 +15,7 @@
 NetworkServer::NetworkServer()
 {
 	//Null out ptrs and network values
-	m_pRakPeer = nullptr;
+	s_pRakPeer = nullptr;
 	m_serverAddress = RakNet::SystemAddress();
 
 	//Create Authenticator
@@ -36,19 +36,19 @@ NetworkServer::~NetworkServer()
 void NetworkServer::Init()
 {
 	//Get instance of rakPeerInterface and set state
-	m_pRakPeer = RakNet::RakPeerInterface::GetInstance();
+	s_pRakPeer = RakNet::RakPeerInterface::GetInstance();
 
 	//Start up Server
 	RakNet::SocketDescriptor sd(SERVER_PORT, nullptr);
-	m_pRakPeer->Startup(MAX_CLIENTS, &sd, 1);
-	m_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
+	s_pRakPeer->Startup(MAX_CLIENTS, &sd, 1);
+	s_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
 	m_eServerState = ServerGameStates::SERVER_CLIENTS_CONNECTING;
 
 	//Attach the network replicator to our Rak Peer
 	//so that it runs automatically
 	//We get the network replicator from the base class
 	//ServerClientBase
-	m_pRakPeer->AttachPlugin(GetNetworkReplicator());
+	s_pRakPeer->AttachPlugin(GetNetworkReplicator());
 
 	ConsoleLog::LogConsoleMessage("SERVER :: Server initialized");
 }
@@ -69,7 +69,7 @@ void NetworkServer::Update()
 /// </summary>
 void NetworkServer::DoPreGameServerEvents()
 {
-	RakNet::Packet* packet = m_pRakPeer->Receive();
+	RakNet::Packet* packet = s_pRakPeer->Receive();
 
 	while (packet != nullptr) {
 
@@ -213,8 +213,8 @@ void NetworkServer::DoPreGameServerEvents()
 		}
 
 		//Deallocate Packet and get the next packet
-		m_pRakPeer->DeallocatePacket(packet);
-		packet = m_pRakPeer->Receive();
+		s_pRakPeer->DeallocatePacket(packet);
+		packet = s_pRakPeer->Receive();
 	}
 }
 
@@ -223,7 +223,7 @@ void NetworkServer::DoPreGameServerEvents()
 /// </summary>
 void NetworkServer::DoGamePlayingServerEvents() const
 {
-	RakNet::Packet* packet = m_pRakPeer->Receive();
+	RakNet::Packet* packet = s_pRakPeer->Receive();
 
 	while (packet != nullptr) {
 		switch(packet->data[0])
@@ -249,8 +249,8 @@ void NetworkServer::DoGamePlayingServerEvents() const
 		}
 
 		//Deallocate Packet and get the next packet
-		m_pRakPeer->DeallocatePacket(packet);
-		packet = m_pRakPeer->Receive();
+		s_pRakPeer->DeallocatePacket(packet);
+		packet = s_pRakPeer->Receive();
 	}
 }
 
@@ -264,7 +264,7 @@ void NetworkServer::DoGamePlayingServerEvents() const
 void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, const PacketPriority a_priority, const PacketReliability a_reliability) const
 {
 	//Send Message over rak peer
-	m_pRakPeer->Send(&a_data, a_priority, a_reliability, 0, a_clientAddress, false);
+	s_pRakPeer->Send(&a_data, a_priority, a_reliability, 0, a_clientAddress, false);
 }
 
 
@@ -299,7 +299,7 @@ void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, const Pac
 	for (unsigned int i = 0; i < m_vConnectedClients.size(); ++i) {
 		
 		//Get the server address of the client
-		const RakNet::SystemAddress sClientAddress = m_pRakPeer->GetSystemAddressFromGuid(m_vConnectedClients[i].m_clientGUID);
+		const RakNet::SystemAddress sClientAddress = s_pRakPeer->GetSystemAddressFromGuid(m_vConnectedClients[i].m_clientGUID);
 
 		//Call Send Message Function on the selected client
 		SendMessageToClient(sClientAddress, a_data, a_priority, a_reliability);

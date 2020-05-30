@@ -43,7 +43,7 @@ NetworkBlackboard* NetworkBlackboard::GetInstance()
 /// <param name="a_dataType">Type of Data to Get</param>
 /// <param name="a_iPlayerID">ID of the Player to get the data for</param>
 /// <returns>List of data for the given</returns>
-std::vector<NetworkData*> NetworkBlackboard::GetNetworkData(RakNet::MessageID a_dataType, const int a_iPlayerID)
+std::vector<NetworkData*> NetworkBlackboard::GetNetworkData(RakNet::MessageID a_dataType, const RakNet::RakNetGUID a_iPlayerID)
 {
 	std::vector<NetworkData*> vReturnData;
 	
@@ -83,8 +83,8 @@ void NetworkBlackboard::AddReceivedNetworkData(RakNet::BitStream& a_data)
 {
 	//Strip off the data type and player ID then
 	//create a struct of the infomation and the remaining data
-	RakNet::MessageID dataType;
-	int iPlayerID;
+	RakNet::MessageID dataType = 0;
+	RakNet::RakNetGUID iPlayerID;
 	RakNet::BitStream remainingData;
 
 	a_data.Read(dataType);
@@ -95,7 +95,7 @@ void NetworkBlackboard::AddReceivedNetworkData(RakNet::BitStream& a_data)
 	netData->m_dataType = dataType;
 	netData->m_iPlayerID = iPlayerID;
 	netData->m_data.Write(remainingData);
-	
+	  
 	//Call other function to add it to the vector
 	AddReceivedNetworkData(netData);
 }
@@ -125,14 +125,16 @@ void NetworkBlackboard::SetNetworkClient(NetworkClient* a_networkClient)
 /// Send network data to the sever
 /// </summary>
 /// <param name="a_dataType">Type of data to send</param>
-/// <param name="a_iPlayerID">ID of the player that is data is for</param>
 /// <param name="a_data">Data (without type and player ID)</param>
-void NetworkBlackboard::SendBlackboardDataToServer(const RakNet::MessageID a_dataType, const int a_iPlayerID, RakNet::BitStream& a_data)
+void NetworkBlackboard::SendBlackboardDataToServer(const RakNet::MessageID a_dataType, RakNet::BitStream& a_data)
 {
+	//Get our system ID which will be this players ID so that the server knows who has sent that data
+	RakNet::RakNetGUID ourPlayerID = ServerClientBase::GetSystemGUID();
+	
 	//Encode data in to a bitstream to send
 	RakNet::BitStream bsToSend;
 	bsToSend.Write((RakNet::MessageID)a_dataType);
-	bsToSend.Write(a_iPlayerID);
+	bsToSend.Write(ourPlayerID);
 	bsToSend.Write(a_data);
 
 	if (m_netClient) {

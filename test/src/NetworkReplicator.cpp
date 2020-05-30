@@ -10,9 +10,10 @@
 #include "SpherePrimitiveComponent.h"
 #include "BoxPrimitiveComponent.h"
 #include "PlayerControlComponent.h"
+#include "PlayerDataComponent.h"
 
 
-RakNet::Replica3* TestConnection::AllocReplica(RakNet::BitStream* allocationId, RakNet::ReplicaManager3* replicaManager3)
+RakNet::Replica3* ClientConnection::AllocReplica(RakNet::BitStream* allocationId, RakNet::ReplicaManager3* replicaManager3)
 {
 	RakNet::RakString typeName;
 	allocationId->Read(typeName);
@@ -24,12 +25,13 @@ RakNet::Replica3* TestConnection::AllocReplica(RakNet::BitStream* allocationId, 
 	if (typeName == "PlayerControlComponent") { return new PlayerControlComponent(nullptr); }
 	if (typeName == "BombSpawnerComponent") { return new BombSpawnerComponent(nullptr); }
 	if (typeName == "BombComponent") { return new BombComponent(nullptr); }
+	if (typeName == "PlayerDataComponent") { return new PlayerDataComponent(nullptr, RakNet::RakNetGUID()); }
 	
 	//Default nullptr - don't create anything
 	return nullptr;
 }
 
-void TestConnection::DeallocReplica(RakNet::Connection_RM3* sourceConnection)
+void ClientConnection::DeallocReplica(RakNet::Connection_RM3* sourceConnection)
 {
 	delete sourceConnection;
 }

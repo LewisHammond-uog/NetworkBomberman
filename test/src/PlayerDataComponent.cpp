@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PlayerDataComponent.h"
+#include <ConsoleLog.h>
 
 //Define Component as our parent
 typedef Component PARENT;
@@ -13,6 +14,7 @@ PlayerDataComponent::PlayerDataComponent(Entity* a_pOwner, RakNet::RakNetGUID a_
 	PARENT(a_pOwner),
 	m_playerID(a_iPlayerID)
 {
+	m_eComponentType = COMPONENT_TYPE::PLAYER_DATA;
 }
 /// <summary>
 /// Get the ID of the player that this component is attached to
@@ -38,7 +40,7 @@ void PlayerDataComponent::SerializeConstruction(RakNet::BitStream* constructionB
 	 * CONSTRUCTION DATA LAYOUT
 	 * RakNet::RakNetGUID System that owns this player
 	 */
-
+	
 	 //Send the RakNet GUID
 	constructionBitstream->Write(m_playerID);
 }
@@ -61,8 +63,8 @@ bool PlayerDataComponent::DeserializeConstruction(RakNet::BitStream* constructio
 	 * RakNet::RakNetGUID System that owns this player
 	 */
 
+	//Read in the player ID
 	constructionBitstream->Read(m_playerID);
-
 	
 	return true;
 }

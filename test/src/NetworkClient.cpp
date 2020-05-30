@@ -23,19 +23,19 @@ NetworkClient::~NetworkClient()
 void NetworkClient::Init() {
 
 	//Get instance of rakPeerInterface and set state
-	m_pRakPeer = RakNet::RakPeerInterface::GetInstance();
+	s_pRakPeer = RakNet::RakPeerInterface::GetInstance();
 	m_eConnectionState = NetworkClient::ClientConnectionState::CLIENT_START_CONNECTION;
 	m_eClientGameState = NetworkClient::ClientLocalState::NOT_CONNECTED;
 
 	//Startup Client
 	RakNet::SocketDescriptor sd;
-	m_pRakPeer->Startup(1, &sd, 1);
+	s_pRakPeer->Startup(1, &sd, 1);
 
 	//Attach the network replicator to our Rak Peer
 	//so that it runs automatically
 	//We get the network replicator from the base class
 	//ServerClientBase
-	m_pRakPeer->AttachPlugin(GetNetworkReplicator());
+	s_pRakPeer->AttachPlugin(GetNetworkReplicator());
 
 	//Set our network client for the blackboard
 	NetworkBlackboard::GetInstance()->SetNetworkClient(this);
@@ -103,7 +103,7 @@ void NetworkClient::DoClientConnectionEvents()
 				//Get user inputed IP address and try and connect to the server
 				std::stringstream ss;
 				ss << ipAddress[0] << "." << ipAddress[1] << "." << ipAddress[2] << "." << ipAddress[3];
-				m_pRakPeer->Connect(ss.str().c_str(), SERVER_PORT, nullptr, 0);
+				s_pRakPeer->Connect(ss.str().c_str(), SERVER_PORT, nullptr, 0);
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_CONNECTION;
 			}
 
@@ -124,7 +124,7 @@ void NetworkClient::DoClientConnectionEvents()
 			ImGui::Text("Waiting for Connection... %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
 
 			//Wait for a packet to be recieved
-			RakNet::Packet* packet = m_pRakPeer->Receive();
+			RakNet::Packet* packet = s_pRakPeer->Receive();
 
 
 			//While we still have packets to proccess keep processing them
@@ -148,7 +148,7 @@ void NetworkClient::DoClientConnectionEvents()
 					{
 						//Server is full - reset to new connection window
 						ImGui::Text("Server Full");
-						m_pRakPeer->CloseConnection(packet->systemAddress, true);
+						s_pRakPeer->CloseConnection(packet->systemAddress, true);
 						ConsoleLog::LogConsoleMessage("CLIENT :: CLIENT CANNOT CONNECT TO A FULL SERVER");
 						m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
 						break;
@@ -158,8 +158,8 @@ void NetworkClient::DoClientConnectionEvents()
 					}
 
 				//Deallocate Packet and get the next packet
-				m_pRakPeer->DeallocatePacket(packet);
-				packet = m_pRakPeer->Receive();
+				s_pRakPeer->DeallocatePacket(packet);
+				packet = s_pRakPeer->Receive();
 
 			}
 
@@ -224,7 +224,7 @@ void NetworkClient::DoClientConnectionEvents()
 			ImGui::Text("Waiting for Authentication... %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
 
 			//Wait for message of login.fail success
-			RakNet::Packet* packet = m_pRakPeer->Receive();
+			RakNet::Packet* packet = s_pRakPeer->Receive();
 			while (packet != nullptr) {
 
 				switch (packet->data[0])
@@ -253,8 +253,8 @@ void NetworkClient::DoClientConnectionEvents()
 					}
 
 				//Deallocate Packet and get the next packet
-				m_pRakPeer->DeallocatePacket(packet);
-				packet = m_pRakPeer->Receive();
+				s_pRakPeer->DeallocatePacket(packet);
+				packet = s_pRakPeer->Receive();
 			}
 
 			ImGui::End();
@@ -306,7 +306,7 @@ void NetworkClient::DoClientPreGameEvents()
 			ImGui::End();
 
 			//Wait for a packet to be recieved
-			RakNet::Packet* packet = m_pRakPeer->Receive();
+			RakNet::Packet* packet = s_pRakPeer->Receive();
 			//Wait for us to receive the game start message
 			while (packet != nullptr) {
 				//Check if we have the game start message
@@ -318,8 +318,8 @@ void NetworkClient::DoClientPreGameEvents()
 
 				}
 				//Deallocate Packet and get the next packet
-				m_pRakPeer->DeallocatePacket(packet);
-				packet = m_pRakPeer->Receive();
+				s_pRakPeer->DeallocatePacket(packet);
+				packet = s_pRakPeer->Receive();
 			}
 			
 			break;
@@ -339,7 +339,7 @@ void NetworkClient::DoClientPreGameEvents()
 void NetworkClient::SendMessageToServer(RakNet::BitStream& a_data, const PacketPriority a_priority,
                                         const PacketReliability a_reliability) const
 {
-	m_pRakPeer->Send(&a_data, a_priority, a_reliability, 0, m_serverAddress, false);
+	s_pRakPeer->Send(&a_data, a_priority, a_reliability, 0, m_serverAddress, false);
 }
 
 /// <summary>

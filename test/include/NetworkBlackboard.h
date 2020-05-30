@@ -7,6 +7,7 @@
 //RakNet Includes
 #include "BitStream.h"
 
+//Forward Declrations
 class NetworkClient;
 
 //Struct for data that we get send to
@@ -17,7 +18,7 @@ public:
 	NetworkData() = default;
 	
 	RakNet::MessageID m_dataType; //Type of Data
-	int m_iPlayerID; //ID of the player this data is intended for
+	RakNet::RakNetGUID m_iPlayerID; //ID of the player this data is intended for
 	RakNet::BitStream m_data; //Remaining Data after data type and player ID have been stripped
 };
 
@@ -38,12 +39,12 @@ public:
 	static NetworkBlackboard* GetInstance();
 
 	//Server Functions
-	std::vector<NetworkData*> GetNetworkData(RakNet::MessageID a_dataType, int a_iPlayerID);
+	std::vector<NetworkData*> GetNetworkData(RakNet::MessageID a_dataType, RakNet::RakNetGUID a_playerID);
 	void AddReceivedNetworkData(RakNet::BitStream& a_data);
 	void AddReceivedNetworkData(NetworkData* a_pBlackboardData);
 
 	//Client Functions
-	void SendBlackboardDataToServer(RakNet::MessageID a_dataType, int a_iPlayerID, RakNet::BitStream& a_data);
+	void SendBlackboardDataToServer(RakNet::MessageID a_dataType, RakNet::BitStream& a_data);
 	void SetNetworkClient(NetworkClient* a_networkClient);
 
 private:

@@ -21,6 +21,7 @@ public:
 	RakNet::RakNetGUID GetPlayerID() const;
 
 #pragma region RakNet Functions
+	RakNet::RakString GetName(void) const override { return RakNet::RakString("PlayerDataComponent"); }
 	void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection) override;
 	bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection) override;
 #pragma  endregion 

@@ -19,6 +19,7 @@ public:
 	virtual void Update(float a_fDeltaTime);
 	virtual void Draw(Shader* a_pShader);
 
+	
 #pragma region Replica Manager Functions
 	
 	//Entity Name
@@ -41,8 +42,8 @@ private:
 	//Function to get the input from the player
 	glm::vec2 GetPlayerKeyboardMovementInput() const;
 
-	//Player ID
-	int m_iPlayerID;
+	//Function to get our player id
+	RakNet::RakNetGUID GetPlayerID() const;
 
 	//Last sent data 
 	glm::vec2 m_v2LastSentMovementInputs;

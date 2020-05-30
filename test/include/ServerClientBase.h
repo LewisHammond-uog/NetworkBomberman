@@ -54,6 +54,8 @@ public:
 
 	static RakNet::NetworkIDManager* GetNetworkIDManager();
 	static NetworkReplicator* GetNetworkReplicator();
+	
+	static RakNet::RakNetGUID GetSystemGUID();
 
 
 protected:
@@ -65,7 +67,7 @@ protected:
 	
 
 	//Raknet peer for packet send/receive
-	RakNet::RakPeerInterface* m_pRakPeer;
+	static RakNet::RakPeerInterface* s_pRakPeer;
 	RakNet::SystemAddress m_serverAddress;
 
 private:

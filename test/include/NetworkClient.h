@@ -49,7 +49,7 @@ public:
 	void Update();
 
 	//Init Imgui Function
-	static void InitImguiWindow();
+	void InitImguiWindow();
 	
 	//Functions to send a message to the server
 	void SendMessageToServer(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability) const;

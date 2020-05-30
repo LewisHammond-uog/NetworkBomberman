@@ -47,7 +47,6 @@ void BombComponent::ExplodeBomb() const
 {
 	//todo explosion
 
-	
 	//Destroy this bomb's owner entity
 	GameManager::GetInstance()->DeleteEntityAfterUpdate(m_pOwnerEntity);
 }

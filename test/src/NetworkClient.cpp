@@ -47,14 +47,9 @@ void NetworkClient::Update()
 	switch (m_eClientGameState) {
 		case(ClientLocalState::NOT_CONNECTED): {
 			DoClientConnectionEvents();
-			break;
 		}
 		case(ClientLocalState::PRE_GAME): {
 			DoClientPreGameEvents();
-			break;
-		}
-		case(ClientLocalState::GAME_PLAYING): {
-			break;
 		}
 		default: {
 			m_eClientGameState = ClientLocalState::NOT_CONNECTED;
@@ -68,8 +63,8 @@ void NetworkClient::Update()
 void NetworkClient::InitImguiWindow()
 {
 	ImGuiIO& io = ImGui::GetIO();
-	const ImVec2 windowSize = ImVec2(400.f, 250.f);
-	const ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
+	ImVec2 windowSize = ImVec2(400.f, 250.f);
+	ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
 	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Always);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_FirstUseEver);
 }
@@ -307,7 +302,7 @@ void NetworkClient::DoClientPreGameEvents()
 			*/
 			//Show waiting to start
 			ImGui::Begin("Waiting for the game to start", &showConnectionWindow);
-			ImGui::Text("Waiting for the game to start %c", "|/-\\"[static_cast<int>(Utility::getTotalTime() / 0.05f) & 3]);
+			ImGui::Text("Waiting for the game to start %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
 			ImGui::End();
 
 			//Wait for a packet to be recieved
@@ -332,6 +327,7 @@ void NetworkClient::DoClientPreGameEvents()
 		default:
 			break;
 	}
+
 }
 
 /// <summary>

@@ -15,11 +15,13 @@
     <ClInclude Include="include\BombComponent.h" />
     <ClInclude Include="include\BombSpawnerComponent.h" />
     <ClInclude Include="include\BoxPrimitiveComponent.h" />
+    <ClInclude Include="include\ColliderComponent.h" />
     <ClInclude Include="include\ConsoleLog.h" />
     <ClInclude Include="include\NetworkBlackboard.h" />
     <ClInclude Include="include\PlayerControlComponent.h" />
     <ClInclude Include="include\PlayerDataComponent.h" />
     <ClInclude Include="include\PrimitiveComponent.h" />
+    <ClInclude Include="include\RaycastComponent.h" />
     <ClInclude Include="include\ServerClientBase.h" />
     <ClInclude Include="include\Component.h" />
     <ClInclude Include="include\Entity.h" />
@@ -39,6 +41,7 @@
     <ClCompile Include="src\BombComponent.cpp" />
     <ClCompile Include="src\BombSpawnerComponent.cpp" />
     <ClCompile Include="src\BoxPrimitiveComponent.cpp" />
+    <ClCompile Include="src\ColliderComponent.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\GameManager.cpp" />
@@ -50,6 +53,7 @@
     <ClCompile Include="src\PlayerControlComponent.cpp" />
     <ClCompile Include="src\PlayerDataComponent.cpp" />
     <ClCompile Include="src\PrimitiveComponent.cpp" />
+    <ClCompile Include="src\RaycastComponent.cpp" />
     <ClCompile Include="src\ServerClientBase.cpp" />
     <ClCompile Include="src\SpherePrimitiveComponent.cpp" />
     <ClCompile Include="src\stdafx.cpp">

@@ -48,7 +48,7 @@ public:
 	static void LoadLevel();
 
 	//Collision World
-	rp3d::CollisionWorld* GetCollisionWorld();
+	rp3d::CollisionWorld* GetCollisionWorld() const;
 	
 	//Function to an entity for safe deletion
 	void DeleteEntityAfterUpdate(Entity* a_pEntity);

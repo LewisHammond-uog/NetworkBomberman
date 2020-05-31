@@ -242,7 +242,7 @@ void GameManager::LoadLevel()
 /// <summary>
 /// Gets the collision world that the game is occoruing in
 /// </summary>
-rp3d::CollisionWorld* GameManager::GetCollisionWorld()
+rp3d::CollisionWorld* GameManager::GetCollisionWorld() const
 {
 	return m_pCollisionWorld;
 }

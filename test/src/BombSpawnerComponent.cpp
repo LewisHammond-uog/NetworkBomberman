@@ -110,16 +110,13 @@ void BombSpawnerComponent::SpawnBomb(glm::vec3 a_v3SpawnPosition)
 	{
 		return;
 	}
-
-	//Get the Collision World for the raycaster and collider
-	rp3d::CollisionWorld* pCollisionWorld = GameManager::GetInstance()->GetCollisionWorld();
 	
 	//Create Bomb Entity and add the approprite components
 	Entity* pBombEntity = new Entity();
 	TransformComponent* pTransform = new TransformComponent(pBombEntity);
 	BombComponent* pBombComponent = new BombComponent(pBombEntity);
 	SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pBombEntity);
-	RaycastComponent* pRaycaster = new RaycastComponent(pBombEntity, pCollisionWorld);
+	RaycastComponent* pRaycaster = new RaycastComponent(pBombEntity);
 	
 	//Set Transform position to be the inputted position
 	pTransform->SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, a_v3SpawnPosition);

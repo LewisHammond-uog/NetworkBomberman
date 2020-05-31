@@ -20,7 +20,7 @@ class RayCastHitsInfo;
 class RaycastComponent : public Component
 {
 public:
-	RaycastComponent(Entity* a_pOwner, reactphysics3d::CollisionWorld* a_pCollisionWorld);
+	RaycastComponent(Entity* a_pOwner);
 	~RaycastComponent() = default;
 
 	//Component Functions
@@ -32,7 +32,6 @@ public:
 	RayCastHitsInfo* RayCast(rp3d::Ray* a_ray) const;
 	std::vector<RayCastHitsInfo*> MutiRayCast(std::vector<rp3d::Ray*> a_vRays, bool a_bDeleteRays = false) const;
 
-	Need to add RayCast and Collider Component RakNet Functions.
 	
 private:
 	rp3d::CollisionWorld* m_pCollisionWorld; //Pointer to the physics world that this object is using

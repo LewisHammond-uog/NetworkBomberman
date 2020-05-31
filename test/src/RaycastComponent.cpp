@@ -1,10 +1,8 @@
 #include "stdafx.h"
 
 #include "RaycastComponent.h"
-
-
-
 #include "ColliderComponent.h"
+#include "GameManager.h"
 
 //Typedefs
 typedef Component PARENT;
@@ -14,10 +12,11 @@ typedef Component PARENT;
 /// </summary>
 /// <param name="a_pOwner">Owner Entity</param>
 /// <param name="a_pCollisionWorld">Collision World to test raycasts in</param>
-RaycastComponent::RaycastComponent(Entity* a_pOwner, reactphysics3d::CollisionWorld* a_pCollisionWorld) :
-	PARENT(a_pOwner),
-	m_pCollisionWorld(a_pCollisionWorld)
+RaycastComponent::RaycastComponent(Entity* a_pOwner) :
+	PARENT(a_pOwner)
 {
+	//Get the Collision World
+	m_pCollisionWorld = GameManager::GetInstance()->GetCollisionWorld();
 }
 
 /// <summary>

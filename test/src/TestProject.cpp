@@ -168,6 +168,8 @@ void TestProject::Destroy()
 	delete gameClient;
 	delete gameServer;
 
+	//Delete the game manager
+	delete GameManager::GetInstance();
 
 	Gizmos::destroy();
 }

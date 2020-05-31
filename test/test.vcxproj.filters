@@ -114,6 +114,9 @@
     <ClCompile Include="src\RaycastComponent.cpp">
       <Filter>Source Files\ECS\Components\Primitives</Filter>
     </ClCompile>
+    <ClCompile Include="src\WallComponent.cpp">
+      <Filter>Source Files\ECS\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\TestProject.h">
@@ -186,6 +189,9 @@
       <Filter>Header Files\ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\ColliderComponent.h">
+      <Filter>Header Files\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WallComponent.h">
       <Filter>Header Files\ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>

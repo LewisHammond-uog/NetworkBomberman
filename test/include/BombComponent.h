@@ -1,8 +1,14 @@
 #ifndef __BOMB_COMPONENT_H__
 #define __BOMB_COMPONENT_H__
 
+//C++ Includes
+#include <vector>
+
 //Project Includes
 #include "Component.h"
+
+//React Physics Includes
+#include "reactphysics3d.h"
 
 /// <summary>
 /// Class for dealing with a bomb in the world
@@ -26,8 +32,16 @@ public:
 private:
 
 	void ExplodeBomb() const;
-	
-	float mc_fBombExplosionTime = 5.0f;
+
+	//Function for getting collision rays
+	std::vector<rp3d::Ray*> GetCollisionRays() const;
+
+	//Time from creation to bomb explosion
+	const float mc_fBombExplosionTime = 5.0f;
+
+	//Range of the bomb
+	const float mc_fBombRange = 5.0f;
+
 	float m_fTimeSinceCreation;
 	
 };

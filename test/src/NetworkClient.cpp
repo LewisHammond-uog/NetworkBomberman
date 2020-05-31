@@ -58,8 +58,8 @@ void NetworkClient::Update()
 			break;
 		}
 		case(ClientLocalState::GAME_PLAYING): {
-			s_pRakPeer->CloseConnection(m_serverAddress, true);
 			DoClientGameEvents();
+			break;;;
 		}
 		default: {
 			m_eClientGameState = ClientLocalState::NOT_CONNECTED;

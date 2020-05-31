@@ -11,6 +11,7 @@
 #include "BoxPrimitiveComponent.h"
 #include "PlayerControlComponent.h"
 #include "PlayerDataComponent.h"
+#include "RaycastComponent.h"
 
 
 RakNet::Replica3* ClientConnection::AllocReplica(RakNet::BitStream* allocationId, RakNet::ReplicaManager3* replicaManager3)
@@ -26,6 +27,7 @@ RakNet::Replica3* ClientConnection::AllocReplica(RakNet::BitStream* allocationId
 	if (typeName == "BombSpawnerComponent") { return new BombSpawnerComponent(nullptr); }
 	if (typeName == "BombComponent") { return new BombComponent(nullptr); }
 	if (typeName == "PlayerDataComponent") { return new PlayerDataComponent(nullptr, RakNet::RakNetGUID()); }
+	if (typeName == "RaycastComponent") { return new RaycastComponent(nullptr, nullptr); }
 	
 	//Default nullptr - don't create anything
 	return nullptr;

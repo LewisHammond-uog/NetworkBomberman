@@ -8,6 +8,9 @@
 #include "NetworkServer.h"
 #include "RakNetTypes.h"
 
+//React Phsyics Includes
+#include "reactphysics3d.h"
+
 //Forward Declares
 class NetworkReplicator;
 class Entity;
@@ -23,6 +26,10 @@ namespace RakNet
 class GameManager
 {
 public:
+
+	//Destructor
+	~GameManager();
+	
 	static GameManager* GetInstance();
 	
 	//Update/Draw Functions
@@ -37,18 +44,26 @@ public:
 	static void DestroyPlayer(Entity* a_pPlayer);
 	static void DestroyPlayer(RakNet::RakNetGUID a_playerGUID);
 
+	//Functions to generate the level
+	static void LoadLevel();
+
+	//Collision World
+	rp3d::CollisionWorld* GetCollisionWorld();
+	
 	//Function to an entity for safe deletion
 	void DeleteEntityAfterUpdate(Entity* a_pEntity);
 	void ProcessDeletions();
 	
 private:
 
-	//Constructor/Destructor
-	GameManager() = default;
-	~GameManager();
+	//Constructor
+	GameManager();
 
 	//Queue of entities to delete after this frame ends
 	std::vector<Entity*> m_vDeleteEntityQueue;
+
+	//Collision World that the game happens in
+	rp3d::CollisionWorld* m_pCollisionWorld;
 	
 	//Instance of this sigleton
 	static GameManager* s_pInstance;

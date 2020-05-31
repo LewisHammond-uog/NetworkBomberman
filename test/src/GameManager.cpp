@@ -18,8 +18,22 @@
 //Init Statics
 GameManager* GameManager::s_pInstance = nullptr;
 
+/// <summary>
+/// Create the Game Manager
+/// </summary>
+GameManager::GameManager()
+{
+	//Create Collision World
+	m_pCollisionWorld = new rp3d::CollisionWorld();
+}
+
+/// <summary>
+/// Destory the Game Manager
+/// </summary>
 GameManager::~GameManager()
 {
+	//Destroy the collision world
+	delete m_pCollisionWorld;
 }
 
 /// <summary>
@@ -101,7 +115,6 @@ void GameManager::ProcessDeletions()
 		}
 	}
 }
-
 
 /// <summary>
 /// Creates players for all of the clients connected
@@ -214,4 +227,22 @@ void GameManager::DestroyPlayer(RakNet::RakNetGUID a_playerGUID)
 			return;
 		}
 	}
+}
+
+/// <summary>
+/// Load the level
+/// </summary>
+void GameManager::LoadLevel()
+{
+
+	
+	
+}
+
+/// <summary>
+/// Gets the collision world that the game is occoruing in
+/// </summary>
+rp3d::CollisionWorld* GameManager::GetCollisionWorld()
+{
+	return m_pCollisionWorld;
 }

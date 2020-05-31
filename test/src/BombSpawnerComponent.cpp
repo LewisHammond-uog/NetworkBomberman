@@ -10,7 +10,9 @@
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
 #include "BombComponent.h"
+#include "GameManager.h"
 #include "PlayerDataComponent.h"
+#include "RaycastComponent.h"
 
 //Typedefs
 typedef Component PARENT;
@@ -48,6 +50,10 @@ void BombSpawnerComponent::Draw(Shader* a_pShader)
 {
 }
 
+/// <summary>
+/// Update the spawner (on the server)
+/// </summary>
+/// <param name="a_fDeltaTime">Delta Time</param>
 void BombSpawnerComponent::ServerUpdateSpawner(float a_fDeltaTime)
 {
 	//Check for messages that we should spawn a bomb
@@ -63,13 +69,15 @@ void BombSpawnerComponent::ServerUpdateSpawner(float a_fDeltaTime)
 	//because this message has no other data attached
 	if(!vBombCreationRequests.empty())
 	{
-		//todo clean up, messy
 		//Get our transform because this is where we are going to
 		//create our bombs at our current position
 		if (m_pOwnerEntity == nullptr) { return; }
-		TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
-		if (pTransform == nullptr) { return; }
-		const glm::vec3 bombCreatePos = pTransform->GetCurrentPosition();
+		TransformComponent* pPlayerTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
+		if (pPlayerTransform == nullptr) { return; }
+
+		//Create the bomb at the players position
+		glm::vec3 bombCreatePos = pPlayerTransform->GetCurrentPosition();
+
 		
 		for(unsigned int i = 0; i < vBombCreationRequests.size(); ++i)
 		{
@@ -81,15 +89,13 @@ void BombSpawnerComponent::ServerUpdateSpawner(float a_fDeltaTime)
 
 void BombSpawnerComponent::ClientUpdateSpawner(float a_fDeltaTime)
 {
+	//Get if the client has pressed the key to spawn the bomb
 	GLFWwindow* pActiveWindow = glfwGetCurrentContext();
-
 	const bool bBombSpawnKeyPressed = (glfwGetKey(pActiveWindow, mc_iBombSpawnKey) == GLFW_PRESS);
 	
 	//Check for key press to spawn a bomb
 	if (bBombSpawnKeyPressed && !m_bSpawnKeyPressedLastFrame)
 	{
-
-		
 		//Send the server that we want to create a bomb
 		NetworkBlackboard::GetInstance()->SendBlackboardDataToServer(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB, RakNet::BitStream());
 	}
@@ -104,19 +110,24 @@ void BombSpawnerComponent::SpawnBomb(glm::vec3 a_v3SpawnPosition)
 	{
 		return;
 	}
+
+	//Get the Collision World for the raycaster and collider
+	rp3d::CollisionWorld* pCollisionWorld = GameManager::GetInstance()->GetCollisionWorld();
 	
 	//Create Bomb Entity and add the approprite components
 	Entity* pBombEntity = new Entity();
 	TransformComponent* pTransform = new TransformComponent(pBombEntity);
 	BombComponent* pBombComponent = new BombComponent(pBombEntity);
 	SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pBombEntity);
-
+	RaycastComponent* pRaycaster = new RaycastComponent(pBombEntity, pCollisionWorld);
+	
 	//Set Transform position to be the inputted position
 	pTransform->SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, a_v3SpawnPosition);
 	
 	pBombEntity->AddComponent(pTransform);
 	pBombEntity->AddComponent(pBombComponent);
 	pBombEntity->AddComponent(pSphere);
+	pBombEntity->AddComponent(pRaycaster);
 
 	//Add the new bomb to the network replicator so it is sent to all clients
 	NetworkReplicator* pNetworkReplicator = ServerClientBase::GetNetworkReplicator();
@@ -128,5 +139,6 @@ void BombSpawnerComponent::SpawnBomb(glm::vec3 a_v3SpawnPosition)
 	pNetworkReplicator->Reference(pTransform);
 	pNetworkReplicator->Reference(pBombComponent);
 	pNetworkReplicator->Reference(pSphere);
+	pNetworkReplicator->Reference(pRaycaster);
 	
 }

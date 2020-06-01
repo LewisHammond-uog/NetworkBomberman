@@ -8,6 +8,7 @@
 #include "ServerClientBase.h"
 #include "TestProject.h"
 #include "DestructableWallComponent.h"
+#include "PlayerDataComponent.h"
 
 //Typedefs
 typedef Component PARENT;
@@ -43,6 +44,14 @@ void BombComponent::Update(const float a_fDeltaTime)
 //Empty Draw
 void BombComponent::Draw(Shader* a_pShader)
 {
+	//Test
+	std::vector<rp3d::Ray*> vV3Rays = GetCollisionRays();
+	for(int i =0; i < 4; ++i)
+	{
+		glm::vec3 p1 = glm::vec3(vV3Rays[i]->point1.x, vV3Rays[i]->point1.y, vV3Rays[i]->point1.z);
+		glm::vec3 p2 = glm::vec3(vV3Rays[i]->point2.x, vV3Rays[i]->point2.y, vV3Rays[i]->point2.z);
+		Gizmos::addLine(p1, p2, glm::vec4(1,0,0,1));
+	}
 }
 
 /// <summary>
@@ -58,10 +67,8 @@ void BombComponent::ExplodeBomb() const
 
 	//Check we have a raycaster component
 	RaycastComponent* pRayCaster = dynamic_cast<RaycastComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::RAYCAST));
-	if (pRayCaster == nullptr)
+	if (pRayCaster != nullptr)
 	{
-
-
 		//Get the collision rays and do a raycast on all of them
 		const std::vector<rp3d::Ray*> vV3CollisionRays = GetCollisionRays();
 		std::vector<RayCastHitsInfo*> vRayResults = pRayCaster->MutiRayCast(vV3CollisionRays, true);
@@ -77,7 +84,8 @@ void BombComponent::ExplodeBomb() const
 				RayCastHit* currentHit = currentResult->m_vRayCastHits[hitIndex];
 
 				//Hit Player
-				if (currentHit->m_pHitEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA))
+				PlayerDataComponent* hitPlayer = dynamic_cast<PlayerDataComponent*>(currentHit->m_pHitEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+				if (hitPlayer)
 				{
 					//todo kill player
 				}
@@ -127,8 +135,8 @@ std::vector<rp3d::Ray*> BombComponent::GetCollisionRays() const
 	constexpr int iDirectionCount = 4;
 
 	//Get all of the directions that we want to cast in
-	const glm::vec3 v3Forward = pTransform->GetEntityMatrixRow(MATRIX_ROW::FORWARD_VECTOR);
-	const glm::vec3 v3Right = pTransform->GetEntityMatrixRow(MATRIX_ROW::RIGHT_VECTOR);
+	const glm::vec3 v3Forward = glm::vec3(1,0,0);
+	const glm::vec3 v3Right = glm::vec3(0, 0, 1);;
 	glm::vec3 vV3PositiveDirections[2] = { v3Forward,v3Right };
 
 	//Loop through the directions and mutiply half of them by -1 so we have the inverse's

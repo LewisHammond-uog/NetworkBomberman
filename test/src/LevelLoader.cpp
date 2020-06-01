@@ -122,16 +122,22 @@ Entity* LevelLoader::SpawnDestructibleWall(glm::vec3 a_v3SpawnPos) const
 /// <returns>The Wall entity that was created</returns>
 Entity* LevelLoader::SpawnSolidWall(glm::vec3 a_v3SpawnPos) const
 {
+	//Size of the wall block
+	glm::vec3 v3WallSize = glm::vec3(m_fLevelCubeSize, m_fLevelCubeSize, m_fLevelCubeSize);
+	
 	//Create a wall entity which has a transform, collider and box
 	Entity* pWallEntity = new Entity();
 	TransformComponent* pWallTransform = new TransformComponent(pWallEntity);
 	ColliderComponent* pWallCollider = new ColliderComponent(pWallEntity);
-	BoxPrimitiveComponent* pBox = new BoxPrimitiveComponent(pWallEntity, glm::vec3(m_fLevelCubeSize, m_fLevelCubeSize, m_fLevelCubeSize));
+	BoxPrimitiveComponent* pBox = new BoxPrimitiveComponent(pWallEntity, v3WallSize);
 
 	//Set the position of the level wall to be the given position
 	pWallTransform->SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, a_v3SpawnPos);
+	//Add Box Collider to collider component
+	pWallCollider->AddBoxCollider(v3WallSize, glm::vec3(0, 0, 0));
 	//Set the non destructable colour
 	pBox->SetColour(m_v4SolidColor);
+
 	
 	//Add Components to Wall
 	pWallEntity->AddComponent(pWallTransform);

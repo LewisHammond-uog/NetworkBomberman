@@ -17,6 +17,8 @@ public:
 	void Draw(Shader* a_pShader) override {};
 
 	bool DestroyWall() const;
+
+	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("DestructableWallComponent"); }
 	
 private:
 

@@ -23,6 +23,9 @@ ColliderComponent::ColliderComponent(Entity* a_pOwner) :
 	m_pCollisionBody(nullptr)
 {
 
+	//Set Type
+	m_eComponentType = COMPONENT_TYPE::COLLIDER;
+	
 	//Get the collision world
 	m_pCollisionWorld = GameManager::GetInstance()->GetCollisionWorld();
 	
@@ -58,8 +61,10 @@ ColliderComponent::~ColliderComponent()
 		delete m_apCollisionShapes[i];
 	}
 	m_apCollisionShapes.clear();
-	
-	m_pCollisionWorld->destroyCollisionBody(m_pCollisionBody);
+
+	if (m_pCollisionBody) {
+		GameManager::GetInstance()->GetCollisionWorld()->destroyCollisionBody(m_pCollisionBody);
+	}
 
 	//Proxy and Collision Shapes are removed by React Physics, we do not need to delete them here
 	/* It is not necessary to manually remove all the collision shapes from a body at the end of your application.
@@ -95,11 +100,10 @@ void ColliderComponent::Draw(Shader* a_pShader)
 {
 	//todo remove
 	/*
-	if (DebugUI::GetInstance()->GetUIInputValues()->bShowColliders) {
 		
 		//Get the current position of the object - all colliders positions are relative
 		//to this
-		TransformComponent* pLocalTransform = m_pOwnerEntity->GetComponent<TransformComponent*>();
+		TransformComponent* pLocalTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
 		if (pLocalTransform == nullptr)
 		{
 			return;
@@ -132,8 +136,8 @@ void ColliderComponent::Draw(Shader* a_pShader)
 				break;
 			}
 		}
-	}
 	*/
+	
 }
 
 

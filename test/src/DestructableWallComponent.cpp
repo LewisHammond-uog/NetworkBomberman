@@ -14,6 +14,7 @@ typedef Component PARENT;
 DestructableWallComponent::DestructableWallComponent(Entity* a_pOwnerEntity) :
 	PARENT(a_pOwnerEntity)
 {
+	m_eComponentType = COMPONENT_TYPE::DESTRUCTABLE_WALL;
 }
 
 DestructableWallComponent::~DestructableWallComponent()

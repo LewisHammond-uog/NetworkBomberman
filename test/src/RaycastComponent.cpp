@@ -15,6 +15,9 @@ typedef Component PARENT;
 RaycastComponent::RaycastComponent(Entity* a_pOwner) :
 	PARENT(a_pOwner)
 {
+	//Set Type
+	m_eComponentType = COMPONENT_TYPE::RAYCAST;
+	
 	//Get the Collision World
 	m_pCollisionWorld = GameManager::GetInstance()->GetCollisionWorld();
 }
@@ -71,11 +74,6 @@ std::vector<RayCastHitsInfo*> RaycastComponent::MutiRayCast(std::vector<rp3d::Ra
 		{
 			vAllRayHits.push_back(pRayHit);
 		}
-		else {
-			//Ray hit nothing delete it
-			delete pRayHit;
-		}
-
 
 		//If we should delete the ray itself then delete it
 		if (a_bDeleteRays)

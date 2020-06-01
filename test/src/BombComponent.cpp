@@ -157,7 +157,7 @@ std::vector<rp3d::Ray*> BombComponent::GetCollisionRays() const
 
 		//Create a ray from the direction and our current position
 		const glm::vec3 v3EndPos = v3CurrentPos + (v3CurrentRayDir * mc_fBombRange); //End pos is direction * distance, in this case our neighbourbood radius plus our velcityy
-		rp3d::Ray* pCreatedRay = new rp3d::Ray(v3CurrentPos, v3EndPos);
+		rp3d::Ray* pCreatedRay = new rp3d::Ray(v3EndPos, v3CurrentPos);
 		vRays.push_back(pCreatedRay);
 	}
 

@@ -22,6 +22,11 @@ public:
 	
 	//Function to set colour of the primitive
 	void SetColour(glm::vec4 a_v4Colour);
+
+	#pragma region RakNet Functions
+	void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection) override;
+	bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection) override;
+	#pragma endregion
 	
 protected:
 	//Protected Constructors so that we cannot instantiate this class

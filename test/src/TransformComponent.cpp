@@ -156,7 +156,6 @@ void TransformComponent::Orthogonalize()
 /// <param name="constructionBitstream"></param>
 /// <param name="destinationConnection"></param>
 void TransformComponent::SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection)
-
 {
 
 	//Call base function
@@ -186,13 +185,14 @@ bool TransformComponent::DeserializeConstruction(RakNet::BitStream* construction
 		return false;
 	}
 
+
+	//Call base function
+	Component::DeserializeConstruction(constructionBitstream, sourceConnection);
+
 	/*
 	 * CONSTRUCTION DATA LAYOUT
 	 * glm::vec3 StartPosition
 	 */
-
-	//Call base function
-	Component::DeserializeConstruction(constructionBitstream, sourceConnection);
 
 	//Get position value
 	glm::vec3 receivedPosition;

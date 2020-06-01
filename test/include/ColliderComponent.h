@@ -24,7 +24,7 @@ class ColliderComponent : public Component {
 	friend class CollisionInfo;
 	friend class RayCastHitsInfo;
 public:
-	ColliderComponent(Entity* a_pOwner, rp3d::CollisionWorld* a_pCollisionWorld);
+	ColliderComponent(Entity* a_pOwner);
 	~ColliderComponent();
 
 	void Update(float a_fDeltaTime) override;
@@ -41,6 +41,8 @@ public:
 	//Functions to get collision info from a collision
 	std::vector<CollisionInfo*> GetCollisionInfo() const;
 	CollisionInfo* GetCollisionInfo(ColliderComponent* a_pOtherCollider) const;
+
+	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("ColliderComponent"); }
 	
 private:
 	

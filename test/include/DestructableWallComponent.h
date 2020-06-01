@@ -4,24 +4,22 @@
 //Project Includes
 #include "Component.h"
 
-class WallComponent : public Component
+class DestructableWallComponent : public Component
 {
 public:
 
 	//Constructor/Desctructor
-	WallComponent(Entity* a_pOwnerEntity, bool a_bIsDestructible = false);
-	~WallComponent();
+	DestructableWallComponent(Entity* a_pOwnerEntity);
+	~DestructableWallComponent();
 
 	//Update & Draw Functions
 	void Update(float a_fDeltaTime) override {};
 	void Draw(Shader* a_pShader) override {};
 
-	bool AttemptDestroyWall() const;
+	bool DestroyWall() const;
 	
 private:
-	
-	//If this wall can be destroyed by a bomb
-	bool m_bIsDestructible = false;
+
 	
 };
 

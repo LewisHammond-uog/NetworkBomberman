@@ -46,7 +46,7 @@ RayCastHitsInfo* RaycastComponent::RayCast(rp3d::Ray* a_ray) const
 	RayCastHitsInfo* callback = new RayCastHitsInfo();
 
 	//Perform Raycast and return the resulting info
-	m_pCollisionWorld->raycast(*a_ray, callback);
+	GameManager::GetInstance()->GetCollisionWorld()->raycast(*a_ray, callback);
 	return callback;
 }
 

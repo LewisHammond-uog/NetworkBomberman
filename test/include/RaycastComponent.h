@@ -32,6 +32,7 @@ public:
 	RayCastHitsInfo* RayCast(rp3d::Ray* a_ray) const;
 	std::vector<RayCastHitsInfo*> MutiRayCast(std::vector<rp3d::Ray*> a_vRays, bool a_bDeleteRays = false) const;
 
+	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("RaycastComponent"); }
 	
 private:
 	rp3d::CollisionWorld* m_pCollisionWorld; //Pointer to the physics world that this object is using

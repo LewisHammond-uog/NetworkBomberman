@@ -9,6 +9,7 @@
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
 #include "BoxPrimitiveComponent.h"
+#include "ColliderComponent.h"
 #include "ConsoleLog.h"
 #include "PlayerControlComponent.h"
 #include "PlayerDataComponent.h"
@@ -30,9 +31,10 @@ RakNet::Replica3* ClientConnection::AllocReplica(RakNet::BitStream* allocationId
 	if (typeName == "BombComponent") { return new BombComponent(nullptr); }
 	if (typeName == "PlayerDataComponent") { return new PlayerDataComponent(nullptr, RakNet::RakNetGUID()); }
 	if (typeName == "RaycastComponent") { return new RaycastComponent(nullptr); }
+	if (typeName == "ColliderComponent") { return new ColliderComponent(nullptr); }
 	
 	//Default nullptr - don't create anything
-	ConsoleLog::LogConsoleMessage("ERROR CREATING SENT OBJECT, Type of:" + typeName);
+	ConsoleLog::LogMessage("ERROR CREATING SENT OBJECT, Type of:" + typeName);
 	return nullptr;
 }
 

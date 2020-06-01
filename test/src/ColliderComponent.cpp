@@ -8,6 +8,7 @@
 //Project Includes
 #include "TransformComponent.h"
 #include "Entity.h"
+#include "GameManager.h"
 
 //Typedefs
 typedef Component PARENT;
@@ -17,11 +18,14 @@ typedef Component PARENT;
 /// </summary>
 /// <param name="a_pOwner">Owner Entity</param>
 /// <param name="a_pCollisionWorld">Collision World this collider exists in</param>
-ColliderComponent::ColliderComponent(Entity* a_pOwner, rp3d::CollisionWorld* a_pCollisionWorld) :
+ColliderComponent::ColliderComponent(Entity* a_pOwner) :
 	PARENT(a_pOwner),
-	m_pCollisionWorld(a_pCollisionWorld),
 	m_pCollisionBody(nullptr)
 {
+
+	//Get the collision world
+	m_pCollisionWorld = GameManager::GetInstance()->GetCollisionWorld();
+	
 	/*
 	* Create the collision body, used by rp3d at the transform of
 	* the entity, then attach a collision shape so that we can

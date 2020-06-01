@@ -114,7 +114,10 @@
     <ClCompile Include="src\RaycastComponent.cpp">
       <Filter>Source Files\ECS\Components\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="src\WallComponent.cpp">
+    <ClCompile Include="src\LevelLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DestructableWallComponent.cpp">
       <Filter>Source Files\ECS\Components</Filter>
     </ClCompile>
   </ItemGroup>
@@ -191,7 +194,10 @@
     <ClInclude Include="include\ColliderComponent.h">
       <Filter>Header Files\ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\WallComponent.h">
+    <ClInclude Include="include\LevelLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\DestructableWallComponent.h">
       <Filter>Header Files\ECS\Components</Filter>
     </ClInclude>
   </ItemGroup>

@@ -12,6 +12,8 @@
 #include "GameManager.h"
 #include <NetworkBlackboard.h>
 
+#include "LevelLoader.h"
+
 constexpr int ERROR_BUFFER_SIZE = 128;
 
 NetworkServer::NetworkServer()
@@ -52,7 +54,7 @@ void NetworkServer::Init()
 	//ServerClientBase
 	s_pRakPeer->AttachPlugin(GetNetworkReplicator());
 
-	ConsoleLog::LogConsoleMessage("SERVER :: Server initialized");
+	ConsoleLog::LogMessage("SERVER :: Server initialized");
 }
 
 void NetworkServer::Update()
@@ -83,47 +85,47 @@ void NetworkServer::DoPreGameServerEvents()
 		{
 			case(ID_REMOTE_DISCONNECTION_NOTIFICATION):
 			{
-				ConsoleLog::LogConsoleMessage("SERVER :: A CLIENT HAS DISCONNECTED");
+				ConsoleLog::LogMessage("SERVER :: A CLIENT HAS DISCONNECTED");
 				break;
 			}
 			case(ID_REMOTE_CONNECTION_LOST):
 			{
-				ConsoleLog::LogConsoleMessage("SERVER :: A CLIENT HAS LOST CONNECTION");
+				ConsoleLog::LogMessage("SERVER :: A CLIENT HAS LOST CONNECTION");
 				break;
 			}
 			case(ID_NEW_INCOMING_CONNECTION):
 			{
-				ConsoleLog::LogConsoleMessage("SERVER :: NEW INCOMING CONNECTION REQUEST");
+				ConsoleLog::LogMessage("SERVER :: NEW INCOMING CONNECTION REQUEST");
 				break;
 			}
 			case(ID_NO_FREE_INCOMING_CONNECTIONS):
 			{
-				ConsoleLog::LogConsoleMessage("SERVER :: A CLIENT ATTEMPTED TO CONNECT TO A FULL SERVER");
+				ConsoleLog::LogMessage("SERVER :: A CLIENT ATTEMPTED TO CONNECT TO A FULL SERVER");
 				break;
 			}
 			case(ID_REPLICA_MANAGER_SCOPE_CHANGE):
 			{
-				ConsoleLog::LogConsoleMessage("SERVER :: A REPLICA OBJECT HAS CHANGED SCOPE");
+				ConsoleLog::LogMessage("SERVER :: A REPLICA OBJECT HAS CHANGED SCOPE");
 				break;
 			}
 			case(ID_REPLICA_MANAGER_SERIALIZE):
 			{
-				ConsoleLog::LogConsoleMessage("SERVER :: A REPLICA OBJECT IS BEING SERIALIZED");
+				ConsoleLog::LogMessage("SERVER :: A REPLICA OBJECT IS BEING SERIALIZED");
 				break;
 			}
 			case(ID_REPLICA_MANAGER_CONSTRUCTION):
 			{
-				ConsoleLog::LogConsoleMessage("SERVER :: A REPLICA OBJECT IS BEING CONSTRUCTED");
+				ConsoleLog::LogMessage("SERVER :: A REPLICA OBJECT IS BEING CONSTRUCTED");
 				break;
 			}
 			case(ID_REPLICA_MANAGER_DOWNLOAD_STARTED):
 			{
-				ConsoleLog::LogConsoleMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS STARTING");
+				ConsoleLog::LogMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS STARTING");
 				break;
 			}
 			case(ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE):
 			{
-				ConsoleLog::LogConsoleMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS COMPLETE");
+				ConsoleLog::LogMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS COMPLETE");
 				break;
 			}
 			case(CSNetMessages::CLIENT_REGISTER_DATA): {
@@ -134,7 +136,7 @@ void NetworkServer::DoPreGameServerEvents()
 				//if this is successful or not
 				if (m_oServerAuthenticator->LoginFromBitstream(incomingLoginData, true))
 				{
-					ConsoleLog::LogConsoleMessage("SERVER :: SENDING CLIENT REGISTER SUCCESS INFO");
+					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT REGISTER SUCCESS INFO");
 					//Send success message to client
 					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
 
@@ -148,7 +150,7 @@ void NetworkServer::DoPreGameServerEvents()
 
 					//Send fail message to client
 					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
-					ConsoleLog::LogConsoleMessage("SERVER :: SENDING CLIENT REGISTER FAIL INFO");
+					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT REGISTER FAIL INFO");
 				}
 
 				break;
@@ -161,7 +163,7 @@ void NetworkServer::DoPreGameServerEvents()
 				//if this is successfull or not
 				if (m_oServerAuthenticator->LoginFromBitstream(incomingLoginData, false))
 				{
-					ConsoleLog::LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
+					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
 					//Send success message to client
 					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
 
@@ -177,13 +179,13 @@ void NetworkServer::DoPreGameServerEvents()
 
 					//Send fail message to client
 					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
-					ConsoleLog::LogConsoleMessage("SERVER :: SENDING CLIENT LOGIN FAIL INFO");
+					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT LOGIN FAIL INFO");
 				}
 
 				break;
 			}
 			case(CSNetMessages::CLIENT_READY_TO_PLAY): {
-				ConsoleLog::LogConsoleMessage("SERVER :: A CLIENT IS READY TO PLAY");
+				ConsoleLog::LogMessage("SERVER :: A CLIENT IS READY TO PLAY");
 
 				//Add to our ready clients count
 				++m_iReadyClients;
@@ -202,8 +204,10 @@ void NetworkServer::DoPreGameServerEvents()
 					//todo move?
 					//Create Players
 					GameManager::CreatePlayersForAllClients(m_vConnectedClients);
+					LevelLoader* ll = new LevelLoader();
+					ll->LoadLevel("level");
 					
-					ConsoleLog::LogConsoleMessage("SERVER :: GAME STARTING");
+					ConsoleLog::LogMessage("SERVER :: GAME STARTING");
 				}
 
 				break;
@@ -213,7 +217,7 @@ void NetworkServer::DoPreGameServerEvents()
 				//Log out unknown data and it's message ID
 				char errorBuffer[ERROR_BUFFER_SIZE];
 				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Get Connections Stage. ID: %i", packet->data[0]);
-				ConsoleLog::LogConsoleMessage(errorBuffer);
+				ConsoleLog::LogMessage(errorBuffer);
 				break;
 			}
 		}
@@ -260,7 +264,7 @@ void NetworkServer::DoGamePlayingServerEvents() const
 				//Log out unknown data and it's message ID
 				char errorBuffer[ERROR_BUFFER_SIZE];
 				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Play Stage. ID: %i", packet->data[0]);
-				ConsoleLog::LogConsoleMessage(errorBuffer);
+				ConsoleLog::LogMessage(errorBuffer);
 			}
 		}
 

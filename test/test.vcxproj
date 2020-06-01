@@ -17,6 +17,7 @@
     <ClInclude Include="include\BoxPrimitiveComponent.h" />
     <ClInclude Include="include\ColliderComponent.h" />
     <ClInclude Include="include\ConsoleLog.h" />
+    <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\NetworkBlackboard.h" />
     <ClInclude Include="include\PlayerControlComponent.h" />
     <ClInclude Include="include\PlayerDataComponent.h" />
@@ -35,7 +36,7 @@
     <ClInclude Include="include\TestProject.h" />
     <ClInclude Include="include\TransformComponent.h" />
     <ClInclude Include="include\TransformHistory.h" />
-    <ClInclude Include="include\WallComponent.h" />
+    <ClInclude Include="include\DestructableWallComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Authenticator.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\GameManager.cpp" />
+    <ClCompile Include="src\LevelLoader.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\NetworkClient.cpp" />
     <ClCompile Include="src\NetworkBlackboard.cpp" />
@@ -64,7 +66,7 @@
     <ClCompile Include="src\TestProject.cpp" />
     <ClCompile Include="src\TransformComponent.cpp" />
     <ClCompile Include="src\TransformHistory.cpp" />
-    <ClCompile Include="src\WallComponent.cpp" />
+    <ClCompile Include="src\DestructableWallComponent.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6A284C87-2398-4D96-B60B-CFB0922F695F}</ProjectGuid>

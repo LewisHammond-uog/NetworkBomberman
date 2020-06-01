@@ -92,6 +92,10 @@ bool Authenticator::RegisterNewUser(const char* a_szUsername, const char* a_szPa
 	//Write new username and password to file with a space seperator
 	sLoginDetailsFile << a_szUsername << " " << a_szPassword << std::endl;
 
+	//Close File
+	sLoginDetailsFile.flush();
+	sLoginDetailsFile.close();
+	
 	//Return true because we have now written the new username/password
 	return true;
 }
@@ -189,6 +193,5 @@ bool Authenticator::ValidUsernameAndPassword(const char* a_szUsername, const cha
 
 	//Username and password did not match, return false
 	return false;
-
 }
 

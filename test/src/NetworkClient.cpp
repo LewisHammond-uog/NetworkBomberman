@@ -118,7 +118,7 @@ void NetworkClient::DoClientConnectionEvents()
 
 			if (ImGui::Button("Connect")) {
 
-				ConsoleLog::LogConsoleMessage("CLIENT :: CLIENT CONNECTION STARTED");
+				ConsoleLog::LogMessage("CLIENT :: CLIENT CONNECTION STARTED");
 
 				//Get user inputed IP address and try and connect to the server
 				std::stringstream ss;
@@ -156,7 +156,7 @@ void NetworkClient::DoClientConnectionEvents()
 					case(ID_CONNECTION_REQUEST_ACCEPTED):
 					{
 						//Server has accepted our requrest
-						ConsoleLog::LogConsoleMessage("CLIENT :: CLIENT SUCCESSFULLY CONNECTED TO THE SERVER");
+						ConsoleLog::LogMessage("CLIENT :: CLIENT SUCCESSFULLY CONNECTED TO THE SERVER");
 						m_eConnectionState = ClientConnectionState::CLIENT_ENTER_AUTH_DETAILS;
 
 						//We have successfully connected to the server store it's ip to send all further
@@ -169,7 +169,7 @@ void NetworkClient::DoClientConnectionEvents()
 						//Server is full - reset to new connection window
 						ImGui::Text("Server Full");
 						s_pRakPeer->CloseConnection(packet->systemAddress, true);
-						ConsoleLog::LogConsoleMessage("CLIENT :: CLIENT CANNOT CONNECT TO A FULL SERVER");
+						ConsoleLog::LogMessage("CLIENT :: CLIENT CANNOT CONNECT TO A FULL SERVER");
 						m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
 						break;
 					}
@@ -212,7 +212,7 @@ void NetworkClient::DoClientConnectionEvents()
 				
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
 
-				ConsoleLog::LogConsoleMessage("CLIENT :: SENDING LOGIN DETAILS TO THE SERVER");
+				ConsoleLog::LogMessage("CLIENT :: SENDING LOGIN DETAILS TO THE SERVER");
 			}
 
 			//Send Registation Details and move to waiting for authorization
@@ -226,7 +226,7 @@ void NetworkClient::DoClientConnectionEvents()
 
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
 
-				ConsoleLog::LogConsoleMessage("CLIENT :: SENDING REGISTRATION DETAILS TO THE SERVER");
+				ConsoleLog::LogMessage("CLIENT :: SENDING REGISTRATION DETAILS TO THE SERVER");
 			}
 
 			ImGui::End();
@@ -252,7 +252,7 @@ void NetworkClient::DoClientConnectionEvents()
 					//TO DO - AUTHENTICATION
 					case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS):
 					{
-						ConsoleLog::LogConsoleMessage("CLIENT :: LOGIN SUCCESS");
+						ConsoleLog::LogMessage("CLIENT :: LOGIN SUCCESS");
 
 						//We have successfully connected and logged in to the server,
 						//move on to actually doing game stuff
@@ -263,7 +263,7 @@ void NetworkClient::DoClientConnectionEvents()
 					}
 					case(CSNetMessages::SERVER_AUTHENTICATE_FAIL):
 					{
-						ConsoleLog::LogConsoleMessage("CLIENT :: LOGIN FAILED");
+						ConsoleLog::LogMessage("CLIENT :: LOGIN FAILED");
 						//Reset to enter new login details
 						m_eConnectionState = ClientConnectionState::CLIENT_ENTER_AUTH_DETAILS;
 						break;
@@ -311,7 +311,7 @@ void NetworkClient::DoClientPreGameEvents()
 
 			//Set state to wait for the game to start
 			m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_GAME_START;
-			ConsoleLog::LogConsoleMessage("CLIENT :: SENT SERVER READY MESSAGE");
+			ConsoleLog::LogMessage("CLIENT :: SENT SERVER READY MESSAGE");
 
 			break;
 		}
@@ -331,7 +331,7 @@ void NetworkClient::DoClientPreGameEvents()
 			while (packet != nullptr) {
 				//Check if we have the game start message
 				if (packet->data[0] == CSGameMessages::SERVER_GAME_STARTING) {
-					ConsoleLog::LogConsoleMessage("CLIENT :: RECEIVED GAME START MESSAGES");
+					ConsoleLog::LogMessage("CLIENT :: RECEIVED GAME START MESSAGES");
 
 					//Change state to game playing
 					m_eClientGameState = ClientLocalState::GAME_PLAYING;

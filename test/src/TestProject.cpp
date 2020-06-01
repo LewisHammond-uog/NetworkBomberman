@@ -105,7 +105,7 @@ void TestProject::Update(float a_deltaTime)
 
 	
 	// update our camera matrix using the keyboard/mouse
-	//Utility::freeMovement(m_cameraMatrix, a_deltaTime, 10);
+	Utility::freeMovement(m_cameraMatrix, a_deltaTime, 10);
 
 	// clear all gizmos from last frame
 	Gizmos::clear();

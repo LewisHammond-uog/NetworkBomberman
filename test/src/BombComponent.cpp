@@ -7,7 +7,7 @@
 #include "RaycastComponent.h"
 #include "ServerClientBase.h"
 #include "TestProject.h"
-#include "WallComponent.h"
+#include "DestructableWallComponent.h"
 
 //Typedefs
 typedef Component PARENT;
@@ -83,10 +83,10 @@ void BombComponent::ExplodeBomb() const
 				}
 
 				//Hit Wall
-				WallComponent* pWall = dynamic_cast<WallComponent*>(currentHit->m_pHitEntity->GetComponent(COMPONENT_TYPE::WALL));
+				DestructableWallComponent* pWall = dynamic_cast<DestructableWallComponent*>(currentHit->m_pHitEntity->GetComponent(COMPONENT_TYPE::DESTRUCTABLE_WALL));
 				if (pWall)
 				{
-					pWall->AttemptDestroyWall();
+					pWall->DestroyWall();
 				}
 			}
 

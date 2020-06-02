@@ -1,14 +1,12 @@
-#include <utility>
-#include <vector>
-
-
 #ifndef __LEVEL_LOADER_H__
 #define __LEVEL_LOADER_H__
 
+#include <utility>
+#include <vector>
+
 //Forward Declare
 class Entity;
-
-//Struct to store a level
+class Level;
 
 /// <summary>
 /// Class for loading the game level
@@ -35,36 +33,14 @@ public:
 	
 private:
 
-	/// <summary>
-	/// Struct to store the data about a level
-	/// </summary>
-	struct Level
-	{
-		//Constructor for Levels
-		Level(std::string a_sLevelName, glm::vec2 a_v2LevelSize)
-		{
-			//Set the level name
-			m_sName = std::move(a_sLevelName);
-			m_v2Size = a_v2LevelSize;
-
-			//Initalise the 2D level Array
-			m_aiLevelData = new int*[m_v2Size.x]; //Create 1D Array of columns
-			for(int i = 0; i < m_v2Size.x; ++i)
-			{
-				m_aiLevelData[i] = new int[m_v2Size.y];
-			}
-		}
-		
-		std::string m_sName;
-		glm::vec2 m_v2Size;
-		std::vector<Entity*> m_vpLevelEntities; //List of entites that are level objects
-		int** m_aiLevelData; //2d Array of data for the level
-	};
 
 
 	Entity* SpawnDestructibleWall(glm::vec3 a_v3SpawnPos) const;
 	Entity* SpawnSolidWall(glm::vec3 a_v3SpawnPos) const;
 
+	//Currently Loaded Level
+	Level* m_pCurrentLevel;
+	
 	//Level Load Path
 	const char* m_szLevelLoadPath = "Levels/";
 

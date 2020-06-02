@@ -206,6 +206,7 @@ void NetworkServer::DoPreGameServerEvents()
 					GameManager::CreatePlayersForAllClients(m_vConnectedClients);
 					LevelLoader* ll = new LevelLoader();
 					ll->LoadLevel("level");
+					ll->UnloadLevel();
 					
 					ConsoleLog::LogMessage("SERVER :: GAME STARTING");
 				}

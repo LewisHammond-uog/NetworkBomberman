@@ -17,6 +17,7 @@
     <ClInclude Include="include\BoxPrimitiveComponent.h" />
     <ClInclude Include="include\ColliderComponent.h" />
     <ClInclude Include="include\ConsoleLog.h" />
+    <ClInclude Include="include\Level.h" />
     <ClInclude Include="include\LevelLoader.h" />
     <ClInclude Include="include\NetworkBlackboard.h" />
     <ClInclude Include="include\PlayerControlComponent.h" />

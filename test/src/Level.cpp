@@ -5,6 +5,7 @@
 #include <math.h>
 
 //Project Includes
+#include "ConsoleLog.h"
 #include "Entity.h"
 
 const float Level::m_fLevelCubeSize = 1.0f; //Size of level cube
@@ -88,8 +89,9 @@ bool Level::IsCellFree(glm::vec3 a_v3Pos) const
 /// <returns></returns>
 glm::vec3 Level::GetNearestCell(glm::vec3 a_v3Pos)
 {
-	int iCellX = round(a_v3Pos.x / sc_fLevelSpacing);
-	int iCellZ = round(a_v3Pos.z / sc_fLevelSpacing);
-
-	return glm::vec3(iCellX, sc_fLevelY, iCellZ);
+	//Get the "array" position
+	float fCellX = round(a_v3Pos.x / sc_fLevelSpacing);
+	float fCellZ = round(a_v3Pos.z / sc_fLevelSpacing);
+	
+	return  glm::vec3(fCellX, sc_fLevelY, fCellZ);
 }

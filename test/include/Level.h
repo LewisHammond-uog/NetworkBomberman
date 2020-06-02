@@ -16,6 +16,8 @@ class Level
 public:
 	bool IsCellFree(glm::vec3 a_v3Pos) const;
 	static glm::vec3 GetNearestCell(glm::vec3 a_v3Pos);
+	
+	static const float sc_fLevelSpacing; //Spacing between level cubes
 private:
 
 	//Constructor for Levels
@@ -30,7 +32,7 @@ private:
 
 	//Level Constants
 	static const float m_fLevelCubeSize; //Size of level cube
-	static const float sc_fLevelSpacing; //Spacing between level cubes
+
 	static const float sc_fLevelY; //Z Level of all level objects
 };
 

@@ -103,7 +103,7 @@ rp3d::decimal RayCastHitsInfo::notifyRaycastHit(const rp3d::RaycastInfo& a_pRayc
 	m_vRayCastHits.push_back(hit);
 
 	// Return a decimal of 0 to stop raycast when we hit something
-	return reactphysics3d::decimal(0.f);
+	return reactphysics3d::decimal(1.f);
 }
 
 

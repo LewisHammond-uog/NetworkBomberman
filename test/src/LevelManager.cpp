@@ -64,7 +64,7 @@ void LevelManager::LoadLevel(const std::string& a_sLevelName)
 	std::string lvlName;
 	int lvlWidth = 0;
 	int lvlHeight = 0;
-	sLevelFile >> lvlName >> lvlWidth >> lvlHeight;
+	sLevelFile >> lvlName >> lvlWidth >> lvlHeight; //Read in Level Info
 
 	//Create Level Struct
 	s_pCurrentLevel = new Level(lvlName, glm::vec2(lvlWidth, lvlHeight));
@@ -168,7 +168,7 @@ Entity* LevelManager::SpawnDestructibleWall(glm::vec3 a_v3SpawnPos) const
 Entity* LevelManager::SpawnSolidWall(glm::vec3 a_v3SpawnPos) const
 {
 	//Size of the wall block
-	glm::vec3 v3WallSize = glm::vec3(m_fLevelCubeSize, m_fLevelCubeSize, m_fLevelCubeSize);
+	glm::vec3 v3WallSize = glm::vec3(Level::m_fLevelCubeSize, Level::m_fLevelCubeSize, Level::m_fLevelCubeSize);
 	
 	//Create a wall entity which has a transform, collider and box
 	Entity* pWallEntity = new Entity();

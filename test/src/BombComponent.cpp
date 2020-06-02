@@ -44,14 +44,6 @@ void BombComponent::Update(const float a_fDeltaTime)
 //Empty Draw
 void BombComponent::Draw(Shader* a_pShader)
 {
-	//Test
-	std::vector<rp3d::Ray*> vV3Rays = GetCollisionRays();
-	for(int i =0; i < 4; ++i)
-	{
-		glm::vec3 p1 = glm::vec3(vV3Rays[i]->point1.x, vV3Rays[i]->point1.y, vV3Rays[i]->point1.z);
-		glm::vec3 p2 = glm::vec3(vV3Rays[i]->point2.x, vV3Rays[i]->point2.y, vV3Rays[i]->point2.z);
-		Gizmos::addLine(p1, p2, glm::vec4(1,0,0,1));
-	}
 }
 
 /// <summary>
@@ -157,7 +149,7 @@ std::vector<rp3d::Ray*> BombComponent::GetCollisionRays() const
 
 		//Create a ray from the direction and our current position
 		const glm::vec3 v3EndPos = v3CurrentPos + (v3CurrentRayDir * mc_fBombRange); //End pos is direction * distance, in this case our neighbourbood radius plus our velcityy
-		rp3d::Ray* pCreatedRay = new rp3d::Ray(v3EndPos, v3CurrentPos);
+		rp3d::Ray* pCreatedRay = new rp3d::Ray(v3CurrentPos, v3EndPos);
 		vRays.push_back(pCreatedRay);
 	}
 

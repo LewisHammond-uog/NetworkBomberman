@@ -79,10 +79,12 @@ void BombSpawnerComponent::ServerUpdateSpawner(float a_fDeltaTime)
 
 		//Round from the player postion
 		//to the nearest grid square and check if that grid square is free
-		glm::vec3 bombCreatePos = Level::GetNearestCell(pPlayerTransform->GetCurrentPosition());
+		glm::vec3 v3SpawnPosition = pPlayerTransform->GetCurrentPosition();
 		if (LevelManager::GetCurrentLevel() != nullptr) {
-			if (LevelManager::GetCurrentLevel()->IsCellFree(bombCreatePos)) {
-				SpawnBomb(bombCreatePos);
+			if (LevelManager::GetCurrentLevel()->IsCellFree(v3SpawnPosition)) {
+				//Spawn the bomb at the nearest grid cell * by the level spacing
+				//so we put it in it's real world position
+				SpawnBomb(Level::GetNearestCell(v3SpawnPosition) * glm::vec3(Level::sc_fLevelSpacing));
 			}
 		}
 	}
@@ -121,7 +123,7 @@ void BombSpawnerComponent::SpawnBomb(glm::vec3 a_v3SpawnPosition)
 	Entity* pBombEntity = new Entity();
 	TransformComponent* pTransform = new TransformComponent(pBombEntity);
 	BombComponent* pBombComponent = new BombComponent(pBombEntity);
-	SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pBombEntity);
+	SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pBombEntity, 0.5f);
 	RaycastComponent* pRaycaster = new RaycastComponent(pBombEntity);
 	
 	//Set Transform position to be the inputted position

@@ -14,9 +14,8 @@ class Level
 {
 	friend class LevelManager; //Allow the level loader to access private members
 public:
-	
 	bool IsCellFree(glm::vec3 a_v3Pos) const;
-	
+	static glm::vec3 GetNearestCell(glm::vec3 a_v3Pos);
 private:
 
 	//Constructor for Levels
@@ -28,6 +27,11 @@ private:
 	std::string m_sName;
 	glm::vec2 m_v2Size;
 	Entity*** m_apLevelData; //2d Array of data for the level
+
+	//Level Constants
+	static const float m_fLevelCubeSize; //Size of level cube
+	static const float sc_fLevelSpacing; //Spacing between level cubes
+	static const float sc_fLevelY; //Z Level of all level objects
 };
 
 #endif

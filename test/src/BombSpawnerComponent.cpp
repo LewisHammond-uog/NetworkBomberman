@@ -79,8 +79,7 @@ void BombSpawnerComponent::ServerUpdateSpawner(float a_fDeltaTime)
 
 		//Round from the player postion
 		//to the nearest grid square and check if that grid square is free
-		glm::vec3 playerPos = pPlayerTransform->GetCurrentPosition();
-		glm::vec3 bombCreatePos = glm::vec3(playerPos.x, playerPos.y, playerPos.z);
+		glm::vec3 bombCreatePos = Level::GetNearestCell(pPlayerTransform->GetCurrentPosition());
 		if (LevelManager::GetCurrentLevel() != nullptr) {
 			if (LevelManager::GetCurrentLevel()->IsCellFree(bombCreatePos)) {
 				SpawnBomb(bombCreatePos);

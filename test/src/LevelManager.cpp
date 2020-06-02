@@ -76,12 +76,13 @@ void LevelManager::LoadLevel(const std::string& a_sLevelName)
 		for(int x = 0; x < lvlWidth; ++x)
 		{
 			//Load in the object we need to create
-			int lvlObjectID;
-			sLevelFile >> lvlObjectID;
-			LEVEL_OBJECT lvlObjectType = static_cast<LEVEL_OBJECT>(lvlObjectID);
+			int iLvlObjectID = 0;
+			sLevelFile >> iLvlObjectID;
+			LEVEL_OBJECT lvlObjectType = static_cast<LEVEL_OBJECT>(iLvlObjectID);
 
 			//Calculate Position to create object
-			glm::vec3 v3ObjPos = glm::vec3(m_fLevelSpacing * x, m_fLevelY, m_fLevelSpacing * y);
+			const float fLevelSpacing = Level::sc_fLevelSpacing;
+			glm::vec3 v3ObjPos = glm::vec3(x * fLevelSpacing, Level::sc_fLevelY, y * fLevelSpacing);
 
 			switch (lvlObjectType) {
 				case LEVEL_OBJECT::LEVEL_OBJECT_EMPTY:

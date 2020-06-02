@@ -49,9 +49,6 @@ private:
 	glm::vec4 m_v4SolidColor = glm::vec4(0.f, 0.f, 0.f, 1.0f);
 	
 	//Level Settings
-	const float m_fLevelCubeSize = 1.0f; //Size of level cube
-	const float m_fLevelSpacing = 2.0f; //Spacing between level cubes
-	const float m_fLevelY = 0.f; //Z Level of all level objects
 	
 };
 

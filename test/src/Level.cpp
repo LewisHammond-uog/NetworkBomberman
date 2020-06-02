@@ -7,6 +7,10 @@
 //Project Includes
 #include "Entity.h"
 
+const float Level::m_fLevelCubeSize = 1.0f; //Size of level cube
+const float Level::sc_fLevelSpacing = 2.0f; //Spacing between level 
+const float Level::sc_fLevelY = 0.f; //Z Level of all level objects
+
 /// <summary>
 /// Create a Level
 /// </summary>
@@ -50,8 +54,9 @@ bool Level::IsCellFree(glm::vec3 a_v3Pos) const
 {
 	//Get the position within the array, ignoring Y as all walls are at the same y pos
 	//Take away the level offset so our position is within the array bounds (> 0)
-	int iArrayX = round(a_v3Pos.x) /2; //todo change
-	int iArrayY = round(a_v3Pos.z) /2;
+	glm::vec3 v3NearestCell = GetNearestCell(a_v3Pos);
+	int iArrayX = v3NearestCell.x;
+	int iArrayY = v3NearestCell.z;
 
 	//Check that our array positions are within the bounds of the array
 	if(iArrayX < 0 || iArrayX > m_v2Size.x ||
@@ -75,4 +80,16 @@ bool Level::IsCellFree(glm::vec3 a_v3Pos) const
 
 	//Checks passed, cell is free
 	return true;
+}
+
+/// <summary>
+/// Gets the position of the nearest grid cell
+/// </summary>
+/// <returns></returns>
+glm::vec3 Level::GetNearestCell(glm::vec3 a_v3Pos)
+{
+	int iCellX = round(a_v3Pos.x / sc_fLevelSpacing);
+	int iCellZ = round(a_v3Pos.z / sc_fLevelSpacing);
+
+	return glm::vec3(iCellX, sc_fLevelY, iCellZ);
 }

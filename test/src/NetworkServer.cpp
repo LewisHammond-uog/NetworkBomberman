@@ -23,14 +23,14 @@ NetworkServer::NetworkServer()
 	m_serverAddress = RakNet::SystemAddress();
 
 	//Create Authenticator
-	m_oServerAuthenticator = new Authenticator();
+	m_pServerAuthenticator = new Authenticator();
 
 }
 
 NetworkServer::~NetworkServer()
 {
 	//Destroy Authenticator
-	delete m_oServerAuthenticator;
+	delete m_pServerAuthenticator;
 }
 
 /// <summary>
@@ -59,6 +59,7 @@ void NetworkServer::Init()
 
 void NetworkServer::Update()
 {
+	//Get Packets and then proccess them by the current server state
 	if (m_eServerState == ServerGameStates::SERVER_CLIENTS_CONNECTING) {
 		DoPreGameServerEvents();
 	}else if(m_eServerState == ServerGameStates::SERVER_PROCESSING_EVENTS)
@@ -83,62 +84,17 @@ void NetworkServer::DoPreGameServerEvents()
 
 		switch (packet->data[0])
 		{
-			case(ID_REMOTE_DISCONNECTION_NOTIFICATION):
-			{
-				ConsoleLog::LogMessage("SERVER :: A CLIENT HAS DISCONNECTED");
-				break;
-			}
-			case(ID_REMOTE_CONNECTION_LOST):
-			{
-				ConsoleLog::LogMessage("SERVER :: A CLIENT HAS LOST CONNECTION");
-				break;
-			}
-			case(ID_NEW_INCOMING_CONNECTION):
-			{
-				ConsoleLog::LogMessage("SERVER :: NEW INCOMING CONNECTION REQUEST");
-				break;
-			}
-			case(ID_NO_FREE_INCOMING_CONNECTIONS):
-			{
-				ConsoleLog::LogMessage("SERVER :: A CLIENT ATTEMPTED TO CONNECT TO A FULL SERVER");
-				break;
-			}
-			case(ID_REPLICA_MANAGER_SCOPE_CHANGE):
-			{
-				ConsoleLog::LogMessage("SERVER :: A REPLICA OBJECT HAS CHANGED SCOPE");
-				break;
-			}
-			case(ID_REPLICA_MANAGER_SERIALIZE):
-			{
-				ConsoleLog::LogMessage("SERVER :: A REPLICA OBJECT IS BEING SERIALIZED");
-				break;
-			}
-			case(ID_REPLICA_MANAGER_CONSTRUCTION):
-			{
-				ConsoleLog::LogMessage("SERVER :: A REPLICA OBJECT IS BEING CONSTRUCTED");
-				break;
-			}
-			case(ID_REPLICA_MANAGER_DOWNLOAD_STARTED):
-			{
-				ConsoleLog::LogMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS STARTING");
-				break;
-			}
-			case(ID_REPLICA_MANAGER_DOWNLOAD_COMPLETE):
-			{
-				ConsoleLog::LogMessage("SERVER :: A REPLICA OBJECT DOWNLOAD IS COMPLETE");
-				break;
-			}
 			case(CSNetMessages::CLIENT_REGISTER_DATA): {
 
 				RakNet::BitStream incomingLoginData(packet->data, packet->length, false);
 
 				//Try and authenticate a new user user, return message to client
 				//if this is successful or not
-				if (m_oServerAuthenticator->LoginFromBitstream(incomingLoginData, true))
+				if (m_pServerAuthenticator->LoginFromBitstream(incomingLoginData, true))
 				{
+					//Send Success
 					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT REGISTER SUCCESS INFO");
-					//Send success message to client
-					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
 
 					//Add to list of connected clients
 					ConnectedClientInfo newClientInfo{
@@ -149,7 +105,7 @@ void NetworkServer::DoPreGameServerEvents()
 				} else {
 
 					//Send fail message to client
-					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
 					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT REGISTER FAIL INFO");
 				}
 
@@ -161,19 +117,17 @@ void NetworkServer::DoPreGameServerEvents()
 
 				//Try and authenticate exsiting user, return message to client
 				//if this is successfull or not
-				if (m_oServerAuthenticator->LoginFromBitstream(incomingLoginData, false))
+				if (m_pServerAuthenticator->LoginFromBitstream(incomingLoginData, false))
 				{
 					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
 					//Send success message to client
-					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
 
 					//Add to list of connected clients
 					ConnectedClientInfo newClientInfo{
 						packet->guid, //Store Sys addres
 					};
 					m_vConnectedClients.push_back(newClientInfo);
-
-
 				}
 				else {
 
@@ -199,18 +153,9 @@ void NetworkServer::DoPreGameServerEvents()
 					SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
 
 					//Change Server State
-					m_eServerState = ServerGameStates::SERVER_PROCESSING_EVENTS;
-
-					//todo move?
-					//Create Players
-					GameManager::CreatePlayersForAllClients(m_vConnectedClients);
-					LevelLoader* ll = new LevelLoader();
-					ll->LoadLevel("level");
-					ll->UnloadLevel();
-					
+					m_eServerState = ServerGameStates::SERVER_PROCESSING_EVENTS;					
 					ConsoleLog::LogMessage("SERVER :: GAME STARTING");
 				}
-
 				break;
 			}
 			default:
@@ -232,14 +177,14 @@ void NetworkServer::DoPreGameServerEvents()
 /// <summary>
 /// Do events relating to game playing (i.e processing movements, updating game objects)
 /// </summary>
-void NetworkServer::DoGamePlayingServerEvents() const
+void NetworkServer::DoGamePlayingServerEvents()
 {
 	RakNet::Packet* packet = s_pRakPeer->Receive();
 
 	while (packet != nullptr) {
 		switch(packet->data[0])
 		{
-			//Creation Requests
+		//Creation Requests
 		case(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB):
 		case(CSGameMessages::CLIENT_PLAYER_INPUT_DATA):
 			{
@@ -251,13 +196,13 @@ void NetworkServer::DoGamePlayingServerEvents() const
 				break;
 				
 			}
-			//Disonnections
+		//Disconnections
 		case(ID_CONNECTION_LOST):
 		case(ID_DISCONNECTION_NOTIFICATION):
 			{
 				//Process the fact that this client has disconnected by destroying their player
 				//and removing them from our connected client list
-				GameManager::DestroyPlayer(packet->guid);
+				DisconnectClient(packet->guid);
 				break;
 			}
 		default:
@@ -324,5 +269,25 @@ void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, const Pac
 
 		//Call Send Message Function on the selected client
 		SendMessageToClient(sClientAddress, a_data, a_priority, a_reliability);
+	}
+}
+
+/// <summary>
+/// Disconnect a client from the server
+/// </summary>
+/// <param name="a_clientGUID">Client to disconnectg</param>
+void NetworkServer::DisconnectClient(const RakNet::RakNetGUID a_clientGUID)
+{
+	//Destroy the Player Object
+	GameManager::DestroyPlayer(a_clientGUID);
+
+	//Remove Client from the connected clients list
+	for(std::vector<ConnectedClientInfo>::const_iterator clientIt = m_vConnectedClients.begin(); clientIt != m_vConnectedClients.end(); ++clientIt)
+	{
+		ConnectedClientInfo currentClient = *clientIt;
+		if(currentClient.m_clientGUID == a_clientGUID)
+		{
+			m_vConnectedClients.erase(clientIt);
+		}
 	}
 }

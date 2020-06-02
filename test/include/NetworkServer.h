@@ -46,7 +46,7 @@ private:
 	//Functions for pre game connection of clients 
 	//to the server
 	void DoPreGameServerEvents();
-	void DoGamePlayingServerEvents() const;
+	void DoGamePlayingServerEvents();
 
 	//Sending Messages Events
 	void SendMessageToClient(int a_iClientID, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability);
@@ -54,8 +54,12 @@ private:
 	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability) const;
 	void SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability);
 
+	//Client Disconnections
+	void NetworkServer::DisconnectClient(RakNet::RakNetGUID a_clientGUID);
+	
+
 	//Server Authenticator - used to verify usernames/passwords
-	Authenticator* m_oServerAuthenticator;
+	Authenticator* m_pServerAuthenticator;
 
 	//Current State of the server - Waiting, Playing etc.
 	ServerGameStates m_eServerState;

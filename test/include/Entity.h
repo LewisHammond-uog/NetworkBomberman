@@ -28,6 +28,8 @@ public:
 	virtual void Update(float a_fDeltaTime);
 	virtual void Draw(Shader* a_pShader);
 
+
+	
 	//Add/get components
 	void AddComponent(Component* a_pComponent);
 	void RemoveComponent(Component* a_pComponentToRemove, bool a_bDeleteComponent = false);
@@ -55,10 +57,16 @@ public:
 #pragma  endregion 
 
 private:
+	//Info about this entity
 	unsigned int m_uEntityID;
 	std::vector<Component*> m_apComponentList;
-
-
+public:
+	bool IsEnabled() const;
+	void SetEnabled(bool a_bEnabled);
+private:
+	bool m_bEnabled;
+	
+	//Statics for all entities
 	static unsigned int s_uEntityCount;
 	static std::map<const unsigned int, Entity*> s_xEntityMap;
 };

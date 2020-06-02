@@ -66,9 +66,6 @@
     <ClCompile Include="src\GameManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ServerCreatedObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Component.cpp">
       <Filter>Source Files\ECS\Components</Filter>
     </ClCompile>
@@ -108,9 +105,6 @@
     <ClCompile Include="src\PlayerDataComponent.cpp">
       <Filter>Source Files\ECS\Components</Filter>
     </ClCompile>
-    <ClCompile Include="src\LevelLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\DestructableWallComponent.cpp">
       <Filter>Source Files\ECS\Components</Filter>
     </ClCompile>
@@ -119,6 +113,15 @@
     </ClCompile>
     <ClCompile Include="src\ColliderComponent.cpp">
       <Filter>Source Files\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ServerCreatedObject.cpp">
+      <Filter>Source Files\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Level.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LevelManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -142,9 +145,6 @@
     </ClInclude>
     <ClInclude Include="include\NetworkReplicator.h">
       <Filter>Header Files\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ServerCreatedObject.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Component.h">
       <Filter>Header Files\ECS\Components</Filter>
@@ -194,13 +194,16 @@
     <ClInclude Include="include\ColliderComponent.h">
       <Filter>Header Files\ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\LevelLoader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\DestructableWallComponent.h">
       <Filter>Header Files\ECS\Components</Filter>
     </ClInclude>
     <ClInclude Include="include\Level.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ServerCreatedObject.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="include\LevelManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

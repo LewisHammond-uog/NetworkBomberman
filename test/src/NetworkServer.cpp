@@ -12,7 +12,7 @@
 #include "GameManager.h"
 #include <NetworkBlackboard.h>
 
-#include "LevelLoader.h"
+#include "LevelManager.h"
 
 constexpr int ERROR_BUFFER_SIZE = 128;
 
@@ -152,6 +152,11 @@ void NetworkServer::DoPreGameServerEvents()
 					readyMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_STARTING);
 					SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
 
+					//Create Player
+					GameManager::CreatePlayersForAllClients(m_vConnectedClients);
+					LevelManager* ll = new LevelManager();
+					ll->LoadLevel("level");
+					
 					//Change Server State
 					m_eServerState = ServerGameStates::SERVER_PROCESSING_EVENTS;					
 					ConsoleLog::LogMessage("SERVER :: GAME STARTING");

@@ -3,6 +3,9 @@
 
 //Project Includes
 #include "GameManager.h"
+#include "Entity.h"
+#include "ColliderComponent.h"
+#include "BoxPrimitiveComponent.h"
 
 typedef Component PARENT;
 
@@ -26,9 +29,10 @@ DestructableWallComponent::~DestructableWallComponent()
 /// Wall will only be destroyed if it is a destructable wall
 /// </summary>
 /// <returns>If the wall was destroyed</returns>
-bool DestructableWallComponent::DestroyWall() const
+void DestructableWallComponent::DestroyWall() const
 {
-	//Wall is destructable, destroy after this frame
-	GameManager::GetInstance()->DeleteEntityAfterUpdate(m_pOwnerEntity);
-	return false;
+	//Set our entity to inactive
+	if (m_pOwnerEntity) {
+		m_pOwnerEntity->SetEnabled(false);
+	}
 }

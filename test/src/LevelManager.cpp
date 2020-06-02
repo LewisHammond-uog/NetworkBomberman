@@ -1,10 +1,9 @@
 #include "stdafx.h"
-#include "LevelLoader.h"
+#include "LevelManager.h"
 
 //C++ Include
 #include <fstream>
 #include <iostream>
-
 
 //Project Includes
 #include "ConsoleLog.h"
@@ -16,13 +15,16 @@
 #include "NetworkServer.h"
 #include "Level.h"
 
+//Static Initalisations
+Level* LevelManager::s_pCurrentLevel = nullptr;
+
 /// <summary>
 /// Delete the Level loader, unloading the level
 /// </summary>
-LevelLoader::~LevelLoader()
+LevelManager::~LevelManager()
 {
 	//Unload the current level
-	if (m_pCurrentLevel != nullptr) {
+	if (s_pCurrentLevel != nullptr) {
 		UnloadLevel();
 	}
 }
@@ -31,8 +33,14 @@ LevelLoader::~LevelLoader()
 /// Loads a level of a given name
 /// </summary>
 /// <param name="a_sLevelName">Name of the level to be loaded</param>
-void LevelLoader::LoadLevel(const std::string& a_sLevelName)
+void LevelManager::LoadLevel(const std::string& a_sLevelName)
 {
+	//If a level is already loaded then unload it
+	if(s_pCurrentLevel != nullptr)
+	{
+		UnloadLevel();
+	}
+	
 	//Find the level file
 	const std::string sLevelFileName = m_szLevelLoadPath + a_sLevelName + ".txt";
 
@@ -59,7 +67,7 @@ void LevelLoader::LoadLevel(const std::string& a_sLevelName)
 	sLevelFile >> lvlName >> lvlWidth >> lvlHeight;
 
 	//Create Level Struct
-	m_pCurrentLevel = new Level(lvlName, glm::vec2(lvlWidth, lvlHeight));
+	s_pCurrentLevel = new Level(lvlName, glm::vec2(lvlWidth, lvlHeight));
 
 	//Load in the level data from file in to the data array.
 	//Spawn the approprite object 
@@ -67,31 +75,31 @@ void LevelLoader::LoadLevel(const std::string& a_sLevelName)
 	{
 		for(int x = 0; x < lvlWidth; ++x)
 		{
-			//Load in to array
-			sLevelFile >> m_pCurrentLevel->m_aiLevelData[x][y];
-
-			//Load the object
-			LEVEL_OBJECT lvlObjectType = static_cast<LEVEL_OBJECT>(m_pCurrentLevel->m_aiLevelData[x][y]);
+			//Load in the object we need to create
+			int lvlObjectID;
+			sLevelFile >> lvlObjectID;
+			LEVEL_OBJECT lvlObjectType = static_cast<LEVEL_OBJECT>(lvlObjectID);
 
 			//Calculate Position to create object
-			glm::vec3 v3ObjPos = m_v3StartPos + glm::vec3(x * m_fLevelSpacing, m_fLevelZ, y * m_fLevelSpacing);
+			glm::vec3 v3ObjPos = glm::vec3(m_fLevelSpacing * x, m_fLevelY, m_fLevelSpacing * y);
 
 			switch (lvlObjectType) {
 				case LEVEL_OBJECT::LEVEL_OBJECT_EMPTY:
 					//No Object Required
+					s_pCurrentLevel->m_apLevelData[x][y] = nullptr;
 					break;
 				case LEVEL_OBJECT::LEVEL_OBJECT_SOLID_WALL:
 					//Spawn Solid Wall
-					m_pCurrentLevel->m_vpLevelEntities.push_back(SpawnSolidWall(v3ObjPos));
+					s_pCurrentLevel->m_apLevelData[x][y] = SpawnSolidWall(v3ObjPos);
 					break;
 				case LEVEL_OBJECT::LEVEL_OBJECT_DESTRUCT_WALL:
 					//Spawn Destructable Wall
-					m_pCurrentLevel->m_vpLevelEntities.push_back(SpawnDestructibleWall(v3ObjPos));
+					s_pCurrentLevel->m_apLevelData[x][y] = SpawnDestructibleWall(v3ObjPos);
 					break;
 				default:
 					//Error, not a valid level object
-					ConsoleLog::LogError("[ERROR] Invalid Level Object Read from file. Aborting Load");
-					return;
+					ConsoleLog::LogError("[ERROR] Invalid Level Object Read from file");
+					break;
 			}
 		}
 	}
@@ -104,16 +112,25 @@ void LevelLoader::LoadLevel(const std::string& a_sLevelName)
 /// <summary>
 /// Unload the currently loaded level
 /// </summary>
-void LevelLoader::UnloadLevel()
+void LevelManager::UnloadLevel()
 {
 	//Check that we have a level
-	if(m_pCurrentLevel == nullptr)
+	if(s_pCurrentLevel == nullptr)
 	{
 		return;
 	}
 	
 	//Delete the current level
-	delete m_pCurrentLevel;
+	delete s_pCurrentLevel;
+}
+
+/// <summary>
+/// Gets the currently loaded level
+/// </summary>
+/// <returns>Pointer to the currently loaded level</returns>
+Level* LevelManager::GetCurrentLevel()
+{
+	return s_pCurrentLevel;
 }
 
 /// <summary>
@@ -121,7 +138,7 @@ void LevelLoader::UnloadLevel()
 /// </summary>
 /// <param name="a_v3SpawnPos">Position to spawn the wall at</param>
 /// <returns>The Wall entity that was created</returns>
-Entity* LevelLoader::SpawnDestructibleWall(glm::vec3 a_v3SpawnPos) const
+Entity* LevelManager::SpawnDestructibleWall(glm::vec3 a_v3SpawnPos) const
 {
 	//Create a solid wall and add a destructable wall component
 	Entity* pWallEntity = SpawnSolidWall(a_v3SpawnPos);
@@ -147,7 +164,7 @@ Entity* LevelLoader::SpawnDestructibleWall(glm::vec3 a_v3SpawnPos) const
 /// </summary>
 /// <param name="a_v3SpawnPos">Position to spawn the wall at</param>
 /// <returns>The Wall entity that was created</returns>
-Entity* LevelLoader::SpawnSolidWall(glm::vec3 a_v3SpawnPos) const
+Entity* LevelManager::SpawnSolidWall(glm::vec3 a_v3SpawnPos) const
 {
 	//Size of the wall block
 	glm::vec3 v3WallSize = glm::vec3(m_fLevelCubeSize, m_fLevelCubeSize, m_fLevelCubeSize);

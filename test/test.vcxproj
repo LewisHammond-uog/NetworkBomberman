@@ -18,7 +18,7 @@
     <ClInclude Include="include\ColliderComponent.h" />
     <ClInclude Include="include\ConsoleLog.h" />
     <ClInclude Include="include\Level.h" />
-    <ClInclude Include="include\LevelLoader.h" />
+    <ClInclude Include="include\LevelManager.h" />
     <ClInclude Include="include\NetworkBlackboard.h" />
     <ClInclude Include="include\PlayerControlComponent.h" />
     <ClInclude Include="include\PlayerDataComponent.h" />
@@ -48,7 +48,8 @@
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\GameManager.cpp" />
-    <ClCompile Include="src\LevelLoader.cpp" />
+    <ClCompile Include="src\Level.cpp" />
+    <ClCompile Include="src\LevelManager.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\NetworkClient.cpp" />
     <ClCompile Include="src\NetworkBlackboard.cpp" />

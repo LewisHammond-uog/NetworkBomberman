@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "LevelLoader.h"
+#include "LevelManager.h"
 
 #define DEFAULT_SCREENWIDTH 1920
 #define DEFAULT_SCREENHEIGHT 1080

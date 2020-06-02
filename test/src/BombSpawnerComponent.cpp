@@ -6,11 +6,13 @@
 #include "NetworkBlackboard.h"
 #include "NetworkClient.h"
 #include "TestProject.h"
+#include "GameManager.h"
+#include "LevelManager.h"
+#include "Level.h"
 //Components
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
 #include "BombComponent.h"
-#include "GameManager.h"
 #include "PlayerDataComponent.h"
 #include "RaycastComponent.h"
 
@@ -75,18 +77,23 @@ void BombSpawnerComponent::ServerUpdateSpawner(float a_fDeltaTime)
 		TransformComponent* pPlayerTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
 		if (pPlayerTransform == nullptr) { return; }
 
-		//Create the bomb at the players position
-		glm::vec3 bombCreatePos = pPlayerTransform->GetCurrentPosition();
-
-		
-		for(unsigned int i = 0; i < vBombCreationRequests.size(); ++i)
-		{
-			SpawnBomb(bombCreatePos);
+		//Round from the player postion
+		//to the nearest grid square and check if that grid square is free
+		glm::vec3 playerPos = pPlayerTransform->GetCurrentPosition();
+		glm::vec3 bombCreatePos = glm::vec3(playerPos.x, playerPos.y, playerPos.z);
+		if (LevelManager::GetCurrentLevel() != nullptr) {
+			if (LevelManager::GetCurrentLevel()->IsCellFree(bombCreatePos)) {
+				SpawnBomb(bombCreatePos);
+			}
 		}
 	}
-	
 }
 
+
+/// <summary>
+/// Update the spawner on the client
+/// </summary>
+/// <param name="a_fDeltaTime">Delta Time</param>
 void BombSpawnerComponent::ClientUpdateSpawner(float a_fDeltaTime)
 {
 	//Get if the client has pressed the key to spawn the bomb
@@ -137,5 +144,4 @@ void BombSpawnerComponent::SpawnBomb(glm::vec3 a_v3SpawnPosition)
 	pNetworkReplicator->Reference(pBombComponent);
 	pNetworkReplicator->Reference(pSphere);
 	pNetworkReplicator->Reference(pRaycaster);
-	
 }

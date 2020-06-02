@@ -63,7 +63,9 @@ void GameManager::Update(const float a_fDeltaTime)
 	{
 		Entity* pEntity = xUpdateIter->second;
 		if (pEntity) {
-			pEntity->Update(a_fDeltaTime);
+			if (pEntity->IsEnabled()) {
+				pEntity->Update(a_fDeltaTime);
+			}
 		}
 	}
 
@@ -82,13 +84,16 @@ void GameManager::Draw()
 	{
 		Entity* pEntity = xUpdateIter->second;
 		if (pEntity) {
-			pEntity->Draw(nullptr);
+			if (pEntity->IsEnabled()) {
+				pEntity->Draw(nullptr);
+			}
 		}
 	}
 }
 
 /// <summary>
 /// Delete an entity after all other entities in the scene are updated
+/// Also forces the memory free 
 /// </summary>
 /// <param name="a_pEntity"></param>
 void GameManager::DeleteEntityAfterUpdate(Entity* a_pEntity)

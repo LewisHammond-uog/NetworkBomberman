@@ -16,6 +16,9 @@ Entity::Entity()
 	//todo remove? - don't think we need this because we are a replica object and this is pre assigned by s_pReplicaManager->SetNetworkIDManager(GetNetworkIDManager()); in Client Server Base
 	//Set our Network ID Manager
 	SetNetworkIDManager(ServerClientBase::GetNetworkIDManager());
+
+	//Set Active
+	m_bEnabled = true;
 	
 	//Increment entity count and add to entity list
 	m_uEntityID = s_uEntityCount++;
@@ -69,6 +72,8 @@ void Entity::Draw(Shader* a_pShader)
 		}
 	}
 }
+
+
 
 ///Add a component to this entity
 void Entity::AddComponent(Component* a_pComponent)
@@ -145,8 +150,7 @@ RakNet::RM3SerializationResult Entity::Serialize(RakNet::SerializeParameters* se
 	);
 
 	//Serialize Variables
-	//m_variableDeltaSerializer.SerializeVariable(&serializationContext, 0);
-	//m_variableDeltaSerializer.SerializeVariable(&serializationContext, 0);
+	m_variableDeltaSerializer.SerializeVariable(&serializationContext, m_bEnabled);
 
 	//Return that we should always serialize
 	return RakNet::RM3SR_SERIALIZED_ALWAYS;
@@ -158,8 +162,7 @@ void Entity::Deserialize(RakNet::DeserializeParameters* deserializeParameters)
 
 	//Deserialise the data
 	m_variableDeltaSerializer.BeginDeserialize(&deserializationContext, &deserializeParameters->serializationBitstream[0]);
-	//m_variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_sObjName);
-	//m_variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_fHealth);
+	m_variableDeltaSerializer.DeserializeVariable(&deserializationContext, m_bEnabled);
 
 
 	m_variableDeltaSerializer.EndDeserialize(&deserializationContext);
@@ -203,4 +206,22 @@ bool Entity::DeserializeDestruction(RakNet::BitStream* destructionBitstream, Rak
 {
 	//Return true to allow destruction
 	return true;
+}
+
+/// <summary>
+/// Get if entity is enabled
+/// </summary>
+/// <returns></returns>
+bool Entity::IsEnabled() const
+{
+	return m_bEnabled;
+}
+
+/// <summary>
+/// Set if entity is enabled
+/// </summary>
+/// <param name="a_bEnabled"></param>
+void Entity::SetEnabled(const bool a_bEnabled)
+{
+	m_bEnabled = a_bEnabled;
 }

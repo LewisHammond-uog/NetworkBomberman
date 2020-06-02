@@ -16,7 +16,7 @@ public:
 	void Update(float a_fDeltaTime) override {};
 	void Draw(Shader* a_pShader) override {};
 
-	bool DestroyWall() const;
+	void DestroyWall() const;
 
 	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("DestructableWallComponent"); }
 	

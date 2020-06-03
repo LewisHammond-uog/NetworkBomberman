@@ -38,10 +38,7 @@ public:
 	glm::vec3 GetEntityMatrixRow(MATRIX_ROW a_eRow);
 	glm::vec3 GetCurrentPosition();
 
-	//Transform history used by the client to interpolate between server transfrom updates
-	const RakNet::TimeMS m_fMaxWriteInterval = 30.f; //Time between writes for transform updates
-	const RakNet::TimeMS m_fMaxHistoryTime = 3000.f; //Max time to keep the transform history for
-	TransformHistory* m_pTransformHistory;
+
 
 #pragma region RakNet Functions
 	//RakNet Functions
@@ -54,6 +51,11 @@ public:
 
 private:
 	glm::mat4 m_m4EntityMatrix;
+	
+	//Transform history used by the client to interpolate between server transfrom updates
+	const RakNet::TimeMS m_fMaxWriteInterval = 30.f; //Time between writes for transform updates
+	const RakNet::TimeMS m_fMaxHistoryTime = 3000.f; //Max time to keep the transform history for
+	TransformHistory* m_pTransformHistory;
 };
 
 #endif // ! __TRANSFORM_COMPONENT_H__

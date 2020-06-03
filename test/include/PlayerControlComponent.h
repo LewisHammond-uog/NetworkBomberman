@@ -51,6 +51,8 @@ private:
 	//Store our current velocity - we transmit this over
 	//the network rather than our position every frame
 	glm::vec3 m_v3CurrentVelocity;
+	glm::vec3 m_v3PlayerInput = glm::vec3(0.f);
+	glm::vec3 m_v3TargetPos = glm::vec3(0.0f);
 
 	//Speed for the player to move at
 	const float mc_fMovementSpeed = 5.0f;

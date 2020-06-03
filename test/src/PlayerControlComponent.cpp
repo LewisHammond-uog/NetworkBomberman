@@ -12,6 +12,8 @@
 #include "Entity.h"
 #include "PlayerDataComponent.h"
 #include "TestProject.h"
+#include "LevelManager.h"
+#include "Level.h"
 
 //Typedefs
 typedef Component PARENT;
@@ -65,28 +67,46 @@ void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 	const std::vector<NetworkData*> latestNetworkInputs = NetworkBlackboard::GetInstance()->GetNetworkData(
 		CSGameMessages::CLIENT_PLAYER_INPUT_DATA, GetPlayerID());
 	
+	//Get our owners transform
+	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
+	if (!pTransform) { return; }
+
+	//Get the players current position, so we can see if we can move
+	glm::vec3 v3PlayerPos = pTransform->GetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR);
+
+	//Check that we have some inputs from the network
 	if (!latestNetworkInputs.empty()) {
 		
 		//Get the movement amount
 		glm::vec2 v2ClientInput = glm::vec2(0, 0);
 		latestNetworkInputs[0]->m_data.Read(v2ClientInput);
 
-		//Take our inputs and mutiply then by the movement speed and delta time
-		//to get our velocity
-		m_v3CurrentVelocity = glm::vec3(v2ClientInput.y, 0.f, v2ClientInput.x) * mc_fMovementSpeed * a_fDeltaTime;
+		//Translate the client movement in a potential velocity, used if the next tile
+		//is free
+		m_v3PlayerInput = glm::vec3(v2ClientInput.y, 0.f, v2ClientInput.x);
 	}
 
-
-	//Get our owners transform
-	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
-	if (!pTransform) { return; }
-
-	//Update based on velocity
-	if (TestProject::isServer) {
-		glm::vec3 v3CurrentPos = pTransform->GetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR);
-		glm::vec3 v3NewPos = v3CurrentPos + m_v3CurrentVelocity;
-		pTransform->SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, v3NewPos);
+	//Check if the next tile is free, if it is not then 0 our velocity
+	if(LevelManager::GetCurrentLevel() != nullptr)
+	{
+		if(LevelManager::GetCurrentLevel()->IsCellFree(v3PlayerPos + m_v3PlayerInput))
+		{
+			//Make our velocity lerp to the nearest cell position
+			m_v3TargetPos = LevelManager::GetCurrentLevel()->GetNearestCell(v3PlayerPos + m_v3PlayerInput) * Level::sc_fLevelSpacing;
+		}
 	}
+	Gizmos::addSphere(m_v3TargetPos, 10u, 10u, 0.25f, glm::vec4(1, 1, 1, 1));
+
+	//Move towards the cell pos
+	//Get the direction and mutiply it by our move speed
+	glm::vec3 v3CellDir = glm::length(m_v3TargetPos - v3PlayerPos) != 0 ? glm::normalize(m_v3TargetPos - v3PlayerPos) : m_v3TargetPos - v3PlayerPos;
+	m_v3CurrentVelocity = v3CellDir * mc_fMovementSpeed * a_fDeltaTime;
+	
+	//Update Position based on velocity
+
+	glm::vec3 v3NewPos = v3PlayerPos + m_v3CurrentVelocity;
+	pTransform->SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, v3NewPos);
+	
 }
 
 void PlayerControlComponent::ClientUpdatePlayer(float a_fDeltaTime)

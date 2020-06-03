@@ -45,14 +45,13 @@ private:
 	//Function to get our player id
 	RakNet::RakNetGUID GetPlayerID() const;
 
-	//Last sent data 
+	//Last sent data from the client
 	glm::vec2 m_v2LastSentMovementInputs;
 	
-	//Store our current velocity - we transmit this over
-	//the network rather than our position every frame
-	glm::vec3 m_v3CurrentVelocity;
-	glm::vec3 m_v3PlayerInput = glm::vec3(0.f);
-	glm::vec3 m_v3TargetPos = glm::vec3(0.0f);
+	//Server infomation about how the player is moving
+	glm::vec3 m_v3CurrentVelocity; //The current velocity of the player
+	glm::vec3 m_v3PlayerInput; //The last inputs we got 
+	glm::vec3 m_v3TargetPos; //The current target position of the player
 
 	//Speed for the player to move at
 	const float mc_fMovementSpeed = 5.0f;

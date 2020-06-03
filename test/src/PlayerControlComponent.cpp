@@ -74,7 +74,7 @@ void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 	//Get the players current position, so we can see if we can move
 	glm::vec3 v3PlayerPos = pTransform->GetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR);
 
-	//Check that we have some inputs from the network
+	//See if there is an input from the network
 	if (!latestNetworkInputs.empty()) {
 		
 		//Get the movement amount
@@ -82,29 +82,45 @@ void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 		latestNetworkInputs[0]->m_data.Read(v2ClientInput);
 
 		//Translate the client movement in a potential velocity, used if the next tile
-		//is free
-		m_v3PlayerInput = glm::vec3(v2ClientInput.y, 0.f, v2ClientInput.x);
+		//is free, ignore the y component as we never jump
+		m_v3PlayerInput = glm::vec3(v2ClientInput.y, Level::sc_fLevelY, v2ClientInput.x) * Level::sc_fLevelSpacing;
 	}
 
-	//Check if the next tile is free, if it is not then 0 our velocity
-	if(LevelManager::GetCurrentLevel() != nullptr)
-	{
-		if(LevelManager::GetCurrentLevel()->IsCellFree(v3PlayerPos + m_v3PlayerInput))
+	//If we have input then update our target position to be the next cell in the
+	//direction that the player is going in
+	if (m_v3PlayerInput != glm::vec3(0, 0, 0)) {
+		if (LevelManager::GetCurrentLevel() != nullptr)
 		{
-			//Make our velocity lerp to the nearest cell position
-			m_v3TargetPos = LevelManager::GetCurrentLevel()->GetNearestCell(v3PlayerPos + m_v3PlayerInput) * Level::sc_fLevelSpacing;
+			if (LevelManager::GetCurrentLevel()->IsCellFree(v3PlayerPos + m_v3PlayerInput))
+			{
+				//We have a valid grid cell, set it to be our target position
+				m_v3TargetPos = LevelManager::GetCurrentLevel()->GetNearestCell(v3PlayerPos + m_v3PlayerInput) * Level::sc_fLevelSpacing;
+			}
 		}
 	}
+
+	//todo remove - this is just for debugging
 	Gizmos::addSphere(m_v3TargetPos, 10u, 10u, 0.25f, glm::vec4(1, 1, 1, 1));
 
-	//Move towards the cell pos
-	//Get the direction and mutiply it by our move speed
-	glm::vec3 v3CellDir = glm::length(m_v3TargetPos - v3PlayerPos) != 0 ? glm::normalize(m_v3TargetPos - v3PlayerPos) : m_v3TargetPos - v3PlayerPos;
-	m_v3CurrentVelocity = v3CellDir * mc_fMovementSpeed * a_fDeltaTime;
+	//--Move towards the target position--//
 	
-	//Update Position based on velocity
+	//Get the direction
+	glm::vec3 v3CellDir = glm::length(m_v3TargetPos - v3PlayerPos) != 0 ? glm::normalize(m_v3TargetPos - v3PlayerPos) : m_v3TargetPos - v3PlayerPos;
+	//Calculate the amount we will move towards the target this frame
+	m_v3CurrentVelocity = v3CellDir * mc_fMovementSpeed * a_fDeltaTime;
+	glm::vec3 v3NewPos;
+	
+	//If our movement this frame is less than the distance to the cell then set out new position to the cell
+	if (glm::length(m_v3CurrentVelocity) > glm::length(m_v3TargetPos - v3PlayerPos))
+	{
+		v3NewPos = m_v3TargetPos;
+	}else
+	{
+		//Otherwise keep moving towards it
+		v3NewPos = v3PlayerPos + m_v3CurrentVelocity;
+	}
 
-	glm::vec3 v3NewPos = v3PlayerPos + m_v3CurrentVelocity;
+	//Move the player object
 	pTransform->SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, v3NewPos);
 	
 }

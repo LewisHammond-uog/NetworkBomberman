@@ -42,6 +42,7 @@ Level::~Level()
 	{
 		delete[] m_apLevelData[i];
 	}
+
 	delete[] m_apLevelData;
 }
 

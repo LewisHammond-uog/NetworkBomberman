@@ -14,6 +14,7 @@
 //Forward Declares
 class NetworkReplicator;
 class Entity;
+class LevelManager;
 namespace RakNet
 {
 	class NetworkIDManager;
@@ -36,32 +37,50 @@ public:
 	void Update(float a_fDeltaTime);
 	void Draw();
 	
-	//Function to Create Player
-	static void CreatePlayersForAllClients(const std::vector<ConnectedClientInfo>& a_vConnectedClients);
-	static void CreatePlayer(RakNet::RakNetGUID a_ownerGUID);
+	//Game Running Functions
+	void WarmupGame();
+	void StartGame();
+	void EndGame();
 
-	//Functions to Destory Player
-	static void DestroyPlayer(Entity* a_pPlayer);
-	static void DestroyPlayer(RakNet::RakNetGUID a_playerGUID);
-
-	//Functions to generate the level
-	static void LoadLevel();
+	//Function to process when a player disconnects
+	void ProcessDisconnection(RakNet::RakNetGUID a_disconnectionGUID);
 
 	//Collision World
 	rp3d::CollisionWorld* GetCollisionWorld() const;
+
+	//Functions to assign the players that need to be created
+	void AssignConnectedPlayers(std::vector<ConnectedClientInfo>* a_pvConnectedPlayers);
 	
 	//Function to an entity for safe deletion
 	void DeleteEntityAfterUpdate(Entity* a_pEntity);
-	void ProcessDeletions();
-	
+
 private:
 
 	//Constructor
 	GameManager();
 
+	//Proccess Deleted Objects
+	void ProcessDeletions();
+
+	//Function to Create Player
+	void CreatePlayersForAllClients(const std::vector<ConnectedClientInfo>& a_vConnectedClients);
+	void CreatePlayer(RakNet::RakNetGUID a_ownerGUID);
+
+	//Functions to Destory Player
+	void DestroyPlayer(Entity* a_pPlayer);
+	void DestroyPlayer(RakNet::RakNetGUID a_playerGUID);
+	
+	//Level Loader
+	LevelManager* m_pLevelManager;
+	//List of players
+	std::vector<Entity*> m_vpPlayers;
 	//Queue of entities to delete after this frame ends
 	std::vector<Entity*> m_vDeleteEntityQueue;
 
+	//Pointer to the clients that are connected to the server,
+	//so we can assign players to a GUID
+	std::vector<ConnectedClientInfo>* m_pvConnectedClients{};
+	
 	//Collision World that the game happens in
 	rp3d::CollisionWorld* m_pCollisionWorld;
 	

@@ -153,9 +153,9 @@ void NetworkServer::DoPreGameServerEvents()
 					SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
 
 					//Create Player
-					GameManager::CreatePlayersForAllClients(m_vConnectedClients);
-					LevelManager* ll = new LevelManager();
-					ll->LoadLevel("level");
+					GameManager::GetInstance()->AssignConnectedPlayers(&m_vConnectedClients);
+					GameManager::GetInstance()->WarmupGame();
+					GameManager::GetInstance()->StartGame();
 					
 					//Change Server State
 					m_eServerState = ServerGameStates::SERVER_PROCESSING_EVENTS;					
@@ -284,7 +284,7 @@ void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, const Pac
 void NetworkServer::DisconnectClient(const RakNet::RakNetGUID a_clientGUID)
 {
 	//Destroy the Player Object
-	GameManager::DestroyPlayer(a_clientGUID);
+	GameManager::GetInstance()->ProcessDisconnection(a_clientGUID);
 
 	//Remove Client from the connected clients list
 	for(std::vector<ConnectedClientInfo>::const_iterator clientIt = m_vConnectedClients.begin(); clientIt != m_vConnectedClients.end(); ++clientIt)

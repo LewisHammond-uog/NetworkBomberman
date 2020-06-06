@@ -153,7 +153,7 @@ RakNet::RM3SerializationResult Entity::Serialize(RakNet::SerializeParameters* se
 	m_variableDeltaSerializer.SerializeVariable(&serializationContext, m_bEnabled);
 
 	//Return that we should always serialize
-	return RakNet::RM3SR_SERIALIZED_ALWAYS;
+	return RakNet::RM3SR_BROADCAST_IDENTICALLY;
 }
 
 void Entity::Deserialize(RakNet::DeserializeParameters* deserializeParameters)

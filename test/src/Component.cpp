@@ -74,7 +74,7 @@ RakNet::RM3SerializationResult Component::Serialize(RakNet::SerializeParameters*
 
 
 	//Return that we should always serialize
-	return RakNet::RM3SR_SERIALIZED_ALWAYS;
+	return RakNet::RM3SR_BROADCAST_IDENTICALLY;
 }
 
 void Component::Deserialize(RakNet::DeserializeParameters* deserializeParameters)

@@ -100,7 +100,7 @@ RakNet::RM3SerializationResult TransformComponent::Serialize(RakNet::SerializePa
 	m_variableDeltaSerializer.SerializeVariable(&serializationContext, m_m4EntityMatrix);
 
 	//Send only if the data has changed
-	return RakNet::RM3SR_SERIALIZED_ALWAYS;
+	return RakNet::RM3SR_BROADCAST_IDENTICALLY;
 }
 
 void TransformComponent::Deserialize(RakNet::DeserializeParameters* deserializeParameters)

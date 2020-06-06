@@ -15,6 +15,7 @@
 class NetworkReplicator;
 class Entity;
 class LevelManager;
+class PlayerManager;
 namespace RakNet
 {
 	class NetworkIDManager;
@@ -62,18 +63,12 @@ private:
 	//Proccess Deleted Objects
 	void ProcessDeletions();
 
-	//Function to Create Player
-	void CreatePlayersForAllClients(const std::vector<ConnectedClientInfo>& a_vConnectedClients);
-	void CreatePlayer(RakNet::RakNetGUID a_ownerGUID);
-
-	//Functions to Destory Player
-	void DestroyPlayer(Entity* a_pPlayer);
-	void DestroyPlayer(RakNet::RakNetGUID a_playerGUID);
-	
-	//Level Loader
+	//Level Loader - to spawn level
 	LevelManager* m_pLevelManager;
-	//List of players
-	std::vector<Entity*> m_vpPlayers;
+	
+	//Player Manager - to spawn player
+	PlayerManager* m_pPlayerManager;
+	
 	//Queue of entities to delete after this frame ends
 	std::vector<Entity*> m_vDeleteEntityQueue;
 

@@ -1,4 +1,4 @@
-#ifndef  __COLOUR_H__
+#ifndef __COLOUR_H__
 #define __COLOUR_H__
 
 #include "glm/glm.hpp"
@@ -24,7 +24,6 @@ public:
 	//Black/White
 	static const Colour white;
 	static const Colour black;
-
 };
 
 //----Static Definitions for Colours----//

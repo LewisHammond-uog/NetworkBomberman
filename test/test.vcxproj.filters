@@ -40,6 +40,9 @@
     <Filter Include="Source Files\ECS\Components\Primitives">
       <UniqueIdentifier>{964ef13f-71b4-4c53-8428-53edbd1e6248}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{a68b4c18-9ccc-480f-b3d2-0731be9ed662}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TestProject.cpp">
@@ -121,6 +124,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\LevelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlayerManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,10 +212,13 @@
     <ClInclude Include="include\LevelManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\NetworkOrderingChannels.h">
-      <Filter>Header Files\Network</Filter>
-    </ClInclude>
     <ClInclude Include="include\Colour.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\NetworkOrderingChannels.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="include\PlayerManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

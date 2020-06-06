@@ -26,8 +26,8 @@ bool TestProject::onCreate()
 
 	// initialise the Gizmos helper class
 	Gizmos::create();
+	
 	#pragma region Render
-
 	// create a world-space matrix for a camera
 	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(0, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
 
@@ -140,9 +140,6 @@ void TestProject::Update(float a_deltaTime)
 	// quit our application when escape is pressed
 	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		quit();
-
-	
-
 }
 
 void TestProject::Draw()

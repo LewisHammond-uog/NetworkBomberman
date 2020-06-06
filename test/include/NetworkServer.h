@@ -43,6 +43,7 @@ public:
 	void DeInit() override;
 
 private:
+	
 	//Functions for pre game connection of clients 
 	//to the server
 	void DoPreGameServerEvents();
@@ -53,10 +54,11 @@ private:
 							ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL) const;
 	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability, 
 							ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL) const;
-	void SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability, ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL);
+	void SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability, 
+							ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL);
 
 	//Client Disconnections
-	void NetworkServer::DisconnectClient(RakNet::RakNetGUID a_clientGUID);
+	void DisconnectClient(RakNet::RakNetGUID a_clientGUID);
 	
 
 	//Server Authenticator - used to verify usernames/passwords
@@ -66,7 +68,6 @@ private:
 	ServerGameStates m_eServerState;
 
 	//Current number of connected clients
-	int m_iConnectedClients = 0;
 	int m_iReadyClients = 0;
 
 	//List of clients connected to the server

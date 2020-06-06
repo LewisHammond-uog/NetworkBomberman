@@ -301,6 +301,9 @@ void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, const Pac
 /// <param name="a_clientGUID">Client to disconnectg</param>
 void NetworkServer::DisconnectClient(const RakNet::RakNetGUID a_clientGUID)
 {
+	//Close the connection
+	s_pRakPeer->CloseConnection(a_clientGUID, true, ORDERING_CHANNEL_CONNECTIONS);
+	
 	//Destroy the Player Object
 	GameManager::GetInstance()->ProcessDisconnection(a_clientGUID);
 

@@ -22,6 +22,9 @@ NetworkClient::~NetworkClient()
 {
 }
 
+/// <summary>
+/// Initalise the network client
+/// </summary>
 void NetworkClient::Init() {
 
 	//Get instance of rakPeerInterface and set state
@@ -46,6 +49,9 @@ void NetworkClient::Init() {
 	NetworkBlackboard::GetInstance()->SetNetworkClient(this);
 }
 
+/// <summary>
+/// Update the network client
+/// </summary>
 void NetworkClient::Update()
 {
 	//Choose what functions to run based on the current client state
@@ -210,7 +216,7 @@ void NetworkClient::DoClientConnectionEvents()
 				loginCreds.Write((RakNet::MessageID)CSNetMessages::CLIENT_LOGIN_DATA);
 				loginCreds.Write(username, Authenticator::mc_iMaxUsernameLen * sizeof(char));
 				loginCreds.Write(password, Authenticator::mc_iMaxPasswordLen * sizeof(char));
-				SendMessageToServer(loginCreds, PacketPriority::LOW_PRIORITY, PacketReliability::RELIABLE_ORDERED);
+				SendMessageToServer(loginCreds, PacketPriority::LOW_PRIORITY, PacketReliability::RELIABLE_ORDERED, ORDERING_CHANNEL_LOGIN);
 				
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
 
@@ -224,7 +230,7 @@ void NetworkClient::DoClientConnectionEvents()
 				regCreds.Write((RakNet::MessageID)CSNetMessages::CLIENT_REGISTER_DATA);
 				regCreds.Write(username, Authenticator::mc_iMaxUsernameLen * sizeof(char));
 				regCreds.Write(password, Authenticator::mc_iMaxPasswordLen * sizeof(char));
-				SendMessageToServer(regCreds, PacketPriority::LOW_PRIORITY, PacketReliability::RELIABLE_ORDERED);
+				SendMessageToServer(regCreds, PacketPriority::LOW_PRIORITY, PacketReliability::RELIABLE_ORDERED, ORDERING_CHANNEL_LOGIN);
 
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
 
@@ -375,7 +381,7 @@ void NetworkClient::DoClientGameEvents()
 void NetworkClient::DisconnectFromServer()
 {
 	//Send message to server that we are disconnecting
-	s_pRakPeer->CloseConnection(m_serverAddress, true);
+	s_pRakPeer->CloseConnection(m_serverAddress, true, ORDERING_CHANNEL_CONNECTIONS, LOW_PRIORITY);
 	m_serverAddress = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 }
 

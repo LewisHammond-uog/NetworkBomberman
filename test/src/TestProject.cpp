@@ -164,9 +164,18 @@ void TestProject::Draw()
 
 void TestProject::Destroy()
 {
-	//Delete Client or Server
-	delete gameClient;
-	delete gameServer;
+	//Deinitalise the client or sever
+	if(gameClient)
+	{
+		gameClient->DeInit();
+		delete gameClient;
+	}
+	if(gameServer)
+	{
+		gameServer->DeInit();
+		delete gameServer;
+	}
+	
 
 	//Delete the game manager
 	delete GameManager::GetInstance();

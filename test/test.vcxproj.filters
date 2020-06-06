@@ -206,5 +206,8 @@
     <ClInclude Include="include\LevelManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\NetworkOrderingChannels.h">
+      <Filter>Header Files\Network</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -20,6 +20,7 @@
     <ClInclude Include="include\Level.h" />
     <ClInclude Include="include\LevelManager.h" />
     <ClInclude Include="include\NetworkBlackboard.h" />
+    <ClInclude Include="include\NetworkOrderingChannels.h" />
     <ClInclude Include="include\PlayerControlComponent.h" />
     <ClInclude Include="include\PlayerDataComponent.h" />
     <ClInclude Include="include\PrimitiveComponent.h" />

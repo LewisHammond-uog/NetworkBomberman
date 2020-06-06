@@ -9,9 +9,9 @@
 
 //Project Includes
 #include <PacketPriority.h>
-
 #include "ServerClientBase.h"
 #include "Authenticator.h"
+#include "NetworkOrderingChannels.h"
 #include "NetworkReplicator.h"
 
 
@@ -49,10 +49,11 @@ private:
 	void DoGamePlayingServerEvents();
 
 	//Sending Messages Events
-	void SendMessageToClient(int a_iClientID, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability);
-	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability) const;
-	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability) const;
-	void SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability);
+	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability, 
+							ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL) const;
+	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability, 
+							ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL) const;
+	void SendMessageToAllClients(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability, ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL);
 
 	//Client Disconnections
 	void NetworkServer::DisconnectClient(RakNet::RakNetGUID a_clientGUID);
@@ -72,7 +73,7 @@ private:
 	std::vector<ConnectedClientInfo> m_vConnectedClients;
 
 	//Number of players required to start the game
-	const int requiredPlayerCount = 2;
+	const int requiredPlayerCount = 1;
 };
 
 #endif // !__NETWORK_SERVER_H__

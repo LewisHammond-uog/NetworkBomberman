@@ -8,6 +8,7 @@
 #include <NetworkIDManager.h>
 
 //Project Includes
+#include "NetworkOrderingChannels.h"
 #include "NetworkReplicator.h"
 
 class NetworkClient : public ServerClientBase
@@ -53,8 +54,8 @@ public:
 	void InitImguiWindow();
 	
 	//Functions to send a message to the server
-	void SendMessageToServer(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability) const;
-	void SendMessageToServer(RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability) const;
+	void SendMessageToServer(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability, ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL) const;
+	void SendMessageToServer(RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability, ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL) const;
 
 private:
 

@@ -13,6 +13,7 @@
 #include <NetworkBlackboard.h>
 
 #include "LevelManager.h"
+#include "NetworkOrderingChannels.h"
 
 constexpr int ERROR_BUFFER_SIZE = 128;
 
@@ -68,8 +69,21 @@ void NetworkServer::Update()
 	}
 }
 
+/// <summary>
+/// Deinitalise the Server, disconnecting all clients
+/// </summary>
 void NetworkServer::DeInit()
 {
+	//Disconnect all clients
+	if(!m_vConnectedClients.empty())
+	{
+		for(int i = 0; i < m_vConnectedClients.size(); ++i)
+		{
+			DisconnectClient(m_vConnectedClients[i].m_clientGUID);
+		}
+	}
+
+	ConsoleLog::LogMessage("SERVER :: SHUTTING DOWN");
 }
 
 /// <summary>
@@ -150,7 +164,7 @@ void NetworkServer::DoPreGameServerEvents()
 					//Create and send packet that game is ready to play
 					RakNet::BitStream readyMessage;
 					readyMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_STARTING);
-					SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+					SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE, ORDERING_CHANNEL_GENERAL);
 
 					//Create Player
 					GameManager::GetInstance()->AssignConnectedPlayers(&m_vConnectedClients);
@@ -208,6 +222,7 @@ void NetworkServer::DoGamePlayingServerEvents()
 				//Process the fact that this client has disconnected by destroying their player
 				//and removing them from our connected client list
 				DisconnectClient(packet->guid);
+				ConsoleLog::LogMessage("SERVER :: A CLIENT IS DISCONNECTING");
 				break;
 			}
 		default:
@@ -232,10 +247,11 @@ void NetworkServer::DoGamePlayingServerEvents()
 /// <param name="a_data">Bitstream Data to send to</param>
 /// <param name="a_priority">Priotity to Send this message as</param>
 /// <param name="a_reliability">Reliability to send this message as</param>
-void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, const PacketPriority a_priority, const PacketReliability a_reliability) const
+/// <param name="a_orderingChannel">Ordering Channel to Use, defaults to general</param>
+void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, const PacketPriority a_priority, const PacketReliability a_reliability, const ORDERING_CHANNELS a_orderingChannel) const
 {
 	//Send Message over rak peer
-	s_pRakPeer->Send(&a_data, a_priority, a_reliability, 0, a_clientAddress, false);
+	s_pRakPeer->Send(&a_data, a_priority, a_reliability, ORDERING_CHANNEL_GENERAL, a_clientAddress, false);
 }
 
 
@@ -247,7 +263,8 @@ void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddr
 /// <param name="a_eMessage">Message to send</param>
 /// <param name="a_priority">Message priority</param>
 /// <param name="a_reliability">Message reliability</param>
-void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddress, const RakNet::MessageID a_eMessage, const PacketPriority a_priority, const PacketReliability a_reliability) const
+/// <param name="a_orderingChannel">Ordering Channel to Use, defaults to general</param>
+void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddress, const RakNet::MessageID a_eMessage, const PacketPriority a_priority, const PacketReliability a_reliability, const ORDERING_CHANNELS a_orderingChannel) const
 {
 	//Create a bit stream and write
 	//the message ID
@@ -264,7 +281,8 @@ void NetworkServer::SendMessageToClient(const RakNet::SystemAddress a_clientAddr
 /// <param name="a_data">Message to Send</param>
 /// <param name="a_priority">Priotity to Send this message as</param>
 /// <param name="a_reliability">Reliability to send this message as</param>
-void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, const PacketPriority a_priority, const PacketReliability a_reliability)
+/// <param name="a_orderingChannel">Ordering Channel to Use, defaults to general</param>
+void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, const PacketPriority a_priority, const PacketReliability a_reliability, const ORDERING_CHANNELS a_orderingChannel)
 {
 	//Loop though all of the clients and call the send message function
 	for (unsigned int i = 0; i < m_vConnectedClients.size(); ++i) {
@@ -287,12 +305,17 @@ void NetworkServer::DisconnectClient(const RakNet::RakNetGUID a_clientGUID)
 	GameManager::GetInstance()->ProcessDisconnection(a_clientGUID);
 
 	//Remove Client from the connected clients list
-	for(std::vector<ConnectedClientInfo>::const_iterator clientIt = m_vConnectedClients.begin(); clientIt != m_vConnectedClients.end(); ++clientIt)
-	{
-		ConnectedClientInfo currentClient = *clientIt;
-		if(currentClient.m_clientGUID == a_clientGUID)
+	if (!m_vConnectedClients.empty()) {
+		for (std::vector<ConnectedClientInfo>::const_iterator clientIt = m_vConnectedClients.begin(); clientIt != m_vConnectedClients.end();)
 		{
-			m_vConnectedClients.erase(clientIt);
+			ConnectedClientInfo currentClient = *clientIt;
+			if (currentClient.m_clientGUID == a_clientGUID)
+			{
+				clientIt = m_vConnectedClients.erase(clientIt);
+			}else
+			{
+				++clientIt;
+			}
 		}
 	}
 }

@@ -10,6 +10,7 @@
 #include "NetworkBlackboard.h"
 #include "ServerCreatedObject.h"
 #include "ConsoleLog.h"
+#include "NetworkOrderingChannels.h"
 
 //Default Client Constructor
 NetworkClient::NetworkClient() : ServerClientBase()
@@ -74,7 +75,8 @@ void NetworkClient::Update()
 /// </summary>
 void NetworkClient::DeInit()
 {
-	
+	//Disconnect from the server
+	DisconnectFromServer();
 }
 
 /// <summary>
@@ -383,10 +385,11 @@ void NetworkClient::DisconnectFromServer()
 /// <param name="a_data">Bitstream of data to send, must include message id</param>
 /// <param name="a_priority">Priority of the message to send</param>
 /// <param name="a_reliability">Reliability of the message to send</param>
+/// <param name="a_orderingChannel">Ordering Channel to Use, defaults to general</param>
 void NetworkClient::SendMessageToServer(RakNet::BitStream& a_data, const PacketPriority a_priority,
-                                        const PacketReliability a_reliability) const
+                                        const PacketReliability a_reliability, const ORDERING_CHANNELS a_orderingChannel) const
 {
-	s_pRakPeer->Send(&a_data, a_priority, a_reliability, 0, m_serverAddress, false);
+	s_pRakPeer->Send(&a_data, a_priority, a_reliability, a_orderingChannel, m_serverAddress, false);
 }
 
 /// <summary>
@@ -396,13 +399,14 @@ void NetworkClient::SendMessageToServer(RakNet::BitStream& a_data, const PacketP
 /// <param name="a_eMessage">Message ID to send</param>
 /// <param name="a_priority">Priority of the message to send</param>
 /// <param name="a_reliability">Reliability of the message to send</param>
-void NetworkClient::SendMessageToServer(RakNet::MessageID a_eMessage, PacketPriority a_priority,
-	PacketReliability a_reliability) const
+/// <param name="a_orderingChannel">Ordering Channel to Use, defaults to general</param>
+void NetworkClient::SendMessageToServer(const RakNet::MessageID a_eMessage, const PacketPriority a_priority,
+                                        const PacketReliability a_reliability, const ORDERING_CHANNELS a_orderingChannel) const
 {
 	//Create bitstream and write the message ID to it
 	RakNet::BitStream messageStream;
-	messageStream.Write((RakNet::MessageID)CSNetMessages::CLIENT_READY_TO_PLAY);
+	messageStream.Write((RakNet::MessageID)a_eMessage);
 
 	//Send Message using other SendMessageToServer function
-	SendMessageToServer(messageStream, a_priority, a_reliability);
+	SendMessageToServer(messageStream, a_priority, a_reliability, a_orderingChannel);
 }

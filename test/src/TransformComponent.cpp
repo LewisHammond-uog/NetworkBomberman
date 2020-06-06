@@ -103,6 +103,10 @@ RakNet::RM3SerializationResult TransformComponent::Serialize(RakNet::SerializePa
 	return RakNet::RM3SR_BROADCAST_IDENTICALLY;
 }
 
+/// <summary>
+/// Deserialize the Transform, i.e get the data from the server
+/// </summary>
+/// <param name="deserializeParameters"></param>
 void TransformComponent::Deserialize(RakNet::DeserializeParameters* deserializeParameters)
 {
 	RakNet::VariableDeltaSerializer::DeserializationContext deserializationContext;

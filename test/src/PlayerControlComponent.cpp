@@ -61,6 +61,11 @@ void PlayerControlComponent::Draw(Shader* a_pShader)
 {
 }
 
+/// <summary>
+/// Do Server Updates on the server,
+/// moving the player according to inputs
+/// </summary>
+/// <param name="a_fDeltaTime"></param>
 void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 {	
 	//Get the inputs off the blackboard
@@ -125,6 +130,11 @@ void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 	
 }
 
+/// <summary>
+/// Client Updates for the player, takes in inputs from
+/// the keyboards and send them to the server
+/// </summary>
+/// <param name="a_fDeltaTime"></param>
 void PlayerControlComponent::ClientUpdatePlayer(float a_fDeltaTime)
 {
 	//Get player input

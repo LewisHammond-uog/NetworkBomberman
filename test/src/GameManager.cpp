@@ -150,8 +150,7 @@ void GameManager::DeleteEntityAfterUpdate(Entity* a_pEntity)
 void GameManager::ProcessDeletions()
 {
 	//Delete all entities that should be deleted after update
-	std::vector<Entity*>::const_iterator xDelIter;
-	for (xDelIter = m_vDeleteEntityQueue.begin(); xDelIter != m_vDeleteEntityQueue.end();)
+	for (std::vector<Entity*>::const_iterator xDelIter = m_vDeleteEntityQueue.begin(); xDelIter != m_vDeleteEntityQueue.end();)
 	{
 		Entity* pEntity = *xDelIter;
 		if (pEntity)
@@ -170,6 +169,10 @@ void GameManager::ProcessDeletions()
 void GameManager::ProcessDisconnection(const RakNet::RakNetGUID a_disconnectionGUID)
 {
 	//Delete Player from the Player Manager
+	if(m_pPlayerManager)
+	{
+		m_pPlayerManager->DestroyPlayer(a_disconnectionGUID);
+	}
 }
 
 /// <summary>

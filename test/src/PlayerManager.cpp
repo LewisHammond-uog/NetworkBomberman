@@ -14,7 +14,7 @@
 #include "ColliderComponent.h"
 
 //Define pairs for our map
-typedef  std::pair<RakNet::RakNetGUID, Entity*> guidPlayerPair;
+typedef std::pair<RakNet::RakNetGUID, Entity*> GUIDPlayerPair;
 
 /// <summary>
 /// Creates players for all of the clients connected
@@ -74,7 +74,7 @@ Entity* PlayerManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID)
 	pNetworkReplicator->Reference(pPlayerData);
 
 	//Add Player to list of players
-	m_xPlayers.insert(guidPlayerPair(a_ownerGUID, pPlayerEntity));
+	m_xPlayers.insert(GUIDPlayerPair(a_ownerGUID, pPlayerEntity));
 
 	return pPlayerEntity;
 }

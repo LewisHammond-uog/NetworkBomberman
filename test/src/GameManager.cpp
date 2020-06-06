@@ -77,12 +77,10 @@ void GameManager::WarmupGame()
 		CreatePlayersForAllClients(*m_pvConnectedClients);
 
 		//Disable all of the players
-		/*
-		for(int i = 0; i < m_vpPlayers.size(); ++i)
+		for (int i = 0; i < m_vpPlayers.size(); ++i)
 		{
 			m_vpPlayers[i]->SetEnabled(false);
 		}
-		*/
 	}
 	else
 	{

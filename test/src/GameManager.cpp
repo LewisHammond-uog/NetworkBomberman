@@ -11,6 +11,7 @@
 #include "Entity.h"
 //Components
 #include "BombSpawnerComponent.h"
+#include "ColliderComponent.h"
 #include "ConsoleLog.h"
 #include "PlayerControlComponent.h"
 #include "PlayerDataComponent.h"
@@ -76,10 +77,12 @@ void GameManager::WarmupGame()
 		CreatePlayersForAllClients(*m_pvConnectedClients);
 
 		//Disable all of the players
+		/*
 		for(int i = 0; i < m_vpPlayers.size(); ++i)
 		{
 			m_vpPlayers[i]->SetEnabled(false);
 		}
+		*/
 	}
 	else
 	{
@@ -197,6 +200,7 @@ void GameManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID)
 	Entity* pPlayerEntity = new Entity(); //This is added to a static entity list when created so we don't need to worry about storing it here
 	TransformComponent* pPlayerTransform = new TransformComponent(pPlayerEntity); //This is the same for components
 	SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pPlayerEntity);
+	ColliderComponent* pCollider = new ColliderComponent(pPlayerEntity);
 	PlayerControlComponent* pPlayerControl = new PlayerControlComponent(pPlayerEntity);
 	BombSpawnerComponent* pBombSpawner = new BombSpawnerComponent(pPlayerEntity);
 	PlayerDataComponent* pPlayerData = new PlayerDataComponent(pPlayerEntity, a_ownerGUID);
@@ -204,11 +208,13 @@ void GameManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID)
 	//Add these components to the player entity
 	pPlayerEntity->AddComponent(pPlayerTransform);
 	pPlayerEntity->AddComponent(pSphere);
+	pPlayerEntity->AddComponent(pCollider);
 	pPlayerEntity->AddComponent(pPlayerControl);
 	pPlayerEntity->AddComponent(pBombSpawner);
 	pPlayerEntity->AddComponent(pPlayerData);
 
-	pPlayerTransform->SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, glm::vec3(3, 0, 3));
+	//Add Spehere Collider
+	pCollider->AddSphereCollider(1.f, glm::vec3(0, 0, 0));
 
 	//Send the entity and components to the replica manager, it is important
 	//that we send the player entity first as components rely on having

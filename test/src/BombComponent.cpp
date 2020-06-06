@@ -79,7 +79,7 @@ void BombComponent::ExplodeBomb() const
 				PlayerDataComponent* hitPlayer = dynamic_cast<PlayerDataComponent*>(currentHit->m_pHitEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
 				if (hitPlayer)
 				{
-					//todo kill player
+					hitPlayer->KillPlayer();
 				}
 
 				//Hit Wall

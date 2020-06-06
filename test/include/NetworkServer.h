@@ -72,7 +72,7 @@ private:
 	std::vector<ConnectedClientInfo> m_vConnectedClients;
 
 	//Number of players required to start the game
-	const int requiredPlayerCount = 1;
+	const int requiredPlayerCount = 2;
 };
 
 #endif // !__NETWORK_SERVER_H__

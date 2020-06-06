@@ -18,6 +18,9 @@ public:
 	void Update(float a_fDeltaTime) override {};
 	void Draw(Shader* a_pShader) override {};
 
+	//Death Function
+	void KillPlayer();
+	
 	RakNet::RakNetGUID GetPlayerID() const;
 
 #pragma region RakNet Functions

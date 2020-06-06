@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "PlayerDataComponent.h"
-#include <ConsoleLog.h>
+
+
+//Project Includes
+#include "GameManager.h"
+#include "ConsoleLog.h"
 
 //Define Component as our parent
 typedef Component PARENT;
@@ -16,6 +20,18 @@ PlayerDataComponent::PlayerDataComponent(Entity* a_pOwner, RakNet::RakNetGUID a_
 {
 	m_eComponentType = COMPONENT_TYPE::PLAYER_DATA;
 }
+
+/// <summary>
+/// Kills the Player
+/// </summary>
+void PlayerDataComponent::KillPlayer()
+{
+	//Destroy this player after this frame
+	if (m_pOwnerEntity) {
+		GameManager::GetInstance()->DeleteEntityAfterUpdate(m_pOwnerEntity);
+	}
+}
+
 /// <summary>
 /// Get the ID of the player that this component is attached to
 /// </summary>

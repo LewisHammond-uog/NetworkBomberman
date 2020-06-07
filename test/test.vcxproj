@@ -18,6 +18,7 @@
     <ClInclude Include="include\ColliderComponent.h" />
     <ClInclude Include="include\Colour.h" />
     <ClInclude Include="include\ConsoleLog.h" />
+    <ClInclude Include="include\CylinderPrimitiveComponent.h" />
     <ClInclude Include="include\Level.h" />
     <ClInclude Include="include\LevelManager.h" />
     <ClInclude Include="include\MathsUtils.h" />
@@ -51,6 +52,7 @@
     <ClCompile Include="src\ColliderComponent.cpp" />
     <ClCompile Include="src\Colours.cpp" />
     <ClCompile Include="src\Component.cpp" />
+    <ClCompile Include="src\CylinderPrimitiveComponent.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\GameManager.cpp" />
     <ClCompile Include="src\Level.cpp" />

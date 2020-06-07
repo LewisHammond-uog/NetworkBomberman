@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "MathsUtils.h"
 
 //Project Includes

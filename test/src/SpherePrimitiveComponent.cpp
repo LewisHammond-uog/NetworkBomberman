@@ -30,6 +30,10 @@ void SpherePrimitiveComponent::Update(float a_fDeltaTime)
 {
 }
 
+/// <summary>
+/// Draw the sphere 
+/// </summary>
+/// <param name="a_pShader"></param>
 void SpherePrimitiveComponent::Draw(Shader* a_pShader)
 {
 	//Get the transform component - so that we can create the box at our position

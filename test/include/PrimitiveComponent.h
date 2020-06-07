@@ -33,10 +33,11 @@ protected:
 	PrimitiveComponent(Entity* a_pOwner);
 	~PrimitiveComponent() = default;
 
-	enum PrimitiveTypes
+	enum class PrimitiveTypes
 	{
 		SPHERE,
 		BOX,
+		CYLINDER
 	};
 
 	//Type of Primitive that we are

@@ -92,7 +92,7 @@ void TestProject::Update(float a_deltaTime)
 		ImGui::End();
 	}
 	//////////////////////////////////////
-
+	
 	if (gameClient != nullptr) {
 		gameClient->Update();
 	}

@@ -9,6 +9,7 @@
 #include "PlayerControlComponent.h"
 #include "PlayerDataComponent.h"
 #include "SpherePrimitiveComponent.h"
+#include "CylinderPrimitiveComponent.h"
 #include "TransformComponent.h"
 #include "BombSpawnerComponent.h"
 #include "ColliderComponent.h"
@@ -28,6 +29,9 @@ void PlayerManager::CreatePlayersForAllClients(const std::vector<ConnectedClient
 	{
 		//Create player with GUID of the connected client
 		CreatePlayer(a_vConnectedClients[i].m_clientGUID);
+
+		//Set the colour of the player
+		SetPlayerColour(a_vConnectedClients[i].m_clientGUID, Colours::RandomColour());
 	}
 }
 
@@ -38,10 +42,13 @@ void PlayerManager::CreatePlayersForAllClients(const std::vector<ConnectedClient
 /// <returns>Created Player</returns>
 Entity* PlayerManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID)
 {
+	//Size of the player
+	constexpr float fPlayerSize = 1.f;
+	
 	//Create Player Entities with the required components
 	Entity* pPlayerEntity = new Entity(); //This is added to a static entity list when created so we don't need to worry about storing it here
 	TransformComponent* pPlayerTransform = new TransformComponent(pPlayerEntity); //This is the same for components
-	SpherePrimitiveComponent* pSphere = new SpherePrimitiveComponent(pPlayerEntity);
+	CylinderPrimitiveComponent* pCylinder = new CylinderPrimitiveComponent(pPlayerEntity, fPlayerSize, fPlayerSize);
 	ColliderComponent* pCollider = new ColliderComponent(pPlayerEntity);
 	PlayerControlComponent* pPlayerControl = new PlayerControlComponent(pPlayerEntity);
 	BombSpawnerComponent* pBombSpawner = new BombSpawnerComponent(pPlayerEntity);
@@ -49,14 +56,14 @@ Entity* PlayerManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID)
 
 	//Add these components to the player entity
 	pPlayerEntity->AddComponent(pPlayerTransform);
-	pPlayerEntity->AddComponent(pSphere);
+	pPlayerEntity->AddComponent(pCylinder);
 	pPlayerEntity->AddComponent(pCollider);
 	pPlayerEntity->AddComponent(pPlayerControl);
 	pPlayerEntity->AddComponent(pBombSpawner);
 	pPlayerEntity->AddComponent(pPlayerData);
 
 	//Add Spehere Collider
-	pCollider->AddSphereCollider(1.f, glm::vec3(0, 0, 0));
+	pCollider->AddSphereCollider(fPlayerSize, glm::vec3(0, 0, 0));
 
 	//Send the entity and components to the replica manager, it is important
 	//that we send the player entity first as components rely on having
@@ -68,7 +75,7 @@ Entity* PlayerManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID)
 	}
 	pNetworkReplicator->Reference(pPlayerEntity);
 	pNetworkReplicator->Reference(pPlayerTransform);
-	pNetworkReplicator->Reference(pSphere);
+	pNetworkReplicator->Reference(pCylinder);
 	pNetworkReplicator->Reference(pPlayerControl);
 	pNetworkReplicator->Reference(pBombSpawner);
 	pNetworkReplicator->Reference(pPlayerData);

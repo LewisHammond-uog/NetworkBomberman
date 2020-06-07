@@ -169,7 +169,7 @@ void NetworkServer::DoPreGameServerEvents()
 					//Create Player
 					GameManager::GetInstance()->AssignConnectedPlayers(&m_vConnectedClients);
 					GameManager::GetInstance()->WarmupGame();
-					//GameManager::GetInstance()->StartGame();
+					GameManager::GetInstance()->StartGame();
 					
 					//Change Server State
 					m_eServerState = ServerGameStates::SERVER_PROCESSING_EVENTS;					

@@ -15,6 +15,7 @@
 #include "PlayerControlComponent.h"
 #include "PlayerDataComponent.h"
 #include "RaycastComponent.h"
+#include "CylinderPrimitiveComponent.h"
 #include "ServerClientBase.h"
 
 
@@ -31,6 +32,7 @@ RakNet::Replica3* ClientConnection::AllocReplica(RakNet::BitStream* allocationId
 	if (typeName == "BombSpawnerComponent") { return new BombSpawnerComponent(nullptr); }
 	if (typeName == "BombComponent") { return new BombComponent(nullptr); }
 	if (typeName == "PlayerDataComponent") { return new PlayerDataComponent(nullptr, RakNet::RakNetGUID()); }
+	if (typeName == "CylinderPrimitiveComponent") { return new CylinderPrimitiveComponent(nullptr); }
 
 	//RayCaster, Collision and Destructable Wall Components are not sent to the client as they do no processing there
 	

@@ -146,7 +146,7 @@ Entity* LevelManager::SpawnDestructibleWall(glm::vec3 a_v3SpawnPos) const
 	pWallEntity->AddComponent(pWallDestruction);
 
 	//Set the colour of the wall
-	BoxPrimitiveComponent* pBoxPrimative = dynamic_cast<BoxPrimitiveComponent*>(pWallEntity->GetComponent(COMPONENT_TYPE::PRIMITIVE_BOX));
+	BoxPrimitiveComponent* pBoxPrimative = pWallEntity->GetComponent<BoxPrimitiveComponent*>();
 	if(pBoxPrimative)
 	{
 		pBoxPrimative->SetColour(m_v4DestructableColor);

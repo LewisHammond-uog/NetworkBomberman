@@ -59,7 +59,7 @@ void BombSpawnerComponent::Draw(Shader* a_pShader)
 void BombSpawnerComponent::ServerUpdateSpawner(float a_fDeltaTime)
 {
 	//Check for messages that we should spawn a bomb
-	PlayerDataComponent* pPlayerData = dynamic_cast<PlayerDataComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+	PlayerDataComponent* pPlayerData = m_pOwnerEntity->GetComponent<PlayerDataComponent*>();
 	if (!pPlayerData)
 	{
 		return;
@@ -74,7 +74,7 @@ void BombSpawnerComponent::ServerUpdateSpawner(float a_fDeltaTime)
 		//Get our transform because this is where we are going to
 		//create our bombs at our current position
 		if (m_pOwnerEntity == nullptr) { return; }
-		TransformComponent* pPlayerTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
+		TransformComponent* pPlayerTransform = m_pOwnerEntity->GetComponent<TransformComponent*>();
 		if (pPlayerTransform == nullptr) { return; }
 
 		//Round from the player postion

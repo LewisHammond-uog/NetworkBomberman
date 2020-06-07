@@ -23,7 +23,7 @@ public:
 	void KillPlayer();
 
 	//Colour Set Function
-	void SetPlayerColour(Colour a_v4Colour);
+	void SetPlayerColour(glm::vec4 a_v4Colour);
 	
 	RakNet::RakNetGUID GetPlayerID() const;
 
@@ -35,7 +35,7 @@ public:
 
 private:
 	RakNet::RakNetGUID m_playerID; //Player ID of this component, uses RakNetGUID
-	Colour m_v4PlayerColour; //Colour of this player
+	glm::vec4 m_v4PlayerColour; //Colour of this player
 };
 
 #endif //!__PLAYER_DATA_COMPONENT_H__

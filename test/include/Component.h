@@ -12,20 +12,6 @@
 class Entity;
 class Shader;
 
-enum class COMPONENT_TYPE {
-	NONE,
-	TRANSFORM,
-	MODEL,
-	COLLIDER,
-	RAYCAST,
-	PLAYER_CONTROL,
-	PLAYER_DATA,
-	DESTRUCTABLE_WALL,
-	PRIMITIVE,
-	PRIMITIVE_BOX,
-	PRIMITIVE_SPHERE
-};
-
 /// <summary>
 /// Abstract class for a component which is used so we can
 /// loop all components with Update() and Draw() functions
@@ -42,7 +28,6 @@ public:
 	virtual void Draw(Shader* a_pShader) = 0; //Pure Virtual Function
 
 	Entity* GetOwnerEntity() const;
-	COMPONENT_TYPE GetComponentType() const;
 	void RemoveOwnerEntity();
 
 #pragma region Replica Manager Functions
@@ -62,7 +47,6 @@ public:
 
 protected:
 	Entity* m_pOwnerEntity;
-	COMPONENT_TYPE m_eComponentType;
 };
 
 #endif	//!__COMPONENT_H__

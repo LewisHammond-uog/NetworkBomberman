@@ -97,7 +97,7 @@ void PlayerManager::SetAllPlayersEnabled(const bool a_bEnabled)
 /// </summary>
 /// <param name="a_ownerGUID">GUID of the system that owns the player</param>
 /// <param name="a_v4Colour">Colour to set the player tod</param>
-void PlayerManager::SetPlayerColour(RakNet::RakNetGUID a_ownerGUID, Colour a_v4Colour)
+void PlayerManager::SetPlayerColour(RakNet::RakNetGUID a_ownerGUID, glm::vec4 a_v4Colour)
 {
 	//Try and find the player entity
 	Entity* pPlayerEntity = m_xPlayers[a_ownerGUID];
@@ -107,7 +107,7 @@ void PlayerManager::SetPlayerColour(RakNet::RakNetGUID a_ownerGUID, Colour a_v4C
 	}
 
 	//Get the player data component
-	PlayerDataComponent* pPlayerData = dynamic_cast<PlayerDataComponent*>(pPlayerEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+	PlayerDataComponent* pPlayerData = pPlayerEntity->GetComponent<PlayerDataComponent*>();
 	if(!pPlayerEntity)
 	{
 		return;
@@ -134,7 +134,7 @@ void PlayerManager::DestroyPlayer(RakNet::RakNetGUID a_playerGUID)
 	}
 
 	//Check that this entity is a player
-	PlayerDataComponent* pPlayerData = dynamic_cast<PlayerDataComponent*>(pPlayerEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+	PlayerDataComponent* pPlayerData = pPlayerEntity->GetComponent<PlayerDataComponent*>();
 	if (!pPlayerData)
 	{
 		return;

@@ -48,6 +48,7 @@
     <ClCompile Include="src\BombSpawnerComponent.cpp" />
     <ClCompile Include="src\BoxPrimitiveComponent.cpp" />
     <ClCompile Include="src\ColliderComponent.cpp" />
+    <ClCompile Include="src\Colours.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\Entity.cpp" />
     <ClCompile Include="src\GameManager.cpp" />

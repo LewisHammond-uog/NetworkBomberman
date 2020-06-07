@@ -24,9 +24,6 @@ PlayerControlComponent::PlayerControlComponent(Entity* a_pOwner) :
 	m_v2LastSentMovementInputs(0,0),
 	m_v3CurrentVelocity(glm::vec3(0, 0, 0))
 {
-	//Set Component Type
-	m_eComponentType = COMPONENT_TYPE::PLAYER_CONTROL;
-	
 }
 
 PlayerControlComponent::~PlayerControlComponent()
@@ -73,7 +70,7 @@ void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 		CSGameMessages::CLIENT_PLAYER_INPUT_DATA, GetPlayerID());
 	
 	//Get our owners transform
-	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
+	TransformComponent* pTransform = m_pOwnerEntity->GetComponent<TransformComponent*>();
 	if (!pTransform) { return; }
 
 	//Get the players current position, so we can see if we can move
@@ -182,7 +179,7 @@ glm::vec2 PlayerControlComponent::GetPlayerKeyboardMovementInput() const
 RakNet::RakNetGUID PlayerControlComponent::GetPlayerID() const
 {
 	//Get player Data Component, if it null return a 'null' GUID
-	PlayerDataComponent* playerData = static_cast<PlayerDataComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+	PlayerDataComponent* playerData = m_pOwnerEntity->GetComponent<PlayerDataComponent*>();
 	if (!playerData)
 	{
 		return RakNet::RakNetGUID();

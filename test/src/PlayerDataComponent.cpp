@@ -19,7 +19,6 @@ PlayerDataComponent::PlayerDataComponent(Entity* a_pOwner, RakNet::RakNetGUID a_
 	PARENT(a_pOwner),
 	m_playerID(a_iPlayerID)
 {
-	m_eComponentType = COMPONENT_TYPE::PLAYER_DATA;
 }
 
 /// <summary>
@@ -37,13 +36,13 @@ void PlayerDataComponent::KillPlayer()
 /// Sets the colour of the player (i.e in visual elements)
 /// </summary>
 /// <param name="a_v4Colour">Colour to set</param>
-void PlayerDataComponent::SetPlayerColour(Colour a_v4Colour)
+void PlayerDataComponent::SetPlayerColour(glm::vec4 a_v4Colour)
 {
 	//Set our colour variable
 	m_v4PlayerColour = a_v4Colour;
 
 	//Set colour of attached primative
-	PrimitiveComponent* pPlayerPrimitive = dynamic_cast<PrimitiveComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::PRIMITIVE_BOX));
+	PrimitiveComponent* pPlayerPrimitive = m_pOwnerEntity->GetComponent<PrimitiveComponent*>();
 	if(pPlayerPrimitive != nullptr)
 	{
 		pPlayerPrimitive->SetColour(a_v4Colour);

@@ -58,7 +58,7 @@ void BombComponent::ExplodeBomb() const
 	*/
 
 	//Check we have a raycaster component
-	RaycastComponent* pRayCaster = dynamic_cast<RaycastComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::RAYCAST));
+	RaycastComponent* pRayCaster = m_pOwnerEntity->GetComponent<RaycastComponent*>();
 	if (pRayCaster != nullptr)
 	{
 		//Get the collision rays and do a raycast on all of them
@@ -76,14 +76,14 @@ void BombComponent::ExplodeBomb() const
 				RayCastHit* currentHit = currentResult->m_vRayCastHits[hitIndex];
 
 				//Hit Player
-				PlayerDataComponent* hitPlayer = dynamic_cast<PlayerDataComponent*>(currentHit->m_pHitEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+				PlayerDataComponent* hitPlayer = currentHit->m_pHitEntity->GetComponent<PlayerDataComponent*>();
 				if (hitPlayer)
 				{
 					hitPlayer->KillPlayer();
 				}
 
 				//Hit Wall
-				DestructableWallComponent* pWall = dynamic_cast<DestructableWallComponent*>(currentHit->m_pHitEntity->GetComponent(COMPONENT_TYPE::DESTRUCTABLE_WALL));
+				DestructableWallComponent* pWall = currentHit->m_pHitEntity->GetComponent<DestructableWallComponent*>();
 				if (pWall)
 				{
 					pWall->DestroyWall();
@@ -114,7 +114,7 @@ std::vector<rp3d::Ray*> BombComponent::GetCollisionRays() const
 	{
 		return vRays;
 	}
-	TransformComponent* pTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
+	TransformComponent* pTransform = m_pOwnerEntity->GetComponent<TransformComponent*>();
 	if (!pTransform)
 	{
 		return vRays;

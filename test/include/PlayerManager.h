@@ -31,7 +31,7 @@ public:
 	//Function to Set Player enabled state
 	void SetAllPlayersEnabled(bool a_bEnabled);
 	//Function to assign player a colour
-	void SetPlayerColour(RakNet::RakNetGUID a_ownerGUID, Colour a_v4Colour);
+	void SetPlayerColour(RakNet::RakNetGUID a_ownerGUID, glm::vec4 a_v4Colour);
 	
 	//Functions to Destory Player
 	void DestroyPlayer(RakNet::RakNetGUID a_playerGUID);

@@ -43,6 +43,9 @@
     <Filter Include="Header Files\Utils">
       <UniqueIdentifier>{a68b4c18-9ccc-480f-b3d2-0731be9ed662}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{e3b967c1-539d-49d6-8ca8-0017122db550}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TestProject.cpp">
@@ -129,6 +132,9 @@
     <ClCompile Include="src\PlayerManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Colours.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\TestProject.h">
@@ -185,9 +191,6 @@
     <ClInclude Include="include\BombComponent.h">
       <Filter>Header Files\ECS\Components</Filter>
     </ClInclude>
-    <ClInclude Include="include\ConsoleLog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\TransformHistory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="include\PlayerManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ConsoleLog.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -26,7 +26,7 @@ NetworkBlackboard::~NetworkBlackboard()
 /// <summary>
 /// Get the instance of the NetworkBlackboard singleton
 /// </summary>
-/// <returns></returns>
+/// <returns>Pointer to Instance of Blackboard</returns>
 NetworkBlackboard* NetworkBlackboard::GetInstance()
 {
 	if(m_pInstance == nullptr)

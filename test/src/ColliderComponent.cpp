@@ -22,10 +22,6 @@ ColliderComponent::ColliderComponent(Entity* a_pOwner) :
 	PARENT(a_pOwner),
 	m_pCollisionBody(nullptr)
 {
-
-	//Set Type
-	m_eComponentType = COMPONENT_TYPE::COLLIDER;
-	
 	//Get the collision world
 	m_pCollisionWorld = GameManager::GetInstance()->GetCollisionWorld();
 	
@@ -38,7 +34,7 @@ ColliderComponent::ColliderComponent(Entity* a_pOwner) :
 	//Create collision body at object transform, or default transform if we don't have one
 	if (m_pCollisionWorld != nullptr) {
 		if (m_pOwnerEntity != nullptr) {
-			TransformComponent* pLocalTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
+			TransformComponent* pLocalTransform = m_pOwnerEntity->GetComponent<TransformComponent*>();
 			if (pLocalTransform) {
 				m_pCollisionBody = m_pCollisionWorld->createCollisionBody(pLocalTransform);
 			}else
@@ -81,7 +77,7 @@ ColliderComponent::~ColliderComponent()
 void ColliderComponent::Update(float a_fDeltaTime)
 {
 	//Get new position and transform of the physics body
-	TransformComponent* pLocalTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));	
+	TransformComponent* pLocalTransform = m_pOwnerEntity->GetComponent<TransformComponent*>();
 	if (pLocalTransform == nullptr)
 	{
 		return;
@@ -219,7 +215,7 @@ bool ColliderComponent::IsColliding(const bool a_bUseAABB) const
 		}
 
 		//Get the collider component
-		ColliderComponent* pTargetCollider = dynamic_cast<ColliderComponent*>(pTarget->GetComponent(COMPONENT_TYPE::COLLIDER));
+		ColliderComponent* pTargetCollider = pTarget->GetComponent<ColliderComponent*>();
 		if (pTargetCollider == nullptr) {
 			return false;
 		}
@@ -295,7 +291,7 @@ std::vector<CollisionInfo*> ColliderComponent::GetCollisionInfo() const
 		}
 
 		//Get the collider component
-		ColliderComponent* pTargetCollider = dynamic_cast<ColliderComponent*>(pTarget->GetComponent(COMPONENT_TYPE::COLLIDER));
+		ColliderComponent* pTargetCollider = pTarget->GetComponent<ColliderComponent*>();
 		if (pTargetCollider == nullptr) {
 			continue;
 		}
@@ -393,10 +389,11 @@ Entity* ColliderComponent::GetEntityFromCollisionBody(rp3d::CollisionBody* a_col
 		}
 
 		//Get the collider component
-		ColliderComponent* pTargetCollider = dynamic_cast<ColliderComponent*>(pTarget->GetComponent(COMPONENT_TYPE::COLLIDER));
+		ColliderComponent* pTargetCollider = pTarget->GetComponent<ColliderComponent*>();
 		if (pTargetCollider == nullptr) {
 			continue;
 		}
+		//Check that there is a collider on the collider component
 		if(pTargetCollider->m_pCollisionBody == nullptr)
 		{
 			continue;

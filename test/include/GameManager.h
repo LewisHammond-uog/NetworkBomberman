@@ -44,7 +44,7 @@ public:
 	void EndGame();
 
 	//Function to process when a player disconnects
-	void ProcessDisconnection(RakNet::RakNetGUID a_disconnectionGUID);
+	void ProcessDisconnection(RakNet::RakNetGUID a_disconnectionGUID) const;
 
 	//Collision World
 	rp3d::CollisionWorld* GetCollisionWorld() const;

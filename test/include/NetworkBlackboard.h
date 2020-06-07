@@ -55,7 +55,7 @@ private:
 	std::vector<NetworkData*> m_vUnreadMessages;
 
 	//Client so that we can send messages to the client
-	NetworkClient* m_netClient;
+	NetworkClient* m_pNetClient;
 	
 	//Store the instance of the blackboard
 	static NetworkBlackboard* m_pInstance;

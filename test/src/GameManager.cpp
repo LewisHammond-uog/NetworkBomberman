@@ -166,7 +166,7 @@ void GameManager::ProcessDeletions()
 /// Processes the client disconnecting from the server and deletes their player
 /// </summary>
 /// <param name="a_disconnectionGUID">Client that has disconnected</param>
-void GameManager::ProcessDisconnection(const RakNet::RakNetGUID a_disconnectionGUID)
+void GameManager::ProcessDisconnection(const RakNet::RakNetGUID a_disconnectionGUID) const
 {
 	//Delete Player from the Player Manager
 	if(m_pPlayerManager)

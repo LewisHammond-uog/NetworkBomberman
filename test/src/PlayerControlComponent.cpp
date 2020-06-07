@@ -104,9 +104,6 @@ void PlayerControlComponent::ServerUpdatePlayer(float a_fDeltaTime)
 		}
 	}
 
-	//todo remove - this is just for debugging
-	Gizmos::addSphere(m_v3TargetPos, 10u, 10u, 0.25f, glm::vec4(1, 1, 1, 1));
-
 	//--Move towards the target position--//
 	
 	//Get the direction

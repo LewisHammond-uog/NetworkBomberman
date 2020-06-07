@@ -3,7 +3,6 @@
 
 //C++ Include
 #include <fstream>
-#include <iostream>
 
 //Project Includes
 #include "ConsoleLog.h"

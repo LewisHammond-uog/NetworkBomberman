@@ -117,7 +117,7 @@ void NetworkBlackboard::SetNetworkClient(NetworkClient* a_networkClient)
 {
 	if(a_networkClient != nullptr)
 	{
-		m_netClient = a_networkClient;
+		m_pNetClient = a_networkClient;
 	}
 }
 
@@ -137,8 +137,9 @@ void NetworkBlackboard::SendBlackboardDataToServer(const RakNet::MessageID a_dat
 	bsToSend.Write(ourPlayerID);
 	bsToSend.Write(a_data);
 
-	if (m_netClient) {
-		m_netClient->SendMessageToServer(bsToSend, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+	//Send Now because it is probably a critical update (i.e movement or bomb placement)
+	if (m_pNetClient) {
+		m_pNetClient->SendMessageToServer(bsToSend, PacketPriority::IMMEDIATE_PRIORITY, PacketReliability::RELIABLE);
 	}
 }
 

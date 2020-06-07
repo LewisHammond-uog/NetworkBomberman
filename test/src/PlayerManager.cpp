@@ -92,6 +92,31 @@ void PlayerManager::SetAllPlayersEnabled(const bool a_bEnabled)
 	}
 }
 
+/// <summary>
+/// Sets the Colour of a given player
+/// </summary>
+/// <param name="a_ownerGUID">GUID of the system that owns the player</param>
+/// <param name="a_v4Colour">Colour to set the player tod</param>
+void PlayerManager::SetPlayerColour(RakNet::RakNetGUID a_ownerGUID, Colour a_v4Colour)
+{
+	//Try and find the player entity
+	Entity* pPlayerEntity = m_xPlayers[a_ownerGUID];
+	if(!pPlayerEntity)
+	{
+		return;
+	}
+
+	//Get the player data component
+	PlayerDataComponent* pPlayerData = dynamic_cast<PlayerDataComponent*>(pPlayerEntity->GetComponent(COMPONENT_TYPE::PLAYER_DATA));
+	if(!pPlayerEntity)
+	{
+		return;
+	}
+
+	//Set the colour of the player
+	pPlayerData->SetPlayerColour(a_v4Colour);
+}
+
 
 /// <summary>
 /// Destroy a player entity

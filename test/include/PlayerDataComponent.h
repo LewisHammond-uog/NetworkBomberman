@@ -2,6 +2,7 @@
 #define __PLAYER_DATA_COMPONENT_H__
 
 //Project Includes
+#include "Colour.h"
 #include "Component.h"
 
 /// <summary>
@@ -20,6 +21,9 @@ public:
 
 	//Death Function
 	void KillPlayer();
+
+	//Colour Set Function
+	void SetPlayerColour(Colour a_v4Colour);
 	
 	RakNet::RakNetGUID GetPlayerID() const;
 
@@ -31,6 +35,7 @@ public:
 
 private:
 	RakNet::RakNetGUID m_playerID; //Player ID of this component, uses RakNetGUID
+	Colour m_v4PlayerColour; //Colour of this player
 };
 
 #endif //!__PLAYER_DATA_COMPONENT_H__

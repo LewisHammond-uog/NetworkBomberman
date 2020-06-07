@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "PlayerDataComponent.h"
 
-
 //Project Includes
 #include "GameManager.h"
+#include "PrimitiveComponent.h"
+#include "Entity.h"
 #include "ConsoleLog.h"
 
 //Define Component as our parent
@@ -29,6 +30,23 @@ void PlayerDataComponent::KillPlayer()
 	//Destroy this player after this frame
 	if (m_pOwnerEntity) {
 		GameManager::GetInstance()->DeleteEntityAfterUpdate(m_pOwnerEntity);
+	}
+}
+
+/// <summary>
+/// Sets the colour of the player (i.e in visual elements)
+/// </summary>
+/// <param name="a_v4Colour">Colour to set</param>
+void PlayerDataComponent::SetPlayerColour(Colour a_v4Colour)
+{
+	//Set our colour variable
+	m_v4PlayerColour = a_v4Colour;
+
+	//Set colour of attached primative
+	PrimitiveComponent* pPlayerPrimitive = dynamic_cast<PrimitiveComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::PRIMITIVE_BOX));
+	if(pPlayerPrimitive != nullptr)
+	{
+		pPlayerPrimitive->SetColour(a_v4Colour);
 	}
 }
 

@@ -4,12 +4,15 @@
 #include "glm/glm.hpp"
 // ReSharper disable CppInconsistentNaming - For Colour Names
 
+//Type Def vec4 as a colour
+typedef glm::vec4 Colour;
+
 //Struct of predefined colours
 struct Colours
 {
 public:
-	//Type Def vec4 as a colour
-	typedef glm::vec4 Colour;
+	//Function to Generate a Random Colour
+	static Colour RandomColour();
 	
 	//Primary Colours
 	static const Colour red;
@@ -27,6 +30,4 @@ public:
 };
 
 // ReSharper restore CppInconsistentNaming - For Colour Names
-
-
 #endif //!__COLOUR_H__

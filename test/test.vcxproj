@@ -20,6 +20,7 @@
     <ClInclude Include="include\ConsoleLog.h" />
     <ClInclude Include="include\Level.h" />
     <ClInclude Include="include\LevelManager.h" />
+    <ClInclude Include="include\MathsUtils.h" />
     <ClInclude Include="include\NetworkBlackboard.h" />
     <ClInclude Include="include\NetworkOrderingChannels.h" />
     <ClInclude Include="include\PlayerControlComponent.h" />
@@ -55,6 +56,7 @@
     <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\LevelManager.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\MathUtils.cpp" />
     <ClCompile Include="src\NetworkClient.cpp" />
     <ClCompile Include="src\NetworkBlackboard.cpp" />
     <ClCompile Include="src\NetworkReplicator.cpp" />

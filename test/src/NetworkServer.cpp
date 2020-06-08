@@ -60,12 +60,33 @@ void NetworkServer::Init()
 
 void NetworkServer::Update()
 {
-	//Get Packets and then proccess them by the current server state
-	if (m_eServerState == ServerGameStates::SERVER_CLIENTS_CONNECTING) {
-		DoPreGameServerEvents();
-	}else if(m_eServerState == ServerGameStates::SERVER_PROCESSING_EVENTS)
+	//Get a received packets this frame
+	RakNet::Packet* pPacket = s_pRakPeer->Receive();
+
+	//Proccess the packets using different methods
+	//(i.e disconnection, game playing packets)
+	while(pPacket != nullptr)
 	{
-		DoGamePlayingServerEvents();
+		//Process Game Packets
+		switch(m_eServerState) {
+		case ServerGameStates::SERVER_CLIENTS_CONNECTING: {
+			DoPreGameServerEvents(pPacket);
+			break;
+		}
+		case ServerGameStates::SERVER_GAME_PLAYING: {
+			DoGamePlayingServerEvents(pPacket);
+			break;
+		}
+		default:
+			break;
+		}
+
+		//Process Disconnections
+		HandleDisconnectPackets(pPacket);
+
+		//Deallocate Packet and get the next a_pPacket
+		s_pRakPeer->DeallocatePacket(pPacket);
+		pPacket = s_pRakPeer->Receive();		
 	}
 }
 
@@ -90,153 +111,129 @@ void NetworkServer::DeInit()
 /// Does server events until enough clients are connected to the 
 /// server and a ready
 /// </summary>
-void NetworkServer::DoPreGameServerEvents()
+void NetworkServer::DoPreGameServerEvents(RakNet::Packet* a_pPacket)
 {
-	RakNet::Packet* packet = s_pRakPeer->Receive();
+	//Do events based on the data we have received
+	switch (a_pPacket->data[0])
+	{
+		case(CSNetMessages::CLIENT_REGISTER_DATA): {
 
-	while (packet != nullptr) {
+			RakNet::BitStream incomingLoginData(a_pPacket->data, a_pPacket->length, false);
 
-		switch (packet->data[0])
-		{
-			case(CSNetMessages::CLIENT_REGISTER_DATA): {
-
-				RakNet::BitStream incomingLoginData(packet->data, packet->length, false);
-
-				//Try and authenticate a new user user, return message to client
-				//if this is successful or not
-				if (m_pServerAuthenticator->LoginFromBitstream(incomingLoginData, true))
-				{
-					//Send Success
-					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT REGISTER SUCCESS INFO");
-					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
-
-					//Add to list of connected clients
-					ConnectedClientInfo newClientInfo{
-						packet->guid, //Store Sys identifier
-					};
-					m_vConnectedClients.push_back(newClientInfo);
-					
-				} else {
-
-					//Send fail message to client
-					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
-					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT REGISTER FAIL INFO");
-				}
-
-				break;
-			}
-			case(CSNetMessages::CLIENT_LOGIN_DATA): {
-
-				RakNet::BitStream incomingLoginData(packet->data, packet->length, false);
-
-				//Try and authenticate exsiting user, return message to client
-				//if this is successfull or not
-				if (m_pServerAuthenticator->LoginFromBitstream(incomingLoginData, false))
-				{
-					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
-					//Send success message to client
-					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
-
-					//Add to list of connected clients
-					ConnectedClientInfo newClientInfo{
-						packet->guid, //Store Sys addres
-					};
-					m_vConnectedClients.push_back(newClientInfo);
-				}
-				else {
-
-					//Send fail message to client
-					SendMessageToClient(packet->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
-					ConsoleLog::LogMessage("SERVER :: SENDING CLIENT LOGIN FAIL INFO");
-				}
-
-				break;
-			}
-			case(CSNetMessages::CLIENT_READY_TO_PLAY): {
-				ConsoleLog::LogMessage("SERVER :: A CLIENT IS READY TO PLAY");
-
-				//Add to our ready clients count
-				++m_iReadyClients;
-
-				//Check if game is ready to start
-				if (m_iReadyClients >= requiredPlayerCount) {
-
-					//Create and send packet that game is ready to play
-					RakNet::BitStream readyMessage;
-					readyMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_STARTING);
-					SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE, ORDERING_CHANNEL_GENERAL);
-
-					//Create Player
-					GameManager::GetInstance()->AssignConnectedPlayers(&m_vConnectedClients);
-					GameManager::GetInstance()->WarmupGame();
-					GameManager::GetInstance()->StartGame();
-					
-					//Change Server State
-					m_eServerState = ServerGameStates::SERVER_PROCESSING_EVENTS;					
-					ConsoleLog::LogMessage("SERVER :: GAME STARTING");
-				}
-				break;
-			}
-			default:
+			//Try and authenticate a new user user, return message to client
+			//if this is successful or not
+			if (m_pServerAuthenticator->LoginFromBitstream(incomingLoginData, true))
 			{
-				//Log out unknown data and it's message ID
-				char errorBuffer[ERROR_BUFFER_SIZE];
-				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Get Connections Stage. ID: %i", packet->data[0]);
-				ConsoleLog::LogMessage(errorBuffer);
-				break;
-			}
-		}
+				//Send Success
+				ConsoleLog::LogMessage("SERVER :: SENDING CLIENT REGISTER SUCCESS INFO");
+				SendMessageToClient(a_pPacket->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
 
-		//Deallocate Packet and get the next packet
-		s_pRakPeer->DeallocatePacket(packet);
-		packet = s_pRakPeer->Receive();
+				//Add to list of connected clients
+				const ConnectedClientInfo newClientInfo{
+					a_pPacket->guid, //Store Sys identifier
+				};
+				m_vConnectedClients.push_back(newClientInfo);
+				
+			} else {
+
+				//Send fail message to client
+				SendMessageToClient(a_pPacket->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
+				ConsoleLog::LogMessage("SERVER :: SENDING CLIENT REGISTER FAIL INFO");
+			}
+
+			break;
+		}
+		case(CSNetMessages::CLIENT_LOGIN_DATA): {
+
+			RakNet::BitStream incomingLoginData(a_pPacket->data, a_pPacket->length, false);
+
+			//Try and authenticate exsiting user, return message to client
+			//if this is successfull or not
+			if (m_pServerAuthenticator->LoginFromBitstream(incomingLoginData, false))
+			{
+				ConsoleLog::LogMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
+				//Send success message to client
+				SendMessageToClient(a_pPacket->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
+
+				//Add to list of connected clients
+				ConnectedClientInfo newClientInfo{
+					a_pPacket->guid, //Store Sys addres
+				};
+				m_vConnectedClients.push_back(newClientInfo);
+			}
+			else {
+
+				//Send fail message to client
+				SendMessageToClient(a_pPacket->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_FAIL, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+				ConsoleLog::LogMessage("SERVER :: SENDING CLIENT LOGIN FAIL INFO");
+			}
+
+			break;
+		}
+		case(CSNetMessages::CLIENT_READY_TO_PLAY): {
+			ConsoleLog::LogMessage("SERVER :: A CLIENT IS READY TO PLAY");
+
+			//Add to our ready clients count
+			++m_iReadyClients;
+
+			//Check if game is ready to start
+			if (m_iReadyClients >= requiredPlayerCount) {
+
+				//Create and send a_pPacket that game is ready to play
+				RakNet::BitStream readyMessage;
+				readyMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_STARTING);
+				SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE, ORDERING_CHANNEL_GENERAL);
+
+				//Create Player
+				GameManager::GetInstance()->AssignConnectedPlayers(&m_vConnectedClients);
+				GameManager::GetInstance()->WarmupGame();
+				GameManager::GetInstance()->StartGame();
+				
+				//Change Server State
+				m_eServerState = ServerGameStates::SERVER_GAME_PLAYING;					
+				ConsoleLog::LogMessage("SERVER :: GAME STARTING");
+			}
+			break;
+		}
+		default:
+		{
+			//Log out unknown data and it's message ID
+			char errorBuffer[ERROR_BUFFER_SIZE];
+			sprintf(errorBuffer, "SERVER :: Unknown Data Received in Get Connections Stage. ID: %i", a_pPacket->data[0]);
+			ConsoleLog::LogMessage(errorBuffer);
+			break;
+		}
 	}
+	
 }
 
 /// <summary>
 /// Do events relating to game playing (i.e processing movements, updating game objects)
 /// </summary>
-void NetworkServer::DoGamePlayingServerEvents()
+void NetworkServer::DoGamePlayingServerEvents(RakNet::Packet* a_pPacket)
 {
-	RakNet::Packet* packet = s_pRakPeer->Receive();
-
-	while (packet != nullptr) {
-		switch(packet->data[0])
+	//Do events based on the data we have received
+	switch(a_pPacket->data[0])
+	{
+	//Creation Requests
+	case(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB):
+	case(CSGameMessages::CLIENT_PLAYER_INPUT_DATA):
 		{
-		//Creation Requests
-		case(CSGameMessages::CLIENT_PLAYER_CREATE_BOMB):
-		case(CSGameMessages::CLIENT_PLAYER_INPUT_DATA):
-			{
-				//Send Player Input Data to the Blackboard so that it can be processed by
-				//individal players
-				RakNet::BitStream incomingInputData(packet->data, packet->length, true);
+			//Send Player Input Data to the Blackboard so that it can be processed by
+			//individal players
+			RakNet::BitStream incomingInputData(a_pPacket->data, a_pPacket->length, true);
 
-				NetworkBlackboard::GetInstance()->AddReceivedNetworkData(incomingInputData);
-				break;
-				
-			}
-		//Disconnections
-		case(ID_CONNECTION_LOST):
-		case(ID_DISCONNECTION_NOTIFICATION):
-			{
-				//Process the fact that this client has disconnected by destroying their player
-				//and removing them from our connected client list
-				DisconnectClient(packet->guid);
-				ConsoleLog::LogMessage("SERVER :: A CLIENT IS DISCONNECTING");
-				break;
-			}
-		default:
-			{
-				//Log out unknown data and it's message ID
-				char errorBuffer[ERROR_BUFFER_SIZE];
-				sprintf(errorBuffer, "SERVER :: Unknown Data Received in Play Stage. ID: %i", packet->data[0]);
-				ConsoleLog::LogMessage(errorBuffer);
-			}
+			NetworkBlackboard::GetInstance()->AddReceivedNetworkData(incomingInputData);
+			break;
+			
 		}
-
-		//Deallocate Packet and get the next packet
-		s_pRakPeer->DeallocatePacket(packet);
-		packet = s_pRakPeer->Receive();
+	default:
+		{
+			//Log out unknown data and it's message ID
+			char errorBuffer[ERROR_BUFFER_SIZE];
+			sprintf(errorBuffer, "SERVER :: Unknown Data Received in Play Stage. ID: %i", a_pPacket->data[0]);
+			ConsoleLog::LogMessage(errorBuffer);
+		}
 	}
 }
 
@@ -293,6 +290,28 @@ void NetworkServer::SendMessageToAllClients(RakNet::BitStream& a_data, const Pac
 		//Call Send Message Function on the selected client
 		SendMessageToClient(sClientAddress, a_data, a_priority, a_reliability);
 	}
+}
+
+/// <summary>
+/// Handles Disconnection Packets regardless of play mode
+/// </summary>
+/// <param name="a_pPacket">Packet</param>
+/// <returns>If a_pPacket was a disconnection a_pPacket</returns>
+bool NetworkServer::HandleDisconnectPackets(RakNet::Packet* a_pPacket)
+{
+	//Get the a_pPacket type
+	const RakNet::MessageID ePacketType = a_pPacket->data[0];
+
+	//Check if a_pPacket is a disconnection a_pPacket
+	if(ePacketType == ID_CONNECTION_LOST || ePacketType == ID_DISCONNECTION_NOTIFICATION)
+	{
+		//Deal with disconnection
+		DisconnectClient(a_pPacket->guid);
+		return true;
+	}
+
+	//Packet not dealt with by this function
+	return false;
 }
 
 /// <summary>

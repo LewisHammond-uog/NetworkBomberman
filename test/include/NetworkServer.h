@@ -25,9 +25,9 @@ class NetworkServer final : public ServerClientBase
 {
 public:
 	//Server Connection States
-	typedef enum ServerGameStates {
+	typedef enum class ServerGameStates {
 		SERVER_CLIENTS_CONNECTING,
-		SERVER_PROCESSING_EVENTS,
+		SERVER_GAME_PLAYING,
 
 		SERVER_MAX_CONNECTION_STATES
 	} ServerConnectionState;
@@ -46,8 +46,8 @@ private:
 	
 	//Functions for pre game connection of clients 
 	//to the server
-	void DoPreGameServerEvents();
-	void DoGamePlayingServerEvents();
+	void DoPreGameServerEvents(RakNet::Packet* a_pPacket);
+	void DoGamePlayingServerEvents(RakNet::Packet* a_pPacket);
 
 	//Sending Messages Events
 	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability, 
@@ -58,6 +58,7 @@ private:
 							ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL);
 
 	//Client Disconnections
+	bool HandleDisconnectPackets(RakNet::Packet* a_pPacket);
 	void DisconnectClient(RakNet::RakNetGUID a_clientGUID);
 	
 

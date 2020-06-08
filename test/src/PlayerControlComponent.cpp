@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "PlayerControlComponent.h"
 
-#include "Application.h"
-
 //Project Includes
 #include "NetworkBlackboard.h"
 

@@ -10,15 +10,15 @@
 class BombSpawnerComponent : public Component
 {
 public:
-	BombSpawnerComponent(Entity* a_pOwner);
+	explicit BombSpawnerComponent(Entity* a_pOwner);
 	~BombSpawnerComponent() = default;
 
-	virtual void Update(float a_fDeltaTime);
-	virtual void Draw(Shader* a_pShader);
+	void Update(float a_fDeltaTime) override;
+	void Draw(Shader* a_pShader) override;
 
 #pragma region Replica Manager Functions
 	//Entity Name
-	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("BombSpawnerComponent"); }
+	RakNet::RakString GetName(void) const override { return RakNet::RakString("BombSpawnerComponent"); }
 
 #pragma endregion 
 

@@ -66,7 +66,7 @@ void NetworkClient::Update()
 		}
 		case(ClientLocalState::GAME_PLAYING): {
 			DoClientGameEvents();
-			break;;;
+			break;
 		}
 		default: {
 			m_eClientGameState = ClientLocalState::NOT_CONNECTED;

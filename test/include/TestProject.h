@@ -26,10 +26,10 @@ public:
 
 protected:
 
-	virtual bool onCreate();
-	virtual void Update(float a_deltaTime);
-	virtual void Draw();
-	virtual void Destroy();
+	bool onCreate() override;
+	void Update(float a_deltaTime) override;
+	void Draw() override;
+	void Destroy() override;
 
 	glm::mat4	m_cameraMatrix;
 	glm::mat4	m_projectionMatrix;

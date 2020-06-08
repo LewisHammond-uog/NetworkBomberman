@@ -7,12 +7,8 @@
 
 //Project Includes
 #include "ConsoleLog.h"
-
-//TestIncludes
 #include "GameManager.h"
 #include <NetworkBlackboard.h>
-
-#include "LevelManager.h"
 #include "NetworkOrderingChannels.h"
 
 constexpr int ERROR_BUFFER_SIZE = 128;
@@ -25,7 +21,6 @@ NetworkServer::NetworkServer()
 
 	//Create Authenticator
 	m_pServerAuthenticator = new Authenticator();
-
 }
 
 NetworkServer::~NetworkServer()
@@ -156,7 +151,7 @@ void NetworkServer::DoPreGameServerEvents(RakNet::Packet* a_pPacket)
 				SendMessageToClient(a_pPacket->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
 
 				//Add to list of connected clients
-				ConnectedClientInfo newClientInfo{
+				const ConnectedClientInfo newClientInfo{
 					a_pPacket->guid, //Store Sys addres
 				};
 				m_vConnectedClients.push_back(newClientInfo);

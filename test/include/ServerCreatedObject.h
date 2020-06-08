@@ -17,28 +17,28 @@ protected:
 	
 	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("ServerCreatedObject"); }
 
-	virtual void WriteAllocationID(RakNet::Connection_RM3* destinationConnection, RakNet::BitStream* allocationIdBitstream) const;
+	void WriteAllocationID(RakNet::Connection_RM3* destinationConnection, RakNet::BitStream* allocationIdBitstream) const override;
 	
 	//Serialise/Deserialise functions
-	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters* serializeParameters)=0;
-	virtual void Deserialize(RakNet::DeserializeParameters* deserializeParameters)=0;
+	RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters* serializeParameters) override =0;
+	void Deserialize(RakNet::DeserializeParameters* deserializeParameters) override =0;
 
 	//Fuctions for deserialise and serialize on create
-	virtual void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection)=0;
-	virtual bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection)=0;
-	virtual void SerializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* destinationConnection)=0;
-	virtual bool DeserializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* sourceConnection)=0;
+	void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection) override =0;
+	bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection) override =0;
+	void SerializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* destinationConnection) override =0;
+	bool DeserializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* sourceConnection) override =0;
 
 	//Dellocating Object
-	virtual void DeallocReplica(RakNet::Connection_RM3* sourceConnection);
+	void DeallocReplica(RakNet::Connection_RM3* sourceConnection) override;
 
 	//Querying Remote Construction and Destruction - using ServerCreated_ServerSerialized
-	virtual RakNet::RM3ConstructionState QueryConstruction(RakNet::Connection_RM3* destinationConnection, RakNet::ReplicaManager3* replicaManager3);
-	virtual bool QueryRemoteConstruction(RakNet::Connection_RM3* sourceConnection);
-	virtual RakNet::RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3* destinationConnection);
+	RakNet::RM3ConstructionState QueryConstruction(RakNet::Connection_RM3* destinationConnection, RakNet::ReplicaManager3* replicaManager3) override;
+	bool QueryRemoteConstruction(RakNet::Connection_RM3* sourceConnection) override;
+	RakNet::RM3QuerySerializationResult QuerySerialization(RakNet::Connection_RM3* destinationConnection) override;
 	
 	//Function for when we lose a connection 
-	virtual RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3* droppedConnection) const;
+	RakNet::RM3ActionOnPopConnection QueryActionOnPopConnection(RakNet::Connection_RM3* droppedConnection) const override;
 
 	//Saves and compares the variables of this serialise and the last serialize
 	//call. If they are different then true is writen to the bitstream and the value,

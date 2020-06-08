@@ -63,7 +63,7 @@ GameManager* GameManager::GetInstance()
 /// <summary>
 /// Does Game Warm up, creating players and spawning the level
 /// </summary>
-void GameManager::WarmupGame()
+void GameManager::WarmupGame() const
 {
 	//Create the level
 	if (m_pLevelManager) {
@@ -85,7 +85,7 @@ void GameManager::WarmupGame()
 /// <summary>
 /// Start the Game
 /// </summary>
-void GameManager::StartGame()
+void GameManager::StartGame() const
 {
 	//Enable all of the players
 	if (m_pPlayerManager) {

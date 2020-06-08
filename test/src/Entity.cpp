@@ -15,7 +15,7 @@ Entity::Entity()
 {
 	//todo remove? - don't think we need this because we are a replica object and this is pre assigned by s_pReplicaManager->SetNetworkIDManager(GetNetworkIDManager()); in Client Server Base
 	//Set our Network ID Manager
-	SetNetworkIDManager(ServerClientBase::GetNetworkIDManager());
+	NetworkIDObject::SetNetworkIDManager(ServerClientBase::GetNetworkIDManager());
 
 	//Set Active
 	m_bEnabled = true;

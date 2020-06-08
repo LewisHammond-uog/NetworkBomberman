@@ -54,6 +54,7 @@ RayCastHitsInfo* RaycastComponent::RayCast(rp3d::Ray* a_ray) const
 /// Performs Mutiple Raycasts and returns all of the hits from those casts
 /// </summary>
 /// <param name="a_vRays">Rays to process</param>
+/// <param name="a_bDeleteRays">If the rays that are passed should be deleted</param>
 /// <returns>All of the Hits from the raycasts</returns>
 std::vector<RayCastHitsInfo*> RaycastComponent::MutiRayCast(std::vector<rp3d::Ray*> a_vRays, bool a_bDeleteRays /*=false*/) const
 {

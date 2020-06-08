@@ -21,6 +21,7 @@ private:
 	float m_fCylinderRadius;
 	float m_fCylinderHeight;
 	const unsigned m_iCylinderSegments = 20u;
+	float f_cylinder_radius;
 };
 
 #endif //!__CYLINDER_COMPONENT_H__

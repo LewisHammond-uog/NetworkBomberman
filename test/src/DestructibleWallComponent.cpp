@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "DestructableWallComponent.h"
+#include "DestructibleWallComponent.h"
 
 //Project Includes
 #include "GameManager.h"
@@ -13,13 +13,12 @@ typedef Component PARENT;
 /// Create a Wall Component
 /// </summary>
 /// <param name="a_pOwnerEntity"></param>
-/// <param name="a_bIsDestructible"></param>
-DestructableWallComponent::DestructableWallComponent(Entity* a_pOwnerEntity) :
+DestructibleWallComponent::DestructibleWallComponent(Entity* a_pOwnerEntity) :
 	PARENT(a_pOwnerEntity)
 {
 }
 
-DestructableWallComponent::~DestructableWallComponent()
+DestructibleWallComponent::~DestructibleWallComponent()
 {
 }
 
@@ -28,7 +27,7 @@ DestructableWallComponent::~DestructableWallComponent()
 /// Wall will only be destroyed if it is a destructable wall
 /// </summary>
 /// <returns>If the wall was destroyed</returns>
-void DestructableWallComponent::DestroyWall() const
+void DestructibleWallComponent::DestroyWall() const
 {
 	//Set our entity to inactive
 	if (m_pOwnerEntity) {

@@ -20,7 +20,7 @@ public:
 	void Draw(Shader* a_pShader) override {};
 
 	//Death Function
-	void KillPlayer();
+	void KillPlayer() const;
 
 	//Colour Set Function
 	void SetPlayerColour(glm::vec4 a_v4Colour);

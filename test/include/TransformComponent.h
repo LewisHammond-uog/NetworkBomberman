@@ -24,11 +24,11 @@ enum class MATRIX_ROW
 class TransformComponent final : public Component
 {
 public:
-	TransformComponent(Entity* a_pOwner);	
+	explicit TransformComponent(Entity* a_pOwner);	
 	virtual ~TransformComponent();
 
 	void Update(float a_fDeltaTime) override;
-	virtual void Draw(Shader* a_pShader) {}
+	void Draw(Shader* a_pShader) override {}
 
 	void Orthogonalize();
 

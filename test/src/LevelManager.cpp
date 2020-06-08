@@ -10,7 +10,7 @@
 #include "BoxPrimitiveComponent.h"
 #include "ColliderComponent.h"
 #include "TransformComponent.h"
-#include "DestructableWallComponent.h"
+#include "DestructibleWallComponent.h"
 #include "NetworkServer.h"
 #include "Level.h"
 
@@ -142,7 +142,7 @@ Entity* LevelManager::SpawnDestructibleWall(glm::vec3 a_v3SpawnPos) const
 {
 	//Create a solid wall and add a destructable wall component
 	Entity* pWallEntity = SpawnSolidWall(a_v3SpawnPos);
-	DestructableWallComponent* pWallDestruction = new DestructableWallComponent(pWallEntity);
+	DestructibleWallComponent* pWallDestruction = new DestructibleWallComponent(pWallEntity);
 	pWallEntity->AddComponent(pWallDestruction);
 
 	//Set the colour of the wall

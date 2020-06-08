@@ -12,7 +12,7 @@
 class SpherePrimitiveComponent : public PrimitiveComponent
 {
 public:
-	SpherePrimitiveComponent(Entity* a_pOwner, float a_fSphereRadius = 1.0f);
+	explicit SpherePrimitiveComponent(Entity* a_pOwner, float a_fSphereRadius = 1.0f);
 	~SpherePrimitiveComponent() = default;
 
 	//Function to set size
@@ -20,10 +20,10 @@ public:
 	
 	//Update/Draw Functions - have no implementation as primatives
 	//cannot be created 
-	virtual void Update(float a_fDeltaTime);
-	virtual void Draw(Shader* a_pShader);
+	void Update(float a_fDeltaTime) override;
+	void Draw(Shader* a_pShader) override;
 
-	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("SpherePrimitiveComponent"); }
+	RakNet::RakString GetName(void) const override { return RakNet::RakString("SpherePrimitiveComponent"); }
 
 private:
 	float m_fSphereRadius;

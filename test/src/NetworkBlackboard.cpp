@@ -126,10 +126,10 @@ void NetworkBlackboard::SetNetworkClient(NetworkClient* a_networkClient)
 /// </summary>
 /// <param name="a_dataType">Type of data to send</param>
 /// <param name="a_data">Data (without type and player ID)</param>
-void NetworkBlackboard::SendBlackboardDataToServer(const RakNet::MessageID a_dataType, RakNet::BitStream& a_data)
+void NetworkBlackboard::SendBlackboardDataToServer(const RakNet::MessageID a_dataType, RakNet::BitStream& a_data) const
 {
 	//Get our system ID which will be this players ID so that the server knows who has sent that data
-	RakNet::RakNetGUID ourPlayerID = ServerClientBase::GetSystemGUID();
+	const RakNet::RakNetGUID ourPlayerID = ServerClientBase::GetSystemGUID();
 	
 	//Encode data in to a bitstream to send
 	RakNet::BitStream bsToSend;

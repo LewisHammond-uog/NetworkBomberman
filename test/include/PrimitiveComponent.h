@@ -17,8 +17,8 @@ public:
 	//Pure Virtual Update/Draw Functions -
 	//have no implementation as primatives
 	//cannot be created 
-	virtual void Update(float a_fDeltaTime) = 0;
-	virtual void Draw(Shader* a_pShader) = 0;
+	void Update(float a_fDeltaTime) override = 0;
+	void Draw(Shader* a_pShader) override = 0;
 	
 	//Function to set colour of the primitive
 	void SetColour(glm::vec4 a_v4Colour);
@@ -30,7 +30,7 @@ public:
 	
 protected:
 	//Protected Constructors so that we cannot instantiate this class
-	PrimitiveComponent(Entity* a_pOwner);
+	explicit PrimitiveComponent(Entity* a_pOwner);
 	~PrimitiveComponent() = default;
 
 	enum class PrimitiveTypes

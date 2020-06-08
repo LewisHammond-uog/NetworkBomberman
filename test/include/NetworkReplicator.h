@@ -13,18 +13,21 @@ public:
 	ClientConnection(const RakNet::SystemAddress& _systemAddress, RakNet::RakNetGUID _guid) : Connection_RM3(_systemAddress, _guid) {}
 	virtual ~ClientConnection() {}
 
-	virtual RakNet::Replica3* AllocReplica(RakNet::BitStream* allocationId, RakNet::ReplicaManager3* replicaManager3);
+	RakNet::Replica3* AllocReplica(RakNet::BitStream* allocationId, RakNet::ReplicaManager3* replicaManager3) override;
 	virtual void DeallocReplica(RakNet::Connection_RM3* sourceConnection);
 
 };
 
-class NetworkReplicator : public RakNet::ReplicaManager3
+class NetworkReplicator final : public RakNet::ReplicaManager3
 {
 public:
-	virtual RakNet::Connection_RM3* AllocConnection(const RakNet::SystemAddress& systemAddress, RakNet::RakNetGUID rakNetGUID) const {
+	RakNet::Connection_RM3* AllocConnection(const RakNet::SystemAddress& systemAddress, RakNet::RakNetGUID rakNetGUID) const override
+	{
 		return new ClientConnection(systemAddress, rakNetGUID);
 	}
-	virtual void DeallocConnection(RakNet::Connection_RM3* connection) const {
+
+	void DeallocConnection(RakNet::Connection_RM3* connection) const override
+	{
 		delete connection;
 	}
 };

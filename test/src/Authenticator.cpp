@@ -51,7 +51,7 @@ bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, const boo
 /// <param name="a_szUsername">Username to check</param>
 /// <param name="a_szPassword">Password to check</param>
 /// <returns>If login details are correct</returns>
-bool Authenticator::AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword)
+bool Authenticator::AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword) const
 {
 	//Check that username/password does not exceed size limits
 	if (std::strlen(a_szUsername) > mc_iMaxUsernameLen || std::strlen(a_szPassword) > mc_iMaxPasswordLen) {
@@ -65,7 +65,7 @@ bool Authenticator::AuthenticateExistingUser(const char* a_szUsername, const cha
 	return bAuthDetailsValid;
 }
 
-bool Authenticator::RegisterNewUser(const char* a_szUsername, const char* a_szPassword)
+bool Authenticator::RegisterNewUser(const char* a_szUsername, const char* a_szPassword) const
 {
 	//Check that username/password does not exceed size limits
 	if (std::strlen(a_szUsername) > mc_iMaxUsernameLen || std::strlen(a_szPassword) > mc_iMaxPasswordLen) {

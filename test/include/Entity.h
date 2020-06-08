@@ -45,17 +45,17 @@ public:
 
 #pragma region Replica Manager Functions
 	//Entity Name
-	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("Entity"); }
+	RakNet::RakString GetName(void) const override { return RakNet::RakString("Entity"); }
 	
 	//Serialise/Deserialise functions
-	virtual RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters* serializeParameters);
-	virtual void Deserialize(RakNet::DeserializeParameters* deserializeParameters);
+	RakNet::RM3SerializationResult Serialize(RakNet::SerializeParameters* serializeParameters) override;
+	void Deserialize(RakNet::DeserializeParameters* deserializeParameters) override;
 
 	//Fuctions for deserialise and serialize on create
-	virtual void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection);
-	virtual bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection);
-	virtual void SerializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* destinationConnection);
-	virtual bool DeserializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* sourceConnection);
+	void SerializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* destinationConnection) override;
+	bool DeserializeConstruction(RakNet::BitStream* constructionBitstream, RakNet::Connection_RM3* sourceConnection) override;
+	void SerializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* destinationConnection) override;
+	bool DeserializeDestruction(RakNet::BitStream* destructionBitstream, RakNet::Connection_RM3* sourceConnection) override;
 #pragma  endregion 
 
 private:

@@ -18,9 +18,9 @@ public:
 	bool LoginFromBitstream(RakNet::BitStream& a_bitStream, bool a_bRegisterNewUser);
 
 	//Authenticate an existing user from a username and password
-	bool AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword);
+	bool AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword) const;
 	//Register a new user to the system
-	bool RegisterNewUser(const char* a_szUsername, const char* a_szPassword);
+	bool RegisterNewUser(const char* a_szUsername, const char* a_szPassword) const;
 
 	//Max Size of username and password
 	const static int mc_iMaxUsernameLen = 25;

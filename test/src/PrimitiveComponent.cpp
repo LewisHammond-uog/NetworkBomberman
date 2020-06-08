@@ -35,7 +35,6 @@ void PrimitiveComponent::SerializeConstruction(RakNet::BitStream* constructionBi
 	 */
 
 	//Serialize the colour we have
-	glm::vec4 v4Colour = m_v4DrawColour;
 	constructionBitstream->Write(m_v4DrawColour);
 }
 

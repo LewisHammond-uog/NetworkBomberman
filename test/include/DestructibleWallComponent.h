@@ -4,13 +4,13 @@
 //Project Includes
 #include "Component.h"
 
-class DestructableWallComponent : public Component
+class DestructibleWallComponent : public Component
 {
 public:
 
 	//Constructor/Desctructor
-	DestructableWallComponent(Entity* a_pOwnerEntity);
-	~DestructableWallComponent();
+	explicit DestructibleWallComponent(Entity* a_pOwnerEntity);
+	~DestructibleWallComponent();
 
 	//Update & Draw Functions
 	void Update(float a_fDeltaTime) override {};
@@ -18,11 +18,8 @@ public:
 
 	void DestroyWall() const;
 
-	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("DestructableWallComponent"); }
-	
-private:
+	RakNet::RakString GetName(void) const override { return RakNet::RakString("DestructableWallComponent"); }
 
-	
 };
 
 #endif //__WALL_COMPONENT_H__

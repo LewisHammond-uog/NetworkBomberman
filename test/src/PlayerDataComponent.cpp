@@ -24,7 +24,7 @@ PlayerDataComponent::PlayerDataComponent(Entity* a_pOwner, RakNet::RakNetGUID a_
 /// <summary>
 /// Kills the Player
 /// </summary>
-void PlayerDataComponent::KillPlayer()
+void PlayerDataComponent::KillPlayer() const
 {
 	//Destroy this player after this frame
 	if (m_pOwnerEntity) {

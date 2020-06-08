@@ -12,18 +12,18 @@
 class PlayerControlComponent : public Component
 {
 public:
-	PlayerControlComponent(Entity* a_pOwner);
+	explicit PlayerControlComponent(Entity* a_pOwner);
 	~PlayerControlComponent();
 
 	//=Update/Draw Functions
-	virtual void Update(float a_fDeltaTime);
-	virtual void Draw(Shader* a_pShader);
+	void Update(float a_fDeltaTime) override;
+	void Draw(Shader* a_pShader) override;
 
 	
 #pragma region Replica Manager Functions
 	
 	//Entity Name
-	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("PlayerControlComponent"); }
+	RakNet::RakString GetName(void) const override { return RakNet::RakString("PlayerControlComponent"); }
 	
 	//Functions for Replica Manager - so that it automatically
 	//sends updated velocity

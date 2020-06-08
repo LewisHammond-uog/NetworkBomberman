@@ -44,7 +44,7 @@ public:
 	void AddReceivedNetworkData(NetworkData* a_pBlackboardData);
 
 	//Client Functions
-	void SendBlackboardDataToServer(RakNet::MessageID a_dataType, RakNet::BitStream& a_data);
+	void SendBlackboardDataToServer(RakNet::MessageID a_dataType, RakNet::BitStream& a_data) const;
 	void SetNetworkClient(NetworkClient* a_networkClient);
 
 private:

@@ -11,7 +11,7 @@
 #include "BoxPrimitiveComponent.h"
 #include "ColliderComponent.h"
 #include "ConsoleLog.h"
-#include "DestructableWallComponent.h"
+#include "DestructibleWallComponent.h"
 #include "PlayerControlComponent.h"
 #include "PlayerDataComponent.h"
 #include "RaycastComponent.h"

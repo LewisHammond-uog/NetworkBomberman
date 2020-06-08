@@ -7,7 +7,7 @@
 #include "RaycastComponent.h"
 #include "ServerClientBase.h"
 #include "TestProject.h"
-#include "DestructableWallComponent.h"
+#include "DestructibleWallComponent.h"
 #include "PlayerDataComponent.h"
 
 //Typedefs
@@ -83,7 +83,7 @@ void BombComponent::ExplodeBomb() const
 				}
 
 				//Hit Wall
-				DestructableWallComponent* pWall = currentHit->m_pHitEntity->GetComponent<DestructableWallComponent*>();
+				DestructibleWallComponent* pWall = currentHit->m_pHitEntity->GetComponent<DestructibleWallComponent*>();
 				if (pWall)
 				{
 					pWall->DestroyWall();
@@ -128,7 +128,7 @@ std::vector<rp3d::Ray*> BombComponent::GetCollisionRays() const
 
 	//Get all of the directions that we want to cast in
 	const glm::vec3 v3Forward = glm::vec3(1,0,0);
-	const glm::vec3 v3Right = glm::vec3(0, 0, 1);;
+	const glm::vec3 v3Right = glm::vec3(0, 0, 1);
 	glm::vec3 vV3PositiveDirections[2] = { v3Forward,v3Right };
 
 	//Loop through the directions and mutiply half of them by -1 so we have the inverse's

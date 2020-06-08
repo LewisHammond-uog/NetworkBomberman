@@ -8,8 +8,8 @@
 //Typedefs
 typedef PrimitiveComponent PARENT;
 
-CylinderPrimitiveComponent::CylinderPrimitiveComponent(Entity* a_pOwner, float a_fCylinderRadius/* = 1.0f*/, float a_fCylinderHeight /* = 1.0f*/) :
-	PARENT(a_pOwner)
+CylinderPrimitiveComponent::CylinderPrimitiveComponent(Entity* a_pOwner, float a_fCylinderRadius/* = 1.0f*/, const float a_fCylinderHeight /* = 1.0f*/) :
+	PARENT(a_pOwner), f_cylinder_radius(a_fCylinderRadius)
 {
 	m_ePrimitiveType = PrimitiveTypes::CYLINDER;
 

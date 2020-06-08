@@ -24,7 +24,7 @@ class ColliderComponent : public Component {
 	friend class CollisionInfo;
 	friend class RayCastHitsInfo;
 public:
-	ColliderComponent(Entity* a_pOwner);
+	explicit ColliderComponent(Entity* a_pOwner);
 	~ColliderComponent();
 
 	void Update(float a_fDeltaTime) override;
@@ -42,7 +42,7 @@ public:
 	std::vector<CollisionInfo*> GetCollisionInfo() const;
 	CollisionInfo* GetCollisionInfo(ColliderComponent* a_pOtherCollider) const;
 
-	virtual RakNet::RakString GetName(void) const { return RakNet::RakString("ColliderComponent"); }
+	RakNet::RakString GetName(void) const override { return RakNet::RakString("ColliderComponent"); }
 	
 private:
 	

@@ -39,8 +39,8 @@ public:
 	void Draw();
 	
 	//Game Running Functions
-	void WarmupGame();
-	void StartGame();
+	void WarmupGame() const;
+	void StartGame() const;
 	void EndGame();
 
 	//Function to process when a player disconnects

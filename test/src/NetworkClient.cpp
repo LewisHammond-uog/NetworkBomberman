@@ -152,8 +152,6 @@ void NetworkClient::DoClientConnectionEvents()
 
 			//While we still have packets to proccess keep processing them
 			while (packet != nullptr) {
-
-
 				switch (packet->data[0])
 				{
 					case(ID_CONNECTION_REQUEST_ACCEPTED):
@@ -188,9 +186,6 @@ void NetworkClient::DoClientConnectionEvents()
 				packet = s_pRakPeer->Receive();
 
 			}
-
-
-
 			break;
 		}
 		case(ClientConnectionState::CLIENT_FAILED_CONNECTION):
@@ -209,19 +204,19 @@ void NetworkClient::DoClientConnectionEvents()
 			*/
 
 			//Vars to store details
-			static char username[Authenticator::mc_iMaxUsernameLen];
-			static char password[Authenticator::mc_iMaxPasswordLen];
+			static char cUsername[Authenticator::mc_iMaxUsernameLen];
+			static char cPassword[Authenticator::mc_iMaxPasswordLen];
 
 			ImGui::Begin("Enter Login Details", &showConnectionWindow);
-			ImGui::InputText("Enter Username: ", username, Authenticator::mc_iMaxUsernameLen);
-			ImGui::InputText("Enter Password: ", password, Authenticator::mc_iMaxPasswordLen);
+			ImGui::InputText("Enter Username: ", cUsername, Authenticator::mc_iMaxUsernameLen);
+			ImGui::InputText("Enter Password: ", cPassword, Authenticator::mc_iMaxPasswordLen);
 
 			//Send Login Details and move to waiting for authorization
 			if (ImGui::Button("Login")) {
 				RakNet::BitStream loginCreds;
 				loginCreds.Write((RakNet::MessageID)CSNetMessages::CLIENT_LOGIN_DATA);
-				loginCreds.Write(username, Authenticator::mc_iMaxUsernameLen * sizeof(char));
-				loginCreds.Write(password, Authenticator::mc_iMaxPasswordLen * sizeof(char));
+				loginCreds.Write(cUsername, Authenticator::mc_iMaxUsernameLen * sizeof(char));
+				loginCreds.Write(cPassword, Authenticator::mc_iMaxPasswordLen * sizeof(char));
 				SendMessageToServer(loginCreds, PacketPriority::LOW_PRIORITY, PacketReliability::RELIABLE_ORDERED, ORDERING_CHANNEL_LOGIN);
 				
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
@@ -234,8 +229,8 @@ void NetworkClient::DoClientConnectionEvents()
 				//Send through new username and password
 				RakNet::BitStream regCreds;
 				regCreds.Write((RakNet::MessageID)CSNetMessages::CLIENT_REGISTER_DATA);
-				regCreds.Write(username, Authenticator::mc_iMaxUsernameLen * sizeof(char));
-				regCreds.Write(password, Authenticator::mc_iMaxPasswordLen * sizeof(char));
+				regCreds.Write(cUsername, Authenticator::mc_iMaxUsernameLen * sizeof(char));
+				regCreds.Write(cPassword, Authenticator::mc_iMaxPasswordLen * sizeof(char));
 				SendMessageToServer(regCreds, PacketPriority::LOW_PRIORITY, PacketReliability::RELIABLE_ORDERED, ORDERING_CHANNEL_LOGIN);
 
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_AUTHORISATION;
@@ -317,21 +312,18 @@ void NetworkClient::DoClientPreGameEvents()
 
 	switch (m_eConnectionState) {
 		case(ClientConnectionState::CLIENT_INIT_PREGAME): {
-			//Start the pre game functionality
-			m_eConnectionState = ClientConnectionState::CLIENT_SEND_READY;
-			break;
-		}
-		case(ClientConnectionState::CLIENT_SEND_READY): {
+				
+			//Show a Ready UI and if we have pressed then send the ready message
+			if (ConnectionUI::DrawAcknowledgeUI("Waiting for Ready", "Press when Ready to Play", "READY")){
+				/*
+				Tell the server that this client is ready to start the game
+				*/
+				SendMessageToServer(CSNetMessages::CLIENT_READY_TO_PLAY, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
+				//Set state to wait for the game to start
+				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_GAME_START;
+				ConsoleLog::LogMessage("CLIENT :: SENT SERVER READY MESSAGE");
 
-			/*
-			Tell the server that this client is ready to start the game
-			*/
-			SendMessageToServer(CSNetMessages::CLIENT_READY_TO_PLAY, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
-
-			//Set state to wait for the game to start
-			m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_GAME_START;
-			ConsoleLog::LogMessage("CLIENT :: SENT SERVER READY MESSAGE");
-
+			}
 			break;
 		}
 		case(ClientConnectionState::CLIENT_WAITING_FOR_GAME_START): {
@@ -352,7 +344,6 @@ void NetworkClient::DoClientPreGameEvents()
 
 					//Change state to game playing
 					m_eClientGameState = ClientLocalState::GAME_PLAYING;
-
 				}
 				//Deallocate Packet and get the next packet
 				s_pRakPeer->DeallocatePacket(packet);

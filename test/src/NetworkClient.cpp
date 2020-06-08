@@ -7,6 +7,7 @@
 
 //Project Incldues
 #include "Authenticator.h"
+#include "ConnectionUI.h"
 #include "NetworkBlackboard.h"
 #include "ServerCreatedObject.h"
 #include "ConsoleLog.h"
@@ -131,11 +132,9 @@ void NetworkClient::DoClientConnectionEvents()
 				//Get user inputed IP address and try and connect to the server
 				std::stringstream ss;
 				ss << ipAddress[0] << "." << ipAddress[1] << "." << ipAddress[2] << "." << ipAddress[3];
-				s_pRakPeer->Connect(ss.str().c_str(), SERVER_PORT, nullptr, 0);
+				ConnectToServer(ss.str().c_str());
 				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_CONNECTION;
 			}
-
-
 			ImGui::End();
 
 			break;
@@ -145,16 +144,12 @@ void NetworkClient::DoClientConnectionEvents()
 			/*
 			Wait here until the server has confirmed that we have connected or
 			that our connection has been rejected
-			*/
-
-			//Draw Imgui Window
-			ImGui::Begin("Waiting for Connection", &showConnectionWindow);
-			ImGui::Text("Waiting for Connection... %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
-
+			*/				
 			//Wait for a packet to be recieved
 			RakNet::Packet* packet = s_pRakPeer->Receive();
 
-			
+			ConnectionUI::DrawWaitingUI("Waiting For Connection");
+
 			//While we still have packets to proccess keep processing them
 			while (packet != nullptr) {
 
@@ -172,10 +167,13 @@ void NetworkClient::DoClientConnectionEvents()
 						m_serverAddress = packet->systemAddress;
 						break;
 					}
+					case(ID_CONNECTION_ATTEMPT_FAILED):
+						//Set state to connection failed
+						m_eConnectionState = ClientConnectionState::CLIENT_FAILED_CONNECTION;
+						break;;
 					case(ID_NO_FREE_INCOMING_CONNECTIONS):
 					{
 						//Server is full - reset to new connection window
-						ImGui::Text("Server Full");
 						s_pRakPeer->CloseConnection(packet->systemAddress, true);
 						ConsoleLog::LogMessage("CLIENT :: CLIENT CANNOT CONNECT TO A FULL SERVER");
 						m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
@@ -191,10 +189,18 @@ void NetworkClient::DoClientConnectionEvents()
 
 			}
 
-			ImGui::End();
+
 
 			break;
 		}
+		case(ClientConnectionState::CLIENT_FAILED_CONNECTION):
+			//We have failed connection show a window
+			if(ConnectionUI::DrawAcknowledgeUI("Connection Failed", "Connection has timed out"))
+			{
+				//If the acknolage UI button has been pressed then return to the connection screen
+				m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
+			}
+			break;
 		case(ClientConnectionState::CLIENT_ENTER_AUTH_DETAILS):
 		{
 			/*
@@ -248,16 +254,14 @@ void NetworkClient::DoClientConnectionEvents()
 			Wait here for the server to send back whether the details we sent were correct,
 			if they were then we are connected to the server and can move on to actually getting game data
 			*/
-			ImGui::Begin("Waiting for server to authenticate", &showConnectionWindow);
-			ImGui::Text("Waiting for Authentication... %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
-
+			ConnectionUI::DrawWaitingUI("Waiting for Authentication from the Server");
+				
 			//Wait for message of login.fail success
 			RakNet::Packet* packet = s_pRakPeer->Receive();
 			while (packet != nullptr) {
 
 				switch (packet->data[0])
 				{
-					//TO DO - AUTHENTICATION
 					case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS):
 					{
 						ConsoleLog::LogMessage("CLIENT :: LOGIN SUCCESS");
@@ -285,7 +289,6 @@ void NetworkClient::DoClientConnectionEvents()
 				packet = s_pRakPeer->Receive();
 			}
 
-			ImGui::End();
 			break;
 		}
 
@@ -329,9 +332,7 @@ void NetworkClient::DoClientPreGameEvents()
 			Wait for the server to tell us the game is starting
 			*/
 			//Show waiting to start
-			ImGui::Begin("Waiting for the game to start", &showConnectionWindow);
-			ImGui::Text("Waiting for the game to start %c", "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
-			ImGui::End();
+			ConnectionUI::DrawWaitingUI("Waiting for the game to start");
 
 			//Wait for a packet to be recieved
 			RakNet::Packet* packet = s_pRakPeer->Receive();
@@ -373,6 +374,24 @@ void NetworkClient::DoClientGameEvents()
 		s_pRakPeer->DeallocatePacket(packet);
 		packet = s_pRakPeer->Receive();
 	}
+}
+
+/// <summary>
+/// Connect to a server
+/// </summary>
+/// <param name="a_zcIPAddress"></param>
+void NetworkClient::ConnectToServer(const char* a_zcIPAddress)
+{
+	//Check we are not already connected to a server
+	if(m_serverAddress != RakNet::UNASSIGNED_SYSTEM_ADDRESS)
+	{
+		return;
+	}
+
+	//Send connection request,
+	//we are sending no password data or a public key nor a connectionSocket Index this the (nullptr, 0u, nullptr, 0)
+	s_pRakPeer->Connect(a_zcIPAddress, SERVER_PORT, nullptr, 0u, nullptr, 0,
+		mc_iConnectionAttemptLimit, mc_iTimeBetweenConnectionAttempts, mc_fConnectionTimeout);
 }
 
 /// <summary>

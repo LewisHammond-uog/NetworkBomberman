@@ -17,6 +17,7 @@
     <ClInclude Include="include\BoxPrimitiveComponent.h" />
     <ClInclude Include="include\ColliderComponent.h" />
     <ClInclude Include="include\Colour.h" />
+    <ClInclude Include="include\ConnectionUI.h" />
     <ClInclude Include="include\ConsoleLog.h" />
     <ClInclude Include="include\CylinderPrimitiveComponent.h" />
     <ClInclude Include="include\Level.h" />
@@ -45,6 +46,7 @@
     <ClInclude Include="include\DestructibleWallComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\ConnectionUI.cpp" />
     <ClCompile Include="src\Authenticator.cpp" />
     <ClCompile Include="src\BombComponent.cpp" />
     <ClCompile Include="src\BombSpawnerComponent.cpp" />

@@ -26,6 +26,7 @@ public:
 		//Setup Connection to the server
 		CLIENT_START_CONNECTION,
 		CLIENT_WAITING_FOR_CONNECTION,
+		CLIENT_FAILED_CONNECTION,
 		CLIENT_ENTER_AUTH_DETAILS,
 		CLIENT_WAITING_FOR_AUTHORISATION,
 
@@ -64,12 +65,20 @@ private:
 	void DoClientPreGameEvents();
 	void DoClientGameEvents();
 
+	//Function to connect to the server
+	void ConnectToServer(const char* a_zcIPAddress);
+	
 	//Funnction to disconnect to the server
 	void DisconnectFromServer();
 
 	//Local (i.e game running, loading) & Connection State
 	ClientLocalState m_eClientGameState;
 	ClientConnectionState m_eConnectionState;
+
+	//Connection Settings
+	const unsigned mc_iConnectionAttemptLimit = 10; //Maximum number of allowed connection attempts
+	const unsigned mc_iTimeBetweenConnectionAttempts = 1000 /*once a second*/; //Time in MS between connection attempts
+	const RakNet::TimeMS mc_fConnectionTimeout = 10000 /*10 Seconds*/; //Time in MS before we time out a connection 
 };
 
 #endif //!__NETWORK_CLIENT_H__

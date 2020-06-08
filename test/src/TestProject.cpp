@@ -28,7 +28,7 @@ bool TestProject::onCreate()
 	
 	#pragma region Render
 	// create a world-space matrix for a camera
-	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(0, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0)));
+	m_cameraMatrix = glm::inverse(glm::lookAt(glm::vec3(-, 10, 0), glm::vec3(10, -10, 0), glm::vec3(0, 1, 0)));
 
 	// create a perspective projection matrix with a 90 degree field-of-view and widescreen aspect ratio
 	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, (float)m_windowWidth / (float)m_windowHeight, 0.1f, 1000.0f);

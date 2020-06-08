@@ -312,6 +312,7 @@ void NetworkClient::DoClientPreGameEvents()
 
 	switch (m_eConnectionState) {
 		case(ClientConnectionState::CLIENT_INIT_PREGAME): {
+				
 			//Show a Ready UI and if we have pressed then send the ready message
 			if (ConnectionUI::DrawAcknowledgeUI("Waiting for Ready", "Press when Ready to Play", "READY")){
 				/*

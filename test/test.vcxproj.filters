@@ -144,9 +144,6 @@
     <ClCompile Include="include\ConnectionUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CameraComponent.cpp">
-      <Filter>Source Files\ECS\Components</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\TestProject.h">
@@ -247,9 +244,6 @@
     </ClInclude>
     <ClInclude Include="include\ConnectionUI.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\CameraComponent.h">
-      <Filter>Header Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

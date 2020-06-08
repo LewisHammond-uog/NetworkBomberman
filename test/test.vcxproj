@@ -15,7 +15,6 @@
     <ClInclude Include="include\BombComponent.h" />
     <ClInclude Include="include\BombSpawnerComponent.h" />
     <ClInclude Include="include\BoxPrimitiveComponent.h" />
-    <ClInclude Include="include\CameraComponent.h" />
     <ClInclude Include="include\ColliderComponent.h" />
     <ClInclude Include="include\Colour.h" />
     <ClInclude Include="include\ConnectionUI.h" />
@@ -52,7 +51,6 @@
     <ClCompile Include="src\BombComponent.cpp" />
     <ClCompile Include="src\BombSpawnerComponent.cpp" />
     <ClCompile Include="src\BoxPrimitiveComponent.cpp" />
-    <ClCompile Include="src\CameraComponent.cpp" />
     <ClCompile Include="src\ColliderComponent.cpp" />
     <ClCompile Include="src\Colours.cpp" />
     <ClCompile Include="src\Component.cpp" />

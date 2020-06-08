@@ -13,6 +13,8 @@
 #include "TransformComponent.h"
 #include "BombSpawnerComponent.h"
 #include "ColliderComponent.h"
+#include "Level.h"
+#include "LevelManager.h"
 
 //Define pairs for our map
 typedef std::pair<RakNet::RakNetGUID, Entity*> GUIDPlayerPair;
@@ -27,11 +29,18 @@ void PlayerManager::CreatePlayersForAllClients(const std::vector<ConnectedClient
 	const int iClientCount = a_vConnectedClients.size();
 	for (int i = 0; i < iClientCount; ++i)
 	{
-		//Create player with GUID of the connected client
-		CreatePlayer(a_vConnectedClients[i].m_clientGUID);
+		//Get the spawn point for this player, only spawn if there is a valid spawn
+		glm::vec3 v3PlayerSpawn;//Spawn pos, passed by ref
+		if(LevelManager::GetCurrentLevel()->GetPlayerSpawn(i, v3PlayerSpawn)) {
 
-		//Set the colour of the player
-		SetPlayerColour(a_vConnectedClients[i].m_clientGUID, Colours::RandomColour());
+			//Create player with GUID of the connected client
+			Entity* pPlayer = CreatePlayer(a_vConnectedClients[i].m_clientGUID, v3PlayerSpawn);
+
+			//Set the colour of the player, only if we created one
+			if (pPlayer != nullptr) {
+				SetPlayerColour(a_vConnectedClients[i].m_clientGUID, Colours::RandomColour());
+			}
+		}
 	}
 }
 
@@ -39,31 +48,40 @@ void PlayerManager::CreatePlayersForAllClients(const std::vector<ConnectedClient
 /// Creates a player entity
 /// </summary>
 /// <param name="a_ownerGUID">System that owns the player we are creating</param>
+/// <param name="a_v3Position">Position to Create player at</param>
 /// <returns>Created Player</returns>
-Entity* PlayerManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID)
+Entity* PlayerManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID, glm::vec3 a_v3Position)
 {
 	//Size of the player
 	constexpr float fPlayerSize = 1.f;
 	
-	//Create Player Entities with the required components
+	//Create Player Entity with the required components
 	Entity* pPlayerEntity = new Entity(); //This is added to a static entity list when created so we don't need to worry about storing it here
+	
 	TransformComponent* pPlayerTransform = new TransformComponent(pPlayerEntity); //This is the same for components
-	CylinderPrimitiveComponent* pCylinder = new CylinderPrimitiveComponent(pPlayerEntity, fPlayerSize, fPlayerSize);
-	ColliderComponent* pCollider = new ColliderComponent(pPlayerEntity);
-	PlayerControlComponent* pPlayerControl = new PlayerControlComponent(pPlayerEntity);
-	BombSpawnerComponent* pBombSpawner = new BombSpawnerComponent(pPlayerEntity);
-	PlayerDataComponent* pPlayerData = new PlayerDataComponent(pPlayerEntity, a_ownerGUID);
-
-	//Add these components to the player entity
+	pPlayerTransform->SetEntityMatrixRow(MATRIX_ROW::POSTION_VECTOR, a_v3Position);
 	pPlayerEntity->AddComponent(pPlayerTransform);
-	pPlayerEntity->AddComponent(pCylinder);
-	pPlayerEntity->AddComponent(pCollider);
-	pPlayerEntity->AddComponent(pPlayerControl);
-	pPlayerEntity->AddComponent(pBombSpawner);
-	pPlayerEntity->AddComponent(pPlayerData);
 
-	//Add Spehere Collider
+	//Add Drawing Cylinder
+	CylinderPrimitiveComponent* pCylinder = new CylinderPrimitiveComponent(pPlayerEntity, fPlayerSize, fPlayerSize);
+	pPlayerEntity->AddComponent(pCylinder);
+
+	//Add Collider and Sphere Collider to it
+	ColliderComponent* pCollider = new ColliderComponent(pPlayerEntity);
 	pCollider->AddSphereCollider(fPlayerSize, glm::vec3(0, 0, 0));
+	pPlayerEntity->AddComponent(pCollider);
+
+	//Add Player Control
+	PlayerControlComponent* pPlayerControl = new PlayerControlComponent(pPlayerEntity);
+	pPlayerEntity->AddComponent(pPlayerControl);
+
+	//Add Bomb Spawner
+	BombSpawnerComponent* pBombSpawner = new BombSpawnerComponent(pPlayerEntity);
+	pPlayerEntity->AddComponent(pBombSpawner);
+
+	//Add Player Data
+	PlayerDataComponent* pPlayerData = new PlayerDataComponent(pPlayerEntity, a_ownerGUID);
+	pPlayerEntity->AddComponent(pPlayerData);
 
 	//Send the entity and components to the replica manager, it is important
 	//that we send the player entity first as components rely on having

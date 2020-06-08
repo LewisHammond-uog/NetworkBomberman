@@ -26,7 +26,7 @@ public:
 
 	//Function to Create Player
 	void CreatePlayersForAllClients(const std::vector<ConnectedClientInfo>& a_vConnectedClients);
-	Entity* CreatePlayer(RakNet::RakNetGUID a_ownerGUID);
+	Entity* CreatePlayer(RakNet::RakNetGUID a_ownerGUID, glm::vec3 a_v3Position);
 
 	//Function to Set Player enabled state
 	void SetAllPlayersEnabled(bool a_bEnabled);

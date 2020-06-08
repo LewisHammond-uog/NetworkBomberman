@@ -86,15 +86,21 @@ void LevelManager::LoadLevel(const std::string& a_sLevelName)
 			switch (lvlObjectType) {
 				case LEVEL_OBJECT::LEVEL_OBJECT_EMPTY:
 					//No Object Required
-					s_pCurrentLevel->m_apLevelData[x][y] = nullptr;
+					s_pCurrentLevel->m_apLevelEntities[x][y] = nullptr;
 					break;
 				case LEVEL_OBJECT::LEVEL_OBJECT_SOLID_WALL:
 					//Spawn Solid Wall
-					s_pCurrentLevel->m_apLevelData[x][y] = SpawnSolidWall(v3ObjPos);
+					s_pCurrentLevel->m_apLevelEntities[x][y] = SpawnSolidWall(v3ObjPos);
 					break;
 				case LEVEL_OBJECT::LEVEL_OBJECT_DESTRUCT_WALL:
 					//Spawn Destructable Wall
-					s_pCurrentLevel->m_apLevelData[x][y] = SpawnDestructibleWall(v3ObjPos);
+					s_pCurrentLevel->m_apLevelEntities[x][y] = SpawnDestructibleWall(v3ObjPos);
+					break;
+				case LEVEL_OBJECT::LEVEL_OBJECT_PLAYER_SPAWN:
+					//Player Spawn add to the list of player spawns
+					s_pCurrentLevel->m_vv3PlayerSpawns.push_back(v3ObjPos);
+					//Set no object at position
+					s_pCurrentLevel->m_apLevelEntities[x][y] = nullptr;
 					break;
 				default:
 					//Error, not a valid level object

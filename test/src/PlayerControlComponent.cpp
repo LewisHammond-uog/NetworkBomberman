@@ -19,9 +19,18 @@ typedef Component PARENT;
 
 PlayerControlComponent::PlayerControlComponent(Entity* a_pOwner) :
 	PARENT(a_pOwner),
-	m_v2LastSentMovementInputs(0,0),
+	m_v2LastSentMovementInputs(0, 0),
 	m_v3CurrentVelocity(glm::vec3(0, 0, 0))
 {
+	//Set out target position to the players current position
+	if (m_pOwnerEntity) {
+		TransformComponent* pPlayerTransform = m_pOwnerEntity->GetComponent<TransformComponent*>();
+		if(pPlayerTransform)
+		{
+			m_v3TargetPos = pPlayerTransform->GetCurrentPosition();
+		}
+	}
+	
 }
 
 PlayerControlComponent::~PlayerControlComponent()

@@ -24,10 +24,10 @@ Level::Level(std::string a_sLevelName, glm::vec2 a_v2LevelSize)
 	m_v2Size = a_v2LevelSize;
 
 	//Initalise the 2D level Array
-	m_apLevelData = new Entity** [m_v2Size.x]; //Create 1D Array of columns
+	m_apLevelEntities = new Entity** [m_v2Size.x]; //Create 1D Array of columns
 	for (int i = 0; i < m_v2Size.x; ++i)
 	{
-		m_apLevelData[i] = new Entity*[m_v2Size.y];
+		m_apLevelEntities[i] = new Entity*[m_v2Size.y];
 	}
 }
 
@@ -40,10 +40,10 @@ Level::~Level()
 	//Delete the 2D array of entitess
 	for (int i = 0; i < m_v2Size.x; ++i)
 	{
-		delete[] m_apLevelData[i];
+		delete[] m_apLevelEntities[i];
 	}
 
-	delete[] m_apLevelData;
+	delete[] m_apLevelEntities;
 }
 
 /// <summary>
@@ -69,7 +69,7 @@ bool Level::IsCellFree(glm::vec3 a_v3Pos) const
 	}
 
 	//Now we know that the cell is valid we can check if there is an entity there
-	Entity* pEntityAtPos = m_apLevelData[iArrayX][iArrayY];
+	Entity* pEntityAtPos = m_apLevelEntities[iArrayX][iArrayY];
 	if(pEntityAtPos != nullptr)
 	{
 		if (pEntityAtPos->IsEnabled()) {
@@ -95,4 +95,25 @@ glm::vec3 Level::GetNearestCell(glm::vec3 a_v3Pos)
 	float fCellZ = round(a_v3Pos.z / sc_fLevelSpacing);
 	
 	return  glm::vec3(fCellX, sc_fLevelY, fCellZ);
+}
+
+/// <summary>
+/// Gets the Nth player spawn for the level
+/// </summary>
+/// <param name="a_uIndex"></param>
+/// <param name="a_pSpawnPos">[OUT] By reference inserts spawn positiopn in to vector</param>
+/// <returns>If spawn Index is valid</returns>
+bool Level::GetPlayerSpawn(const unsigned a_uIndex, glm::vec3& a_pSpawnPos)
+{
+	//Check that index is within size of the spawns
+	if(m_vv3PlayerSpawns.size() > a_uIndex)
+	{
+		//Put spawn pos in var
+		a_pSpawnPos = m_vv3PlayerSpawns[a_uIndex];
+		return true;
+	}else
+	{
+		//No valid spawn
+		return false;
+	}
 }

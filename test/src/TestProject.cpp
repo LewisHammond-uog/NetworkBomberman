@@ -44,7 +44,6 @@ bool TestProject::onCreate()
 
 void TestProject::Update(float a_deltaTime)
 {
-
 	Application_Log* log = Application_Log::Get();
 
 	//Setup Imgui window size and position
@@ -70,7 +69,6 @@ void TestProject::Update(float a_deltaTime)
 
 			//Set is Server
 			TestProject::isServer = false;
-
 		}
 
 		if (ImGui::Button("Server")) {

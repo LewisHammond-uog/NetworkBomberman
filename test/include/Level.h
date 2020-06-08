@@ -2,6 +2,10 @@
 #define __LEVEL_H__
 
 //C++ Includes
+#include <vector>
+
+//GLM Includes
+#include "glm/vec3.hpp"
 
 //Forward Declare
 class Entity;
@@ -15,6 +19,7 @@ class Level
 public:
 	bool IsCellFree(glm::vec3 a_v3Pos) const;
 	static glm::vec3 GetNearestCell(glm::vec3 a_v3Pos);
+	bool GetPlayerSpawn(unsigned a_uIndex, glm::vec3& a_pSpawnPos);
 	
 	static const float sc_fLevelSpacing; //Spacing between level cubes
 	static const float sc_fLevelY; //Z Level of all level objects
@@ -28,8 +33,10 @@ private:
 	//Level Settings
 	std::string m_sName;
 	glm::vec2 m_v2Size;
-	Entity*** m_apLevelData; //2d Array of data for the level
+	Entity*** m_apLevelEntities; //2D Array of all the entities spawned for the level
+	std::vector<glm::vec3> m_vv3PlayerSpawns; //List of all the locations players can spawn
 
+	
 	//Level Constants
 	static const float m_fLevelCubeSize; //Size of level cube
 };

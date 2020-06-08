@@ -38,8 +38,6 @@ public:
 	glm::vec3 GetEntityMatrixRow(MATRIX_ROW a_eRow);
 	glm::vec3 GetCurrentPosition();
 
-
-
 #pragma region RakNet Functions
 	//RakNet Functions
 	RakNet::RakString GetName(void) const override { return RakNet::RakString("TransformComponent"); }

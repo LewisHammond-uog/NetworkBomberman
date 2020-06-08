@@ -276,8 +276,8 @@ void NetworkClient::DoClientConnectionEvents()
 					case(CSNetMessages::SERVER_AUTHENTICATE_FAIL):
 					{
 						ConsoleLog::LogMessage("CLIENT :: LOGIN FAILED");
-						//Reset to enter new login details
-						m_eConnectionState = ClientConnectionState::CLIENT_ENTER_AUTH_DETAILS;
+						//Change state to auth failed
+						m_eConnectionState = ClientConnectionState::CLIENT_FAILED_AUTHORISATION;
 						break;
 					}
 					default:
@@ -291,7 +291,15 @@ void NetworkClient::DoClientConnectionEvents()
 
 			break;
 		}
-
+		case ClientConnectionState::CLIENT_FAILED_AUTHORISATION:
+			{
+				//Show Failed Authorisiation, if we have pressed the button then return to the login
+				if(ConnectionUI::DrawAcknowledgeUI("Connection Failed", "Login or Registration Details are incorrect", "Retry"))
+				{
+					m_eConnectionState = ClientConnectionState::CLIENT_ENTER_AUTH_DETAILS;
+				}
+				break;
+			}
 		default:
 			break;
 	}

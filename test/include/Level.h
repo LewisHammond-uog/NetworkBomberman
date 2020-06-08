@@ -2,7 +2,6 @@
 #define __LEVEL_H__
 
 //C++ Includes
-#include <vector>
 
 //Forward Declare
 class Entity;

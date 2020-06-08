@@ -5,7 +5,6 @@
 #include <vector>
 
 //Raknet Includes
-#include <NetworkIDManager.h>
 
 //Project Includes
 #include <PacketPriority.h>

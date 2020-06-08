@@ -5,7 +5,6 @@
 #include "ServerClientBase.h"
 
 //RaknetIncludes
-#include <NetworkIDManager.h>
 
 //Project Includes
 #include "NetworkOrderingChannels.h"

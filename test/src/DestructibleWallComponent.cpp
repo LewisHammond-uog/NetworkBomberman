@@ -2,10 +2,7 @@
 #include "DestructibleWallComponent.h"
 
 //Project Includes
-#include "GameManager.h"
 #include "Entity.h"
-#include "ColliderComponent.h"
-#include "BoxPrimitiveComponent.h"
 
 typedef Component PARENT;
 

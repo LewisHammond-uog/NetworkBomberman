@@ -5,7 +5,6 @@
 #include "Entity.h"
 #include "GameManager.h"
 #include "RaycastComponent.h"
-#include "ServerClientBase.h"
 #include "TestProject.h"
 #include "DestructibleWallComponent.h"
 #include "PlayerDataComponent.h"

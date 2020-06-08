@@ -5,8 +5,6 @@
 #include "Application.h"
 
 //Rak Net Includes
-#include <MessageIdentifiers.h>
-#include <RakNetTypes.h>
 
 //Forward Delcleration
 class NetworkServer;

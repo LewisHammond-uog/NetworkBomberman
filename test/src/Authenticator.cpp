@@ -3,7 +3,6 @@
 
 //C++ Includes
 #include <fstream>
-#include <iostream>
 
 //Blank Default Constructor
 Authenticator::Authenticator()

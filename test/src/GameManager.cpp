@@ -3,7 +3,6 @@
 
 //C++ Includes
 #include <map>
-#include <algorithm>
 
 //Project Includes
 #include "Entity.h"

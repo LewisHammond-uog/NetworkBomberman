@@ -2,10 +2,7 @@
 #include "TestProject.h"
 
 //C++ Include
-#include <iostream>
 #include <fstream>
-
-#include "LevelManager.h"
 
 #define DEFAULT_SCREENWIDTH 1920
 #define DEFAULT_SCREENHEIGHT 1080

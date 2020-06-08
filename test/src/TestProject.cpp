@@ -2,7 +2,6 @@
 #include "TestProject.h"
 
 //RakNet Includes
-#include <RakPeerInterface.h>
 
 //Project Includes
 #include "NetworkClient.h"

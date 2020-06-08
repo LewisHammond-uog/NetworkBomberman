@@ -5,7 +5,6 @@
 #include "GameManager.h"
 #include "PrimitiveComponent.h"
 #include "Entity.h"
-#include "ConsoleLog.h"
 
 //Define Component as our parent
 typedef Component PARENT;

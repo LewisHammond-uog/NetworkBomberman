@@ -2,7 +2,6 @@
 #define __GAME_MANAGER_H__
 
 //C++ Includes
-#include <queue>
 
 //RakNet Includes
 #include "NetworkServer.h"

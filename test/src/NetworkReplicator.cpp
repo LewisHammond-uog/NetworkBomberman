@@ -9,12 +9,9 @@
 #include "TransformComponent.h"
 #include "SpherePrimitiveComponent.h"
 #include "BoxPrimitiveComponent.h"
-#include "ColliderComponent.h"
 #include "ConsoleLog.h"
-#include "DestructibleWallComponent.h"
 #include "PlayerControlComponent.h"
 #include "PlayerDataComponent.h"
-#include "RaycastComponent.h"
 #include "CylinderPrimitiveComponent.h"
 #include "ServerClientBase.h"
 

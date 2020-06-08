@@ -2,7 +2,6 @@
 #define __SPHERE_PRIMITIVE_COMPONENT_H__
 
 //Project Includes
-#include <glm/glm.hpp>
 
 #include "PrimitiveComponent.h"
 

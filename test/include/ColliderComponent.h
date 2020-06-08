@@ -9,7 +9,6 @@
 
 //Project Includes
 #include "Component.h"
-#include "TransformComponent.h"
 
 
 //Forward Declare

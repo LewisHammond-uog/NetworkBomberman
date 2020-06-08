@@ -4,7 +4,6 @@
 //Project Includes
 #include <RakString.h>
 #include <ReplicaManager3.h>
-#include <VariableDeltaSerializer.h>
 
 #include "ServerCreatedObject.h"
 

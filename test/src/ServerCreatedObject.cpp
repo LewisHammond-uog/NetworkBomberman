@@ -4,7 +4,6 @@
 #include "ServerCreatedObject.h"
 
 //Test Includes
-#include "ServerClientBase.h"
 #include "TestProject.h"
 
 /// <summary>

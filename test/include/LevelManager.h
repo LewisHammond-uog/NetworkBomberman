@@ -1,9 +1,6 @@
 #ifndef __LEVEL_LOADER_H__
 #define __LEVEL_LOADER_H__
 
-#include <utility>
-#include <vector>
-
 //Forward Declare
 class Entity;
 class Level;

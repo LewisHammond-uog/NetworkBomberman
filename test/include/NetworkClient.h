@@ -18,7 +18,8 @@ public:
 	typedef enum class ClientLocalState {
 		NOT_CONNECTED,
 		PRE_GAME,
-		GAME_PLAYING
+		GAME_PLAYING,
+		GAME_OVER
 	} ClientLocalState;
 
 	//Client Connection States
@@ -36,6 +37,9 @@ public:
 		CLIENT_SEND_READY,
 		CLIENT_WAITING_FOR_READY_PLAYERS,
 		CLIENT_WARMUP,
+
+		//Game Over
+		
 
 		CLIENT_MAX_CONNECTION_STATES
 	} ClientConnectionState;
@@ -58,11 +62,12 @@ private:
 	//the server
 	void DoClientConnectionEvents();
 	void DoClientPreGameEvents();
-	void DoClientGameEvents(RakNet::Packet* a_pPacket);
+	void DoClientPostGameEvents();
 
 	//Functions do deal with incoming packets from the server
 	void HandleClientConnectionPackets(RakNet::Packet* a_pPacket);
 	void HandleClientPreGamePackets(RakNet::Packet* a_pPacket);
+	void HandleClientGamePackets(RakNet::Packet* a_pPacket);
 	
 	void InitImguiWindow();
 	

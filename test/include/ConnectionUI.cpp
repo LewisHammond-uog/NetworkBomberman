@@ -78,3 +78,22 @@ void ConnectionUI::DrawLoginUI(char* a_sUsername,
 	ImGui::End();
 }
 
+/// <summary>
+/// Shows the game over UI
+/// </summary>
+/// <param name="a_bContinue">[REF] If the continue button was pressed</param>
+/// <param name="a_bDisconnect">[REF] If the disconnect button was pressed</param>
+void ConnectionUI::DrawGameOverUI(bool& a_bContinue, bool& a_bDisconnect)
+{
+	ImGui::Begin("Game Over");
+
+	//Flavour Text
+	ImGui::TextWrapped("Game Over! Do you want to play another round or disconnect?");
+
+	//buttons
+	a_bContinue = ImGui::Button("Continue");
+	a_bDisconnect = ImGui::Button("Disconnect");
+
+	ImGui::End();
+}
+

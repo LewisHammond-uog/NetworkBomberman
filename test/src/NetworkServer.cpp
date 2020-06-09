@@ -90,6 +90,9 @@ void NetworkServer::Update()
 	if(m_eServerState == ServerGameStates::SERVER_GAME_WARMUP)
 	{
 		DoGameWarmupServerEvents();
+	}else if(m_eServerState == ServerGameStates::SERVER_GAME_PLAYING)
+	{
+		DoGamePlayingEvents();
 	}
 }
 
@@ -240,6 +243,24 @@ void NetworkServer::DoGameWarmupServerEvents()
 		
 		//Stop the timer
 		timer.Stop();
+	}
+}
+
+/// <summary>
+/// Does events for when the game is playing
+/// </summary>
+void NetworkServer::DoGamePlayingEvents()
+{
+	//Keep checking for if the game is over if it is then send this to clients
+	if(GameManager::GetInstance()->GetGameState() == GAME_STATE::GAME_STATE_ENDED)
+	{
+		//Send Message of the game finishing
+		RakNet::BitStream finishedMessage;
+		finishedMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_OVER);
+		SendMessageToAllClients(finishedMessage, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
+
+		//Change the server state to be back at connecting events
+		m_eServerState = ServerGameStates::SERVER_CLIENTS_CONNECTING;
 	}
 }
 

@@ -61,6 +61,7 @@ void NetworkClient::Update()
 	{
 		HandleClientConnectionPackets(pPacket);
 		HandleClientPreGamePackets(pPacket);
+		HandleClientGamePackets(pPacket);
 
 		s_pRakPeer->DeallocatePacket(pPacket);
 		pPacket = s_pRakPeer->Receive();
@@ -74,20 +75,17 @@ void NetworkClient::Update()
 			DoClientConnectionEvents();
 			break;
 		}
-		
 		case(ClientLocalState::PRE_GAME): {
 			DoClientPreGameEvents();
 			break;
 		}
-		/*
-		case(ClientLocalState::GAME_PLAYING): {
-			DoClientGameEvents(pPacket);
+		case(ClientLocalState::GAME_OVER):{
+			DoClientPostGameEvents();
 			break;
 		}
-		*/
-		default: {
-			m_eClientGameState = ClientLocalState::NOT_CONNECTED;
-		}
+		default:
+			//Do nothing
+			break;
 	}	
 }
 
@@ -280,12 +278,28 @@ void NetworkClient::DoClientPreGameEvents()
 }
 
 /// <summary>
-/// Procceses packes received during gameplay
+/// Do post game events
 /// </summary>
-void NetworkClient::DoClientGameEvents(RakNet::Packet* a_pPacket)
+void NetworkClient::DoClientPostGameEvents()
 {
 
+	bool bContinue = false;
+	bool bDisconnect = false;
+
+	//Draw Game UI and pass by vars by reference so we know when to disconnect
+	ConnectionUI::DrawGameOverUI(bContinue, bDisconnect);
+
+	//If we have chosen to disconnect then disconnect from the server
+	if(bDisconnect)
+	{
+		DisconnectFromServer();
+
+		//Set State to connect to a new server
+		m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
+		m_eClientGameState = ClientLocalState::NOT_CONNECTED;
+	}
 }
+
 
 /// <summary>
 /// Handles the packets for getting our intial connection to the server
@@ -393,6 +407,25 @@ void NetworkClient::HandleClientPreGamePackets(RakNet::Packet* a_pPacket)
 		}
 
 		
+	}
+}
+
+
+/// <summary>
+/// Handle Packets while the game is playing, mostly to detect
+/// when the game is over
+/// </summary>
+/// <param name="a_pPacket"></param>
+void NetworkClient::HandleClientGamePackets(RakNet::Packet* a_pPacket)
+{
+	if(a_pPacket != nullptr)
+	{
+		//Check if the game is over
+		if(a_pPacket->data[0] == SERVER_GAME_OVER)
+		{
+			//Change Client state
+			m_eClientGameState = ClientLocalState::GAME_OVER;
+		}
 	}
 }
 

@@ -21,11 +21,12 @@ namespace RakNet
 }
 
 //Enum for the current game state
-enum GAME_STATE
+enum class GAME_STATE
 {
 	GAME_STATE_IDLE,
 	GAME_STATE_WARMUP,
 	GAME_STATE_PLAYING,
+	GAME_STATE_ENDED
 };
 
 /// <summary>
@@ -50,6 +51,9 @@ public:
 	void StartGame();
 	void EndGame();
 
+	//Function to get the game state
+	GAME_STATE GetGameState() const;
+	
 	//Function to process when a player disconnects
 	void ProcessDisconnection(RakNet::RakNetGUID a_disconnectionGUID) const;
 

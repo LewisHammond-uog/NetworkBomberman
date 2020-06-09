@@ -28,7 +28,8 @@ public:
 		SERVER_CLIENTS_CONNECTING,
 		SERVER_GAME_WARMUP,
 		SERVER_GAME_PLAYING,
-
+		SERVER_GAME_OVER,
+		
 		SERVER_MAX_CONNECTION_STATES
 	} ServerConnectionState;
 
@@ -51,6 +52,7 @@ private:
 
 	//Packet Independent Events
 	void DoGameWarmupServerEvents();
+	void DoGamePlayingEvents();
 
 	//Sending Messages Events
 	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability, 

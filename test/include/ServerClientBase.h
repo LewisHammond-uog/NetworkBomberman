@@ -36,7 +36,8 @@ typedef enum CSGameMessages {
 	CLIENT_PLAYER_CREATE_BOMB,
 
 	SERVER_GAME_WARMUP, //Intitalises the Warmup Stage
-	SERVER_GAME_START
+	SERVER_GAME_START,
+	SERVER_GAME_OVER
 
 
 } CSGameMessages;

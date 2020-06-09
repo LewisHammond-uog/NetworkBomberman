@@ -16,6 +16,9 @@ public:
 
 	//Function to draw Login UI
 	static void DrawLoginUI(char* a_sUsername, char* a_sPassword, bool& a_bLogin, bool& a_bRegister);
+
+	//Draw the connection UI
+	static void DrawGameOverUI(bool& a_bContinue, bool& a_bDisconnect);
 	
 };
 

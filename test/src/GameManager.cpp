@@ -17,7 +17,7 @@ GameManager* GameManager::s_pInstance = nullptr;
 /// Create the Game Manager
 /// </summary>
 GameManager::GameManager() :
-	m_eCurrentGameState(GAME_STATE_IDLE)
+	m_eCurrentGameState(GAME_STATE::GAME_STATE_IDLE)
 {
 	//Create Collision World
 	m_pCollisionWorld = new rp3d::CollisionWorld();
@@ -82,7 +82,7 @@ void GameManager::WarmupGame()
 	}
 
 	//Set the Game State
-	m_eCurrentGameState = GAME_STATE_WARMUP;
+	m_eCurrentGameState = GAME_STATE::GAME_STATE_WARMUP;
 }
 
 /// <summary>
@@ -96,7 +96,7 @@ void GameManager::StartGame()
 	}
 
 	//Set the Game State
-	m_eCurrentGameState = GAME_STATE_PLAYING;
+	m_eCurrentGameState = GAME_STATE::GAME_STATE_PLAYING;
 }
 
 /// <summary>
@@ -104,21 +104,10 @@ void GameManager::StartGame()
 /// </summary>
 void GameManager::EndGame()
 {
-	//Delete all of the player objects
-	if(m_pPlayerManager)
-	{
-		m_pPlayerManager->DestroyAllPlayers();
-	}
-
-	//Unload the level
-	if(m_pLevelManager)
-	{
-		m_pLevelManager->UnloadLevel();
-	}
-
 	//Set the Game State
-	m_eCurrentGameState = GAME_STATE_IDLE;
+	m_eCurrentGameState = GAME_STATE::GAME_STATE_ENDED;
 }
+
 
 /// <summary>
 /// Update all of the entities in the game world
@@ -143,7 +132,7 @@ void GameManager::Update(const float a_fDeltaTime)
 	{
 		//If there is only 1 player left then end the game,
 		//catch just incase 2 players die in the same frame
-		if(m_eCurrentGameState == GAME_STATE_PLAYING &&
+		if(m_eCurrentGameState == GAME_STATE::GAME_STATE_PLAYING &&
 			m_pPlayerManager->GetPlayerCount() <= 1)
 		{
 			//End the game
@@ -231,4 +220,14 @@ rp3d::CollisionWorld* GameManager::GetCollisionWorld() const
 void GameManager::AssignConnectedPlayers(std::vector<ConnectedClientInfo>* a_pvConnectedPlayers)
 {
 	m_pvConnectedClients = a_pvConnectedPlayers;
+}
+
+
+/// <summary>
+/// Gets the current state of the game
+/// </summary>
+/// <returns></returns>
+GAME_STATE GameManager::GetGameState() const
+{
+	return m_eCurrentGameState;
 }

@@ -19,8 +19,8 @@ bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, const boo
 	//Read in given username and password
 	char username[Authenticator::mc_iMaxUsernameLen];
 	char password[Authenticator::mc_iMaxPasswordLen];
-	a_loginData.Read(username, Authenticator::mc_iMaxUsernameLen * sizeof(char));
-	a_loginData.Read(password, Authenticator::mc_iMaxPasswordLen * sizeof(char));
+	a_loginData.Read(username);
+	a_loginData.Read(password);
 
 	//Call other Function with new extracted info based on whether to register
 	//a new user or not

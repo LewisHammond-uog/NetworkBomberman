@@ -37,10 +37,6 @@ public:
 		CLIENT_WAITING_FOR_READY_PLAYERS,
 		CLIENT_WARMUP,
 
-		//Start Game
-
-		//Game Shutdown
-
 		CLIENT_MAX_CONNECTION_STATES
 	} ClientConnectionState;
 
@@ -52,21 +48,24 @@ public:
 	void Update() override;
 	void DeInit() override;
 
-	//Init Imgui Function
-	void InitImguiWindow();
-	
 	//Functions to send a message to the server
 	void SendMessageToServer(RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability, ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL) const;
 	void SendMessageToServer(RakNet::MessageID a_eMessage, PacketPriority a_priority, PacketReliability a_reliability, ORDERING_CHANNELS a_orderingChannel = ORDERING_CHANNEL_GENERAL) const;
 
 private:
 
-	//Functions to run different network events based on 
-	//the current game state
+	//Functions to deal with client connections, send out data to
+	//the server
 	void DoClientConnectionEvents();
 	void DoClientPreGameEvents();
-	void DoClientGameEvents();
+	void DoClientGameEvents(RakNet::Packet* a_pPacket);
 
+	//Functions do deal with incoming packets from the server
+	void HandleClientConnectionPackets(RakNet::Packet* a_pPacket);
+	void HandleClientPreGamePackets(RakNet::Packet* a_pPacket);
+	
+	void InitImguiWindow();
+	
 	//Function to connect to the server
 	void ConnectToServer(const char* a_zcIPAddress) const;
 	

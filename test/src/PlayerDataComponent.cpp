@@ -5,6 +5,7 @@
 #include "GameManager.h"
 #include "PrimitiveComponent.h"
 #include "Entity.h"
+#include "PlayerManager.h"
 
 //Define Component as our parent
 typedef Component PARENT;
@@ -14,9 +15,10 @@ typedef Component PARENT;
 /// </summary>
 /// <param name="a_pOwner">Owner Entity</param>
 /// <param name="a_iPlayerID">ID of this Player</param>
-PlayerDataComponent::PlayerDataComponent(Entity* a_pOwner, RakNet::RakNetGUID a_iPlayerID) :
+PlayerDataComponent::PlayerDataComponent(Entity* a_pOwner, RakNet::RakNetGUID a_iPlayerID, PlayerManager* a_pPlayerManager) :
 	PARENT(a_pOwner),
-	m_playerID(a_iPlayerID)
+	m_playerID(a_iPlayerID),
+	m_pManager(a_pPlayerManager)
 {
 }
 
@@ -25,8 +27,12 @@ PlayerDataComponent::PlayerDataComponent(Entity* a_pOwner, RakNet::RakNetGUID a_
 /// </summary>
 void PlayerDataComponent::KillPlayer() const
 {
-	//Destroy this player after this frame
-	if (m_pOwnerEntity) {
+	//Destroy this player after this frame, if we have a player manager delete
+	//it that way otherwise do it through the game manager
+	if(m_pManager)
+	{
+		m_pManager->DestroyPlayer(m_playerID);
+	}else if (m_pOwnerEntity) {
 		GameManager::GetInstance()->DeleteEntityAfterUpdate(m_pOwnerEntity);
 	}
 }

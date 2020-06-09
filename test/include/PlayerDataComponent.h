@@ -5,6 +5,10 @@
 #include "Colour.h"
 #include "Component.h"
 
+//Forward Delecrations
+class PlayerManager;
+
+
 /// <summary>
 /// Class for data that is used by the player
 /// (i.e playerID, health etc.)
@@ -12,7 +16,7 @@
 class PlayerDataComponent : public Component
 {
 public:
-	explicit PlayerDataComponent(Entity* a_pOwner, RakNet::RakNetGUID a_pPlayerID);
+	explicit PlayerDataComponent(Entity* a_pOwner, RakNet::RakNetGUID a_pPlayerID, PlayerManager* a_pPlayerManager);
 	~PlayerDataComponent() = default;
 
 	//Update/Draw
@@ -36,6 +40,7 @@ public:
 private:
 	RakNet::RakNetGUID m_playerID; //Player ID of this component, uses RakNetGUID
 	glm::vec4 m_v4PlayerColour; //Colour of this player
+	PlayerManager* m_pManager; //Player Manager that created this component
 };
 
 #endif //!__PLAYER_DATA_COMPONENT_H__

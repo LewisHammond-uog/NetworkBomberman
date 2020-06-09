@@ -128,6 +128,9 @@ void LevelManager::UnloadLevel()
 	
 	//Delete the current level
 	delete s_pCurrentLevel;
+
+	//Set the current level to be null
+	s_pCurrentLevel = nullptr;
 }
 
 /// <summary>

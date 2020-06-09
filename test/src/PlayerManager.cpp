@@ -5,14 +5,13 @@
 
 //Project Includes
 #include "Entity.h"
-#include "Component.h"
 #include "PlayerControlComponent.h"
 #include "PlayerDataComponent.h"
-#include "SpherePrimitiveComponent.h"
 #include "CylinderPrimitiveComponent.h"
 #include "TransformComponent.h"
 #include "BombSpawnerComponent.h"
 #include "ColliderComponent.h"
+#include "GameManager.h"
 #include "Level.h"
 #include "LevelManager.h"
 
@@ -80,7 +79,7 @@ Entity* PlayerManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID, glm::v
 	pPlayerEntity->AddComponent(pBombSpawner);
 
 	//Add Player Data
-	PlayerDataComponent* pPlayerData = new PlayerDataComponent(pPlayerEntity, a_ownerGUID);
+	PlayerDataComponent* pPlayerData = new PlayerDataComponent(pPlayerEntity, a_ownerGUID, this);
 	pPlayerEntity->AddComponent(pPlayerData);
 
 	//Send the entity and components to the replica manager, it is important
@@ -168,8 +167,8 @@ void PlayerManager::DestroyPlayer(RakNet::RakNetGUID a_playerGUID)
 	//Remove from the players list
 	m_xPlayers.erase(a_playerGUID);
 
-	//Destory the player entity
-	delete pPlayerEntity;
+	//Destory the player entity after the current update loop has finished
+	GameManager::GetInstance()->DeleteEntityAfterUpdate(pPlayerEntity);
 }
 
 /// <summary>

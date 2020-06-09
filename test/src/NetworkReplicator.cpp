@@ -28,7 +28,7 @@ RakNet::Replica3* ClientConnection::AllocReplica(RakNet::BitStream* allocationId
 	if (typeName == "PlayerControlComponent") { return new PlayerControlComponent(nullptr); }
 	if (typeName == "BombSpawnerComponent") { return new BombSpawnerComponent(nullptr); }
 	if (typeName == "BombComponent") { return new BombComponent(nullptr); }
-	if (typeName == "PlayerDataComponent") { return new PlayerDataComponent(nullptr, RakNet::RakNetGUID()); }
+	if (typeName == "PlayerDataComponent") { return new PlayerDataComponent(nullptr, RakNet::RakNetGUID(), nullptr); }
 	if (typeName == "CylinderPrimitiveComponent") { return new CylinderPrimitiveComponent(nullptr); }
 
 	//RayCaster, Collision and Destructable Wall Components are not sent to the client as they do no processing there

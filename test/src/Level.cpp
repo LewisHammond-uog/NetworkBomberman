@@ -43,7 +43,10 @@ Level::~Level()
 		delete[] m_apLevelEntities[i];
 	}
 
-	delete[] m_apLevelEntities;
+	
+	if (m_apLevelEntities != nullptr) {
+		delete m_apLevelEntities;
+	}
 }
 
 /// <summary>

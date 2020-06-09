@@ -41,6 +41,7 @@
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\ServerCreatedObject.h" />
     <ClInclude Include="include\TestProject.h" />
+    <ClInclude Include="include\Timer.h" />
     <ClInclude Include="include\TransformComponent.h" />
     <ClInclude Include="include\TransformHistory.h" />
     <ClInclude Include="include\DestructibleWallComponent.h" />
@@ -77,6 +78,7 @@
     </ClCompile>
     <ClCompile Include="src\ServerCreatedObject.cpp" />
     <ClCompile Include="src\TestProject.cpp" />
+    <ClCompile Include="src\Timer.cpp" />
     <ClCompile Include="src\TransformComponent.cpp" />
     <ClCompile Include="src\TransformHistory.cpp" />
     <ClCompile Include="src\DestructibleWallComponent.cpp" />

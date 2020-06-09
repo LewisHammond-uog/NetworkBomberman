@@ -89,12 +89,14 @@ returnType Entity::GetComponent() const
 	//If we go through all of the components that we have and have not succesfully
 	//cast then we do not have a component of returnType, so return nullptr.
 	std::vector<Component*>::const_iterator xIter;
-	for (xIter = m_apComponentList.begin(); xIter < m_apComponentList.end(); ++xIter)
-	{
-		returnType pComponent = dynamic_cast<returnType>(*xIter);
-		if (pComponent != nullptr)
+	if (!m_apComponentList.empty()) {
+		for (xIter = m_apComponentList.begin(); xIter != m_apComponentList.end(); ++xIter)
 		{
-			return pComponent;
+			returnType pComponent = dynamic_cast<returnType>(*xIter);
+			if (pComponent != nullptr)
+			{
+				return pComponent;
+			}
 		}
 	}
 

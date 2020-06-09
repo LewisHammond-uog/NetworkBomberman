@@ -26,6 +26,7 @@ public:
 	//Server Connection States
 	typedef enum class ServerGameStates {
 		SERVER_CLIENTS_CONNECTING,
+		SERVER_GAME_WARMUP,
 		SERVER_GAME_PLAYING,
 
 		SERVER_MAX_CONNECTION_STATES
@@ -45,8 +46,11 @@ private:
 	
 	//Functions for pre game connection of clients 
 	//to the server
-	void DoPreGameServerEvents(RakNet::Packet* a_pPacket);
-	void DoGamePlayingServerEvents(RakNet::Packet* a_pPacket);
+	void HandlePreGamePackets(RakNet::Packet* a_pPacket);
+	void HandelPlayingGamePackets(RakNet::Packet* a_pPacket);
+
+	//Packet Independent Events
+	void DoGameWarmupServerEvents();
 
 	//Sending Messages Events
 	void SendMessageToClient(RakNet::SystemAddress a_clientAddress, RakNet::BitStream& a_data, PacketPriority a_priority, PacketReliability a_reliability, 
@@ -73,8 +77,9 @@ private:
 	//List of clients connected to the server
 	std::vector<ConnectedClientInfo> m_vConnectedClients;
 
-	//Number of players required to start the game
-	const int requiredPlayerCount = 1;
+	//Server Settings
+	const int m_iRequiredPlayerCount = 1;
+	const float m_fWarmupDuration = 10.0f;
 };
 
 #endif // !__NETWORK_SERVER_H__

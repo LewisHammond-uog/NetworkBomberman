@@ -8,8 +8,10 @@
 //Project Includes
 #include "ConsoleLog.h"
 #include "GameManager.h"
-#include <NetworkBlackboard.h>
+#include "NetworkBlackboard.h"
+#include "Entity.h"
 #include "NetworkOrderingChannels.h"
+#include "Timer.h"
 
 constexpr int ERROR_BUFFER_SIZE = 128;
 
@@ -65,11 +67,11 @@ void NetworkServer::Update()
 		//Process Game Packets
 		switch(m_eServerState) {
 		case ServerGameStates::SERVER_CLIENTS_CONNECTING: {
-			DoPreGameServerEvents(pPacket);
+			HandlePreGamePackets(pPacket);
 			break;
 		}
 		case ServerGameStates::SERVER_GAME_PLAYING: {
-			DoGamePlayingServerEvents(pPacket);
+			HandelPlayingGamePackets(pPacket);
 			break;
 		}
 		default:
@@ -82,6 +84,12 @@ void NetworkServer::Update()
 		//Deallocate Packet and get the next a_pPacket
 		s_pRakPeer->DeallocatePacket(pPacket);
 		pPacket = s_pRakPeer->Receive();		
+	}
+
+	//Do Server events that are not dependent on packets
+	if(m_eServerState == ServerGameStates::SERVER_GAME_WARMUP)
+	{
+		DoGameWarmupServerEvents();
 	}
 }
 
@@ -106,7 +114,7 @@ void NetworkServer::DeInit()
 /// Does server events until enough clients are connected to the 
 /// server and a ready
 /// </summary>
-void NetworkServer::DoPreGameServerEvents(RakNet::Packet* a_pPacket)
+void NetworkServer::HandlePreGamePackets(RakNet::Packet* a_pPacket)
 {
 	//Do events based on the data we have received
 	switch (a_pPacket->data[0])
@@ -171,22 +179,22 @@ void NetworkServer::DoPreGameServerEvents(RakNet::Packet* a_pPacket)
 			//Add to our ready clients count
 			++m_iReadyClients;
 
-			//Check if game is ready to start
-			if (m_iReadyClients >= requiredPlayerCount) {
+			//Check if game is ready to start, do warmup actions
+			if (m_iReadyClients >= m_iRequiredPlayerCount) {
 
-				//Create and send a_pPacket that game is ready to play
+				//Create and send packet that game is warming up
 				RakNet::BitStream readyMessage;
-				readyMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_STARTING);
-				SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE, ORDERING_CHANNEL_GENERAL);
+				readyMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_WARMUP);
+				SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
 
-				//Create Player
+				//Start Game Warmup
+				//Create Players and level
 				GameManager::GetInstance()->AssignConnectedPlayers(&m_vConnectedClients);
 				GameManager::GetInstance()->WarmupGame();
-				GameManager::GetInstance()->StartGame();
 				
 				//Change Server State
-				m_eServerState = ServerGameStates::SERVER_GAME_PLAYING;					
-				ConsoleLog::LogMessage("SERVER :: GAME STARTING");
+				m_eServerState = ServerGameStates::SERVER_GAME_WARMUP;					
+				ConsoleLog::LogMessage("SERVER :: WARMING UP GAME");
 			}
 			break;
 		}
@@ -203,9 +211,42 @@ void NetworkServer::DoPreGameServerEvents(RakNet::Packet* a_pPacket)
 }
 
 /// <summary>
+/// Does the events of warming up the game
+/// </summary>
+void NetworkServer::DoGameWarmupServerEvents()
+{
+	//Create a static timer to use for tracking how long the warmup is
+	static Timer timer;
+
+	//Check if the timer is enabled if it is not then warmup has not started
+	//and we should enable it
+	if(!timer.IsActive())
+	{
+		timer.Start();
+	}
+
+	//Check if the timer elapsed time is more than the warmup time
+	//then end the warmup phase
+	if(timer.GetElapsedS() >= m_fWarmupDuration)
+	{
+		//Set state to game start and tell the players that the game is starting
+		m_eServerState = ServerGameStates::SERVER_GAME_PLAYING;
+		RakNet::BitStream readyMessage;
+		readyMessage.Write((RakNet::MessageID)CSGameMessages::SERVER_GAME_START);
+		SendMessageToAllClients(readyMessage, PacketPriority::HIGH_PRIORITY, PacketReliability::RELIABLE);
+
+		//Start the game in the game manager
+		GameManager::GetInstance()->StartGame();
+		
+		//Stop the timer
+		timer.Stop();
+	}
+}
+
+/// <summary>
 /// Do events relating to game playing (i.e processing movements, updating game objects)
 /// </summary>
-void NetworkServer::DoGamePlayingServerEvents(RakNet::Packet* a_pPacket)
+void NetworkServer::HandelPlayingGamePackets(RakNet::Packet* a_pPacket)
 {
 	//Do events based on the data we have received
 	switch(a_pPacket->data[0])
@@ -217,7 +258,6 @@ void NetworkServer::DoGamePlayingServerEvents(RakNet::Packet* a_pPacket)
 			//Send Player Input Data to the Blackboard so that it can be processed by
 			//individal players
 			RakNet::BitStream incomingInputData(a_pPacket->data, a_pPacket->length, true);
-
 			NetworkBlackboard::GetInstance()->AddReceivedNetworkData(incomingInputData);
 			break;
 			

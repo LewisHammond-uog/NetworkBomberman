@@ -320,30 +320,45 @@ void NetworkClient::DoClientPreGameEvents()
 				*/
 				SendMessageToServer(CSNetMessages::CLIENT_READY_TO_PLAY, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
 				//Set state to wait for the game to start
-				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_GAME_START;
+				m_eConnectionState = ClientConnectionState::CLIENT_WAITING_FOR_READY_PLAYERS;
 				ConsoleLog::LogMessage("CLIENT :: SENT SERVER READY MESSAGE");
+			}
 
+			//Wait for a packet to be recieved
+			RakNet::Packet* packet = s_pRakPeer->Receive();
+			while (packet != nullptr) {
+				//If the packet type is that we are warming the game up then force the player to be 'ready' and skip to game start
+				if (packet->data[0] == SERVER_GAME_WARMUP) {
+					m_eConnectionState = ClientConnectionState::CLIENT_WARMUP;
+		
+				}
+				//Deallocate Packet and get the next packet
+				s_pRakPeer->DeallocatePacket(packet);
+				packet = s_pRakPeer->Receive();
 			}
 			break;
+				
 		}
-		case(ClientConnectionState::CLIENT_WAITING_FOR_GAME_START): {
+		case(ClientConnectionState::CLIENT_WAITING_FOR_READY_PLAYERS): {
 
 			/*
 			Wait for the server to tell us the game is starting
 			*/
-			//Show waiting to start
-			ConnectionUI::DrawWaitingUI("Waiting for the game to start");
+			//Show waiting for players
+			ConnectionUI::DrawWaitingUI("Waiting for enough players to be ready...");
 
 			//Wait for a packet to be recieved
 			RakNet::Packet* packet = s_pRakPeer->Receive();
-			//Wait for us to receive the game start message
+				
+			//Wait for us to receive the game warmup message
 			while (packet != nullptr) {
+				
 				//Check if we have the game start message
-				if (packet->data[0] == CSGameMessages::SERVER_GAME_STARTING) {
-					ConsoleLog::LogMessage("CLIENT :: RECEIVED GAME START MESSAGES");
+				if (packet->data[0] == CSGameMessages::SERVER_GAME_WARMUP) {
+					ConsoleLog::LogMessage("CLIENT :: RECEIVED GAME WARMUP MESSAGES");
 
-					//Change state to game playing
-					m_eClientGameState = ClientLocalState::GAME_PLAYING;
+					//Change state to game warmup
+					m_eConnectionState = ClientConnectionState::CLIENT_WARMUP;
 				}
 				//Deallocate Packet and get the next packet
 				s_pRakPeer->DeallocatePacket(packet);
@@ -352,6 +367,29 @@ void NetworkClient::DoClientPreGameEvents()
 			
 			break;
 		}
+		case(ClientConnectionState::CLIENT_WARMUP):
+			{
+				//Show waiting for players
+				ConnectionUI::DrawWaitingUI("Game is Starting, Standby...");
+				
+				//Wait for a packet to be recieved
+				RakNet::Packet* packet = s_pRakPeer->Receive();
+
+				//Wait for us to receive the game start message
+				while (packet != nullptr) {
+
+					//Check if we have the game start message
+					if (packet->data[0] == CSGameMessages::SERVER_GAME_START) {
+						ConsoleLog::LogMessage("CLIENT :: RECEIVED GAME START MESSAGES");
+
+						//Change state to game warmup
+						m_eClientGameState = ClientLocalState::GAME_PLAYING;
+					}
+					//Deallocate Packet and get the next packet
+					s_pRakPeer->DeallocatePacket(packet);
+					packet = s_pRakPeer->Receive();
+				}
+			}
 		default:
 			break;
 	}
@@ -379,7 +417,7 @@ void NetworkClient::DoClientGameEvents()
 /// Connect to a server
 /// </summary>
 /// <param name="a_zcIPAddress"></param>
-void NetworkClient::ConnectToServer(const char* a_zcIPAddress)
+void NetworkClient::ConnectToServer(const char* a_zcIPAddress) const
 {
 	//Check we are not already connected to a server
 	if(m_serverAddress != RakNet::UNASSIGNED_SYSTEM_ADDRESS)

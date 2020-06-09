@@ -34,7 +34,8 @@ public:
 		//Setup Game
 		CLIENT_INIT_PREGAME,
 		CLIENT_SEND_READY,
-		CLIENT_WAITING_FOR_GAME_START,
+		CLIENT_WAITING_FOR_READY_PLAYERS,
+		CLIENT_WARMUP,
 
 		//Start Game
 
@@ -67,7 +68,7 @@ private:
 	void DoClientGameEvents();
 
 	//Function to connect to the server
-	void ConnectToServer(const char* a_zcIPAddress);
+	void ConnectToServer(const char* a_zcIPAddress) const;
 	
 	//Funnction to disconnect to the server
 	void DisconnectFromServer();

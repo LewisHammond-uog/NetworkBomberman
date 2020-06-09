@@ -88,11 +88,7 @@ void NetworkClient::Update()
 		default: {
 			m_eClientGameState = ClientLocalState::NOT_CONNECTED;
 		}
-	}
-
-
-
-	
+	}	
 }
 
 

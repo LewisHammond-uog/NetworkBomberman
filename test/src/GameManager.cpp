@@ -16,7 +16,8 @@ GameManager* GameManager::s_pInstance = nullptr;
 /// <summary>
 /// Create the Game Manager
 /// </summary>
-GameManager::GameManager() 
+GameManager::GameManager() :
+	m_eCurrentGameState(GAME_STATE_IDLE)
 {
 	//Create Collision World
 	m_pCollisionWorld = new rp3d::CollisionWorld();
@@ -62,7 +63,7 @@ GameManager* GameManager::GetInstance()
 /// <summary>
 /// Does Game Warm up, creating players and spawning the level
 /// </summary>
-void GameManager::WarmupGame() const
+void GameManager::WarmupGame()
 {
 	//Create the level
 	if (m_pLevelManager) {
@@ -79,17 +80,44 @@ void GameManager::WarmupGame() const
 	{
 		ConsoleLog::LogError("Cannot Create Players, no connected clients assigned!");
 	}
+
+	//Set the Game State
+	m_eCurrentGameState = GAME_STATE_WARMUP;
 }
 
 /// <summary>
 /// Start the Game
 /// </summary>
-void GameManager::StartGame() const
+void GameManager::StartGame()
 {
 	//Enable all of the players
 	if (m_pPlayerManager) {
 		m_pPlayerManager->SetAllPlayersEnabled(true);
 	}
+
+	//Set the Game State
+	m_eCurrentGameState = GAME_STATE_PLAYING;
+}
+
+/// <summary>
+/// Ends the game is progress
+/// </summary>
+void GameManager::EndGame()
+{
+	//Delete all of the player objects
+	if(m_pPlayerManager)
+	{
+		m_pPlayerManager->DestroyAllPlayers();
+	}
+
+	//Unload the level
+	if(m_pLevelManager)
+	{
+		m_pLevelManager->UnloadLevel();
+	}
+
+	//Set the Game State
+	m_eCurrentGameState = GAME_STATE_IDLE;
 }
 
 /// <summary>
@@ -107,6 +135,19 @@ void GameManager::Update(const float a_fDeltaTime)
 			if (pEntity->IsEnabled()) {
 				pEntity->Update(a_fDeltaTime);
 			}
+		}
+	}
+
+	//Null Check player manager
+	if(m_pPlayerManager)
+	{
+		//If there is only 1 player left then end the game,
+		//catch just incase 2 players die in the same frame
+		if(m_eCurrentGameState == GAME_STATE_PLAYING &&
+			m_pPlayerManager->GetPlayerCount() <= 1)
+		{
+			//End the game
+			EndGame();
 		}
 	}
 

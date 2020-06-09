@@ -35,6 +35,10 @@ public:
 	
 	//Functions to Destory Player
 	void DestroyPlayer(RakNet::RakNetGUID a_playerGUID);
+	void DestroyAllPlayers();
+
+	//Getter function for the number of active players
+	unsigned GetPlayerCount() const;
 	
 private:
 

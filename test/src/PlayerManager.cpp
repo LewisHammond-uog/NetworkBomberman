@@ -171,3 +171,29 @@ void PlayerManager::DestroyPlayer(RakNet::RakNetGUID a_playerGUID)
 	//Destory the player entity
 	delete pPlayerEntity;
 }
+
+/// <summary>
+/// Destroys all players that have been created by the player manager
+/// </summary>
+void PlayerManager::DestroyAllPlayers()
+{
+	//Loop all of the players and destroy
+	if (!m_xPlayers.empty()) {
+		std::map<RakNet::RakNetGUID, Entity*>::iterator playerIter = m_xPlayers.begin();
+		while(playerIter != m_xPlayers.end())
+		{
+			DestroyPlayer(playerIter->first);
+			playerIter = m_xPlayers.begin(); //Update the player iter because we remove the player from
+											//the list in DestroyPlayer()
+		}
+	}
+}
+
+/// <summary>
+/// Gets the number of players that are alive
+/// </summary>
+/// <returns></returns>
+unsigned PlayerManager::GetPlayerCount() const
+{
+	return m_xPlayers.size();
+}

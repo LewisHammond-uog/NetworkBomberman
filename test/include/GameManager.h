@@ -20,6 +20,14 @@ namespace RakNet
 	class NetworkIDManager;
 }
 
+//Enum for the current game state
+enum GAME_STATE
+{
+	GAME_STATE_IDLE,
+	GAME_STATE_WARMUP,
+	GAME_STATE_PLAYING,
+};
+
 /// <summary>
 /// Game Manager that is used to perform game functions such as creating players
 /// and updating all entities
@@ -38,8 +46,8 @@ public:
 	void Draw();
 	
 	//Game Running Functions
-	void WarmupGame() const;
-	void StartGame() const;
+	void WarmupGame();
+	void StartGame();
 	void EndGame();
 
 	//Function to process when a player disconnects
@@ -61,6 +69,9 @@ private:
 
 	//Proccess Deleted Objects
 	void ProcessDeletions();
+
+	//Current Game State
+	GAME_STATE m_eCurrentGameState;
 
 	//Level Loader - to spawn level
 	LevelManager* m_pLevelManager;

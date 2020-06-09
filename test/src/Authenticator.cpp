@@ -4,16 +4,6 @@
 //C++ Includes
 #include <fstream>
 
-//Blank Default Constructor
-Authenticator::Authenticator()
-{
-}
-
-//Blank Default Destructor
-Authenticator::~Authenticator()
-{
-}
-
 /// <summary>
 /// Login to the server from a raw bit stream sent from the client (withough ignoring the message ID).
 /// Either logging in as an existing user or registering as a new one
@@ -21,7 +11,7 @@ Authenticator::~Authenticator()
 /// <param name="a_loginData">Bitstream Login Data</param>
 /// <param name="a_bRegisterNewUser">Whether to register as a new user</param>
 /// <returns>If login details are correct</returns>
-bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, const bool a_bRegisterNewUser = false)
+bool Authenticator::LoginFromBitstream(RakNet::BitStream& a_loginData, const bool a_bRegisterNewUser = false) const
 {
 	//Strip Message ID From Bitstream
 	a_loginData.IgnoreBytes(sizeof(RakNet::MessageID));
@@ -58,16 +48,22 @@ bool Authenticator::AuthenticateExistingUser(const char* a_szUsername, const cha
 		return false;
 	}
 
-	bool bAuthDetailsValid = ValidUsernameAndPassword(a_szUsername, a_szPassword);
-
 	//Return if the auth details were valid
-	return bAuthDetailsValid;
+	return ValidUsernameAndPassword(a_szUsername, a_szPassword);
 }
 
+/// <summary>
+/// Register a new user
+/// Only registers if the user does not already exist
+/// </summary>
+/// <param name="a_szUsername">Username to Register</param>
+/// <param name="a_szPassword">Password to Register</param>
+/// <returns>If user was registered</returns>
 bool Authenticator::RegisterNewUser(const char* a_szUsername, const char* a_szPassword) const
 {
-	//Check that username/password does not exceed size limits
-	if (std::strlen(a_szUsername) > mc_iMaxUsernameLen || std::strlen(a_szPassword) > mc_iMaxPasswordLen) {
+	//Check that username/password does not exceed size limits and are over the minimum
+	if (std::strlen(a_szUsername) > mc_iMaxUsernameLen || std::strlen(a_szPassword) > mc_iMaxPasswordLen ||
+		std::strlen(a_szUsername) < mc_iMinUsernameLen || std::strlen(a_szPassword) < mc_iMinPasswordLen) {
 		//Over max size
 		return false;
 	}
@@ -79,7 +75,7 @@ bool Authenticator::RegisterNewUser(const char* a_szUsername, const char* a_szPa
 	}
 
 	//Open auth details file
-	std::fstream sLoginDetailsFile = std::fstream(mc_LoginDetailsFileName, std::ios_base::app);
+	std::fstream sLoginDetailsFile = std::fstream(mc_sLoginDetailsFileName, std::ios_base::app);
 	//If we cannot open the file then return false
 	//- cannot add new username/password
 	if (!sLoginDetailsFile.is_open()) {
@@ -108,7 +104,7 @@ bool Authenticator::RegisterNewUser(const char* a_szUsername, const char* a_szPa
 bool Authenticator::UsernameExists(const char* a_szUsername) const
 {
 	//Open auth details file
-	std::fstream sLoginDetailsFile = std::fstream(mc_LoginDetailsFileName, std::ios_base::in);
+	std::fstream sLoginDetailsFile = std::fstream(mc_sLoginDetailsFileName, std::ios_base::in);
 
 	//If we cannot open the file then return false
 	//- cannot check username/password
@@ -142,11 +138,16 @@ bool Authenticator::UsernameExists(const char* a_szUsername) const
 	return false;
 }
 
+/// <summary>
+/// Checks if a username and password combination exist in the Authentication File
+/// </summary>
+/// <param name="a_szUsername">Username to Check</param>
+/// <param name="a_szPassword">Password to Check</param>
+/// <returns>If username and password combination are valid</returns>
 bool Authenticator::ValidUsernameAndPassword(const char* a_szUsername, const char* a_szPassword) const
 {
-
 	//Open auth details file
-	std::fstream sLoginDetailsFile = std::fstream(mc_LoginDetailsFileName, std::ios_base::in);
+	std::fstream sLoginDetailsFile = std::fstream(mc_sLoginDetailsFileName, std::ios_base::in);
 
 	//If we cannot open the file then return false
 	//- cannot check username/password
@@ -162,6 +163,7 @@ bool Authenticator::ValidUsernameAndPassword(const char* a_szUsername, const cha
 	//Loop through usernames until we either get to
 	//the given username or 
 	while (strcmp(a_szUsername, storedUsername) != 0) {
+		
 		//Check that we are not at the end of the file
 		if (sLoginDetailsFile.eof()) {
 			//At end of file without username being found - username invalid

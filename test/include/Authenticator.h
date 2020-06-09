@@ -11,20 +11,23 @@
 class Authenticator {
 public:
 	//Constructors/Destructors
-	Authenticator();
-	~Authenticator();
+	Authenticator() = default;
+	~Authenticator() = default;
 
 	//Login or Register an existing user from a bitstream
-	bool LoginFromBitstream(RakNet::BitStream& a_bitStream, bool a_bRegisterNewUser);
+	bool LoginFromBitstream(RakNet::BitStream& a_bitStream, bool a_bRegisterNewUser) const;
 
 	//Authenticate an existing user from a username and password
 	bool AuthenticateExistingUser(const char* a_szUsername, const char* a_szPassword) const;
+	
 	//Register a new user to the system
 	bool RegisterNewUser(const char* a_szUsername, const char* a_szPassword) const;
 
-	//Max Size of username and password
+	//Max/Min Size of username and password
 	const static int mc_iMaxUsernameLen = 25;
 	const static int mc_iMaxPasswordLen = 25;
+	const static int mc_iMinUsernameLen = 3;
+	const static int mc_iMinPasswordLen = 3;
 
 private:
 
@@ -35,7 +38,9 @@ private:
 
 
 	//Const filename for the username/password file
-	const char* mc_LoginDetailsFileName = "authDetails.txt";
+	const char* mc_sLoginDetailsFileName = "authDetails.txt";
+
+
 
 
 };

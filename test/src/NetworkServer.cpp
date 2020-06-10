@@ -6,6 +6,7 @@
 #include "BitStream.h"
 
 //Project Includes
+#include "ConnectionUI.h"
 #include "ConsoleLog.h"
 #include "GameManager.h"
 #include "NetworkBlackboard.h"
@@ -35,16 +36,20 @@ NetworkServer::~NetworkServer()
 /// Initalise he server by setting up it's 
 /// rak peer and setting it's starting state
 /// </summary>
-void NetworkServer::Init()
+void NetworkServer::Init(int a_iMaxPlayerCount, int a_iMinReadyPlayers, float a_fWarmupTime, std::vector<std::string> a_vsSelectedLevels)
 {
 	//Get instance of rakPeerInterface and set state
 	s_pRakPeer = RakNet::RakPeerInterface::GetInstance();
 
 	//Start up Server
 	RakNet::SocketDescriptor sd(SERVER_PORT, nullptr);
-	s_pRakPeer->Startup(MAX_CLIENTS, &sd, 1);
-	s_pRakPeer->SetMaximumIncomingConnections(MAX_CLIENTS);
+	s_pRakPeer->Startup(a_iMaxPlayerCount, &sd, 1);
+	s_pRakPeer->SetMaximumIncomingConnections(a_iMaxPlayerCount);
 	m_eServerState = ServerGameStates::SERVER_CLIENTS_CONNECTING;
+
+	//Set Server Settings
+	m_iMinReadyPlayers = a_iMinReadyPlayers;
+	m_fWarmupDuration = a_fWarmupTime;
 
 	//Attach the network replicator to our Rak Peer
 	//so that it runs automatically
@@ -57,6 +62,30 @@ void NetworkServer::Init()
 
 void NetworkServer::Update()
 {
+	//If the server is not initalised then wait until it is
+	if (m_eServerState == ServerGameStates::SERVER_NOT_INIT){
+		
+		//Statics to pass to server settings UI so we can receive the user
+		//inputted values
+		//todo remove magic numbers
+		static int iMaxPlayers = 6;
+		static int iMinReadyPlayers = 1;
+		static float fWarmupTime = 10;
+		static std::vector<std::string> vsLevelRotation;
+
+		//Wait for the user to press the server start button
+		if (ConnectionUI::DrawServerSettingsUI(iMaxPlayers, iMinReadyPlayers, fWarmupTime, vsLevelRotation))
+		{
+			Init(iMaxPlayers, iMinReadyPlayers, fWarmupTime, vsLevelRotation);
+		}
+	}
+
+	//Check that RakPeer is valid 
+	if(s_pRakPeer == nullptr)
+	{
+		return;
+	}
+	
 	//Get a received packets this frame
 	RakNet::Packet* pPacket = s_pRakPeer->Receive();
 
@@ -183,7 +212,7 @@ void NetworkServer::HandlePreGamePackets(RakNet::Packet* a_pPacket)
 			++m_iReadyClients;
 
 			//Check if game is ready to start, do warmup actions
-			if (m_iReadyClients >= m_iRequiredPlayerCount) {
+			if (m_iReadyClients >= m_iMinReadyPlayers) {
 
 				//Create and send packet that game is warming up
 				RakNet::BitStream readyMessage;
@@ -194,6 +223,9 @@ void NetworkServer::HandlePreGamePackets(RakNet::Packet* a_pPacket)
 				//Create Players and level
 				GameManager::GetInstance()->AssignConnectedPlayers(&m_vConnectedClients);
 				GameManager::GetInstance()->WarmupGame();
+
+				//Reset Ready clients
+				m_iReadyClients = 0;
 				
 				//Change Server State
 				m_eServerState = ServerGameStates::SERVER_GAME_WARMUP;					

@@ -157,7 +157,7 @@ std::vector<std::string> LevelManager::GetLoadableLevelNames()
 	//Adding each one to the list
 	for (const auto& entry : std::filesystem::directory_iterator(s_szLevelLoadPath))
 	{
-		vsLevelFiles.push_back(entry.path().filename().u8string());
+		vsLevelFiles.push_back(entry.path().stem().u8string());
 	}
 
 	//Return the files we have found

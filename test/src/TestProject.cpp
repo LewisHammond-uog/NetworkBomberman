@@ -56,8 +56,8 @@ void TestProject::Update(float a_deltaTime)
 
 	///////DECISION WINDOW///////////////
 	
-	if (showConnectionWindow) {
-		ImGui::Begin("Establish Connection", &showConnectionWindow);
+	if (m_bShowConnectionWindow) {
+		ImGui::Begin("Establish Connection", &m_bShowConnectionWindow);
 
 		if (ImGui::Button("Client")) {
 			//Create Client
@@ -65,7 +65,7 @@ void TestProject::Update(float a_deltaTime)
 			gameClient->Init();
 
 			//Hide the connection window
-			showConnectionWindow = false;
+			m_bShowConnectionWindow = false;
 
 			//Set is Server
 			TestProject::isServer = false;
@@ -74,13 +74,9 @@ void TestProject::Update(float a_deltaTime)
 		if (ImGui::Button("Server")) {
 			//Create Server
 			gameServer = new NetworkServer();
-			gameServer->Init();
-
-			//gameClient = new NetworkClient();
-			//gameClient->Init();
-
+			
 			//Hide the connection window
-			showConnectionWindow = false;
+			m_bShowConnectionWindow = false;
 
 			//Set is Server
 			TestProject::isServer = true;

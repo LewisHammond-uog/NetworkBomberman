@@ -25,10 +25,11 @@ class NetworkServer final : public ServerClientBase
 public:
 	//Server Connection States
 	typedef enum class ServerGameStates {
-		SERVER_CLIENTS_CONNECTING,
-		SERVER_GAME_WARMUP,
-		SERVER_GAME_PLAYING,
-		SERVER_GAME_OVER,
+		SERVER_NOT_INIT, //Server is not initalised
+		SERVER_CLIENTS_CONNECTING, //We are connecting clients to the server
+		SERVER_GAME_WARMUP, //The server is warming up
+		SERVER_GAME_PLAYING, //The server is playing the game
+		SERVER_GAME_OVER, //The game is over we are resetting the game
 		
 		SERVER_MAX_CONNECTION_STATES
 	} ServerConnectionState;
@@ -39,7 +40,8 @@ public:
 	virtual ~NetworkServer();
 
 	//Update and Init
-	void Init() override;
+	void Init(int a_iMaxPlayerCount, int a_iMinReadyPlayers, float a_iWarmupTime, std::vector<
+	          std::string> a_vsSelectedLevels);
 	void Update() override;
 	void DeInit() override;
 
@@ -80,8 +82,8 @@ private:
 	std::vector<ConnectedClientInfo> m_vConnectedClients;
 
 	//Server Settings
-	const int m_iRequiredPlayerCount = 1;
-	const float m_fWarmupDuration = 1.0f;
+	int m_iMinReadyPlayers = 1;
+	float m_fWarmupDuration = 1.0f;
 };
 
 #endif // !__NETWORK_SERVER_H__

@@ -51,7 +51,6 @@ public:
 
 	//Pure Virtual Function to make sure that network clients/servers have
 	//an init and update funciton
-	virtual void Init() = 0;
 	virtual void Update() = 0;
 	virtual void DeInit() = 0;
 

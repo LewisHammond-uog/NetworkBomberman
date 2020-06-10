@@ -2,7 +2,10 @@
 #include "ConnectionUI.h"
 
 //Project Includes
+#include <vector>
+
 #include "Authenticator.h"
+#include "LevelManager.h"
 
 /// <summary>
 /// Draws UI for waiting 
@@ -10,6 +13,7 @@
 /// <param name="a_szWaitingMessage"></param>
 void ConnectionUI::DrawWaitingUI(const char* a_szWaitingMessage)
 {
+	InitConnectionWindow();
 	//Start a window with the title of our message
 	ImGui::Begin(a_szWaitingMessage);
 
@@ -33,6 +37,7 @@ void ConnectionUI::DrawWaitingUI(const char* a_szWaitingMessage)
 /// <returns>If the acknowlage button is pressed</returns>
 bool ConnectionUI::DrawAcknowledgeUI(const char* a_szWindowTitle, const char* a_szContent, const char* a_szButtonText /* = "Ok"*/)
 {
+	InitConnectionWindow();
 	//Start UI with titile
 	ImGui::Begin(a_szWindowTitle);
 
@@ -60,6 +65,7 @@ bool ConnectionUI::DrawAcknowledgeUI(const char* a_szWindowTitle, const char* a_
 void ConnectionUI::DrawLoginUI(char* a_sUsername,
 	char* a_sPassword, bool& a_bLogin, bool& a_bRegister)
 {
+	InitConnectionWindow();
 	ImGui::Begin("Login to Server");
 
 	//Help Text
@@ -97,3 +103,124 @@ void ConnectionUI::DrawGameOverUI(bool& a_bContinue, bool& a_bDisconnect)
 	ImGui::End();
 }
 
+/// <summary>
+/// Draw the server settings UI
+/// </summary>
+/// <returns>If the Start Server button is pressed</returns>
+bool ConnectionUI::DrawServerSettingsUI(int& a_iMaxPlayerCount, int& a_iMinReadyPlayers, float& a_iWarmupTime, std::vector<std::string>& a_vsSelectedLevels)
+{
+
+	static std::vector<std::string> vsAvailableLevels = LevelManager::GetLoadableLevelNames(); //List of levels that can be
+
+	//Bool for if the start server UI
+	bool bStartPressed = false;
+	
+	//Force Min Ready Player Count to be under or equal to max players
+	a_iMinReadyPlayers = a_iMinReadyPlayers > a_iMaxPlayerCount ? a_iMaxPlayerCount : a_iMinReadyPlayers;
+
+	InitServerSettingsWindow();
+	ImGui::Begin("Configure Server");
+
+	//Player Count Settings
+	if (ImGui::CollapsingHeader("Player Count Settings")) {
+		
+		ImGui::TextWrapped("Select the Maximum number of players that connect to the server");
+		ImGui::SliderInt("Player Count", &a_iMaxPlayerCount, 2, 6);
+		
+		ImGui::TextWrapped("Select the number of players that must ready up before the game starts");
+		ImGui::SliderInt("Ready Player Count", &a_iMinReadyPlayers, 1, a_iMaxPlayerCount);
+	}
+
+	//Level Settings
+	if(ImGui::CollapsingHeader("Timing Settings"))
+	{
+		ImGui::TextWrapped("The time between %i client(s) being ready and the game starting", a_iMinReadyPlayers);
+		ImGui::InputFloat("Warmup Time", &a_iWarmupTime);
+	}
+
+	//Level Settings
+	if(ImGui::CollapsingHeader("Level Selection"))
+	{
+		//Text for describing how to add levels
+		ImGui::TextWrapped("Select Levels in the left hand columns to add them to the rotation");
+		
+		
+		//List of levels we can add to the rotation
+		ImGui::Columns(2);
+		ImGui::TextWrapped("Select Levels to add");
+		ImGui::Spacing();
+		std::vector<std::string> vsAvaliableLevels = LevelManager::GetLoadableLevelNames();
+		for(int i = 0; i < vsAvaliableLevels.size(); ++i)
+		{
+			if(ImGui::Button(vsAvaliableLevels[i].c_str()))
+			{
+				a_vsSelectedLevels.push_back(vsAvaliableLevels[i]);
+			}
+		}
+
+
+		//---SELECTED LEVELS-------//
+		ImGui::NextColumn();
+		ImGui::TextWrapped("Level Rotation");
+		ImGui::Spacing();
+		if (!a_vsSelectedLevels.empty()) {
+			
+			//Draw a list of selected levels
+			for (int i = 0; i < a_vsSelectedLevels.size(); ++i)
+			{
+				ImGui::Text(a_vsSelectedLevels[i].c_str());
+			}
+
+			//Buttons for clearing list and removing last
+			if (ImGui::Button("Remove Last"))
+			{
+				a_vsSelectedLevels.pop_back();
+			}
+			if (ImGui::Button("Clear"))
+			{
+				a_vsSelectedLevels.clear();
+			}
+		}
+
+		ImGui::Columns(1);
+	}
+
+	//Start Button
+	//Don't allow start if there are no levels
+	ImGui::Dummy(ImVec2(0.0f, 20.0f));
+	if(!a_vsSelectedLevels.empty())
+	{
+		bStartPressed = ImGui::Button("Start Server");
+
+	}else
+	{
+		ImGui::TextDisabled("Cannot Start Server with no levels");
+	}
+
+	ImGui::End();
+	return bStartPressed;
+}
+
+/// <summary>
+/// Intalises the ImGUI window for client connection
+/// </summary>
+void ConnectionUI::InitConnectionWindow()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	const ImVec2 windowSize = ImVec2(400.f, 250.f);
+	const ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Once);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Once);
+}
+
+/// <summary>
+/// Intalises the ImGUI window for server settings
+/// </summary>
+void ConnectionUI::InitServerSettingsWindow()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	const ImVec2 windowSize = ImVec2(900.f, 900.f);
+	const ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Once);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Once);
+}

@@ -1,5 +1,6 @@
 ﻿#ifndef __CONNECTION_UI_H__
 #define __CONNECTION_UI_H__
+#include <vector>
 
 
 /// <summary>
@@ -19,6 +20,16 @@ public:
 
 	//Draw the connection UI
 	static void DrawGameOverUI(bool& a_bContinue, bool& a_bDisconnect);
+
+	//Draw the server settings UI
+	static bool DrawServerSettingsUI(int& a_iMaxPlayerCount, int& a_iMinReadyPlayers, float& a_iWarmupTime, std::
+	                                 vector<std::string>& a_vsSelectedLevels);
+
+private:
+	//Functions to init window types
+	static void InitConnectionWindow();
+	static void InitServerSettingsWindow();
+	
 	
 };
 

@@ -48,7 +48,7 @@ public:
 	NetworkClient();
 	virtual ~NetworkClient();
 
-	void Init() override;
+	void Init();
 	void Update() override;
 	void DeInit() override;
 
@@ -68,8 +68,6 @@ private:
 	void HandleClientConnectionPackets(RakNet::Packet* a_pPacket);
 	void HandleClientPreGamePackets(RakNet::Packet* a_pPacket);
 	void HandleClientGamePackets(RakNet::Packet* a_pPacket);
-	
-	void InitImguiWindow();
 	
 	//Function to connect to the server
 	void ConnectToServer(const char* a_zcIPAddress) const;

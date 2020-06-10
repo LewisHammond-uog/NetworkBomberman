@@ -185,7 +185,8 @@ void PlayerManager::DestroyPlayer(const RakNet::RakNetGUID a_playerGUID)
 /// </summary>
 void PlayerManager::DestroyAllPlayers()
 {
-	//Loop all of the players and destroy
+	//Destroy all of the players by clearing the player map
+	//and freeing the memory
 	if (!m_xPlayers.empty()) {
 		MapUitls::FreeClear(m_xPlayers);
 	}

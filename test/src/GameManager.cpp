@@ -6,6 +6,7 @@
 
 //Project Includes
 #include "Entity.h"
+#include "Level.h"
 #include "LevelManager.h"
 #include "PlayerManager.h"
 #include "ConsoleLog.h"
@@ -110,7 +111,7 @@ void GameManager::EndGame()
 	//Unload the level
 	if(m_pLevelManager)
 	{
-		m_pLevelManager->GetCurrentLevel();
+		m_pLevelManager->UnloadLevel();
 	}
 	
 	//Unload the players

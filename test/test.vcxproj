@@ -22,6 +22,7 @@
     <ClInclude Include="include\CylinderPrimitiveComponent.h" />
     <ClInclude Include="include\Level.h" />
     <ClInclude Include="include\LevelManager.h" />
+    <ClInclude Include="include\MapUtils.h" />
     <ClInclude Include="include\MathsUtils.h" />
     <ClInclude Include="include\NetworkBlackboard.h" />
     <ClInclude Include="include\NetworkOrderingChannels.h" />

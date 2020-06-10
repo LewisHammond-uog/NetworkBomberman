@@ -14,6 +14,7 @@
 #include "GameManager.h"
 #include "Level.h"
 #include "LevelManager.h"
+#include "MapUtils.h"
 
 //Define pairs for our map
 typedef std::pair<RakNet::RakNetGUID, Entity*> GUIDPlayerPair;
@@ -97,8 +98,13 @@ Entity* PlayerManager::CreatePlayer(const RakNet::RakNetGUID a_ownerGUID, glm::v
 	pNetworkReplicator->Reference(pBombSpawner);
 	pNetworkReplicator->Reference(pPlayerData);
 
-	//Add Player to list of players
-	m_xPlayers.insert(GUIDPlayerPair(a_ownerGUID, pPlayerEntity));
+	//Add Player to list of players, if a player already
+	//exists then delete it
+	if(m_xPlayers[a_ownerGUID] != nullptr)
+	{
+		delete m_xPlayers[a_ownerGUID];
+	}
+	m_xPlayers[a_ownerGUID] = pPlayerEntity;
 
 	return pPlayerEntity;
 }
@@ -112,7 +118,9 @@ void PlayerManager::SetAllPlayersEnabled(const bool a_bEnabled)
 	//Loop all of the players and set enabled state
 	for(std::map<RakNet::RakNetGUID, Entity*>::const_iterator playerIter = m_xPlayers.begin(); playerIter != m_xPlayers.end(); ++playerIter)
 	{
-		playerIter->second->SetEnabled(a_bEnabled);
+		if (playerIter->second != nullptr) {
+			playerIter->second->SetEnabled(a_bEnabled);
+		}
 	}
 }
 
@@ -146,7 +154,8 @@ void PlayerManager::SetPlayerColour(RakNet::RakNetGUID a_ownerGUID, glm::vec4 a_
 /// Destroy a player entity
 /// </summary>
 /// <param name="a_playerGUID">System that owns the player</param>
-void PlayerManager::DestroyPlayer(RakNet::RakNetGUID a_playerGUID)
+/// <param name="a_bRemoveFromList">If we should remove the player from the list</param>
+void PlayerManager::DestroyPlayer(const RakNet::RakNetGUID a_playerGUID)
 {
 	//Find the player in the map to retrive the entity
 	Entity* pPlayerEntity = m_xPlayers[a_playerGUID];
@@ -166,7 +175,7 @@ void PlayerManager::DestroyPlayer(RakNet::RakNetGUID a_playerGUID)
 
 	//Remove from the players list
 	m_xPlayers.erase(a_playerGUID);
-
+	
 	//Destory the player entity after the current update loop has finished
 	GameManager::GetInstance()->DeleteEntityAfterUpdate(pPlayerEntity);
 }
@@ -178,13 +187,7 @@ void PlayerManager::DestroyAllPlayers()
 {
 	//Loop all of the players and destroy
 	if (!m_xPlayers.empty()) {
-		std::map<RakNet::RakNetGUID, Entity*>::iterator playerIter = m_xPlayers.begin();
-		while(playerIter != m_xPlayers.end())
-		{
-			DestroyPlayer(playerIter->first);
-			playerIter = m_xPlayers.begin(); //Update the player iter because we remove the player from
-											//the list in DestroyPlayer()
-		}
+		MapUitls::FreeClear(m_xPlayers);
 	}
 }
 

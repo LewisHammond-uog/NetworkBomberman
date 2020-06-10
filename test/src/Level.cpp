@@ -37,15 +37,24 @@ Level::Level(std::string a_sLevelName, glm::vec2 a_v2LevelSize)
 /// </summary>
 Level::~Level()
 {
-	//Delete the 2D array of entitess
+	//Delete the entities in the arary
+	for(int x = 0; x < m_v2Size.x; ++x)
+	{
+		for(int y = 0; y < m_v2Size.y; ++y)
+		{
+			delete m_apLevelEntities[x][y];
+		}
+	}
+	
+	//Delete the 2D array of entites
 	for (int i = 0; i < m_v2Size.x; ++i)
 	{
 		delete[] m_apLevelEntities[i];
 	}
 
 	
-	if (m_apLevelEntities != nullptr) {
-		delete m_apLevelEntities;
+	if (m_apLevelEntities[0] != nullptr) {
+		delete[] m_apLevelEntities;
 	}
 }
 

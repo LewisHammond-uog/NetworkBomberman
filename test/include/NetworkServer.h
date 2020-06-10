@@ -81,7 +81,7 @@ private:
 
 	//Server Settings
 	const int m_iRequiredPlayerCount = 1;
-	const float m_fWarmupDuration = 10.0f;
+	const float m_fWarmupDuration = 1.0f;
 };
 
 #endif // !__NETWORK_SERVER_H__

@@ -106,6 +106,18 @@ void GameManager::EndGame()
 {
 	//Set the Game State
 	m_eCurrentGameState = GAME_STATE::GAME_STATE_ENDED;
+
+	//Unload the level
+	if(m_pLevelManager)
+	{
+		m_pLevelManager->GetCurrentLevel();
+	}
+	
+	//Unload the players
+	if(m_pPlayerManager)
+	{
+		m_pPlayerManager->DestroyAllPlayers();
+	}
 }
 
 

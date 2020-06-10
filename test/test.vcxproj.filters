@@ -46,9 +46,6 @@
     <Filter Include="Source Files\Utils">
       <UniqueIdentifier>{e3b967c1-539d-49d6-8ca8-0017122db550}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Network\Client">
-      <UniqueIdentifier>{59ed2b48-d23d-4f34-ae7c-69a75e81c73e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\TestProject.cpp">
@@ -148,7 +145,7 @@
       <Filter>Source Files\ECS\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\NetworkClient.cpp">
-      <Filter>Source Files\Network\Client</Filter>
+      <Filter>Source Files\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

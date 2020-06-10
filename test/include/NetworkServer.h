@@ -68,7 +68,7 @@ private:
 	
 
 	//Server Authenticator - used to verify usernames/passwords
-	Authenticator* m_pServerAuthenticator;
+	Authenticator* m_pServerAuthenticator;   
 
 	//Current State of the server - Waiting, Playing etc.
 	ServerGameStates m_eServerState;

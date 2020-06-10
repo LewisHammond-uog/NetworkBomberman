@@ -298,6 +298,13 @@ void NetworkClient::DoClientPostGameEvents()
 		m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
 		m_eClientGameState = ClientLocalState::NOT_CONNECTED;
 	}
+
+	//If we have chosen to continue then set our state to waiting for the player to be ready
+	if(bContinue)
+	{
+		m_eConnectionState = ClientConnectionState::CLIENT_INIT_PREGAME;
+		m_eClientGameState = ClientLocalState::PRE_GAME;
+	}
 }
 
 

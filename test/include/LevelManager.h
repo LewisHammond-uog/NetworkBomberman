@@ -1,5 +1,6 @@
 #ifndef __LEVEL_LOADER_H__
 #define __LEVEL_LOADER_H__
+#include <vector>
 
 //Forward Declare
 class Entity;
@@ -18,7 +19,11 @@ public:
 	void LoadLevel(const std::string& a_sLevelName);
 	void UnloadLevel();
 
+	//Get the currently loaded level
 	static Level* GetCurrentLevel();
+
+	//Function to get all levels that can be loaded
+	static std::vector<std::string> GetLoadableLevelNames();
 	
 	//Enum for level pieces
 	enum class LEVEL_OBJECT
@@ -40,7 +45,7 @@ private:
 	static Level* s_pCurrentLevel;
 	
 	//Level Load Path
-	const char* m_szLevelLoadPath = "Levels/";
+	static const char* s_szLevelLoadPath;
 
 	//Colours for level objects
 	glm::vec4 m_v4DestructableColor = glm::vec4(0.75f, 0.75f, 0.75f, 1.0f);

@@ -3,6 +3,7 @@
 
 //C++ Include
 #include <fstream>
+#include <filesystem>
 
 //Project Includes
 #include "ConsoleLog.h"
@@ -16,6 +17,7 @@
 
 //Static Initalisations
 Level* LevelManager::s_pCurrentLevel = nullptr;
+const char* LevelManager::s_szLevelLoadPath = "Levels/";
 
 /// <summary>
 /// Delete the Level loader, unloading the level
@@ -41,7 +43,7 @@ void LevelManager::LoadLevel(const std::string& a_sLevelName)
 	}
 	
 	//Find the level file
-	const std::string sLevelFileName = m_szLevelLoadPath + a_sLevelName + ".txt";
+	const std::string sLevelFileName = s_szLevelLoadPath + a_sLevelName + ".txt";
 
 	//Attempt to open the level files, if fail then exit out and present error
 	std::fstream sLevelFile = std::fstream(sLevelFileName, std::ios_base::in);
@@ -140,6 +142,26 @@ void LevelManager::UnloadLevel()
 Level* LevelManager::GetCurrentLevel()
 {
 	return s_pCurrentLevel;
+}
+
+/// <summary>
+/// Gets the name of all the levels that are loadable in the levels folder
+/// </summary>
+/// <returns></returns>
+std::vector<std::string> LevelManager::GetLoadableLevelNames()
+{
+	//Create Vector for level names
+	std::vector<std::string> vsLevelFiles;
+	
+	//Get all of the files from the level load path,
+	//Adding each one to the list
+	for (const auto& entry : std::filesystem::directory_iterator(s_szLevelLoadPath))
+	{
+		vsLevelFiles.push_back(entry.path().filename().u8string());
+	}
+
+	//Return the files we have found
+	return vsLevelFiles;
 }
 
 /// <summary>

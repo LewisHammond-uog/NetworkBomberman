@@ -380,3 +380,6 @@ MigrationBackup/
 *.exe
 *.out
 *.app
+
+#Project Specific Files
+*.docx

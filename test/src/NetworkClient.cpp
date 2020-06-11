@@ -96,8 +96,13 @@ void NetworkClient::Update()
 /// </summary>
 void NetworkClient::DeInit()
 {
+	//Shut down the rakpeer
+	s_pRakPeer->Shutdown(0);
+	
 	//Disconnect from the server
 	DisconnectFromServer();
+
+
 }
 
 

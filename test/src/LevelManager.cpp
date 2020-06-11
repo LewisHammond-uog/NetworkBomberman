@@ -19,6 +19,11 @@
 Level* LevelManager::s_pCurrentLevel = nullptr;
 const char* LevelManager::s_szLevelLoadPath = "Levels/";
 
+LevelManager::LevelManager() :
+	m_iCurrentLevelIndex(-1)
+{
+}
+
 /// <summary>
 /// Delete the Level loader, unloading the level
 /// </summary>
@@ -31,19 +36,43 @@ LevelManager::~LevelManager()
 }
 
 /// <summary>
+/// Sets the level map rotations
+/// </summary>
+/// <param name="a_vsLevelRotationVector">Vector of Level Names to use as the level rotation</param>
+void LevelManager::SetLevelRotation(const std::vector<std::string> a_vsLevelRotationVector)
+{
+	m_vsLevelRotation = a_vsLevelRotationVector;
+}
+
+/// <summary>
 /// Loads a level of a given name
 /// </summary>
-/// <param name="a_sLevelName">Name of the level to be loaded</param>
-void LevelManager::LoadLevel(const std::string& a_sLevelName)
+void LevelManager::LoadNextLevel()
 {
 	//If a level is already loaded then unload it
 	if(s_pCurrentLevel != nullptr)
 	{
 		UnloadLevel();
 	}
+
+	//Check that we have a level rotation
+	if(m_vsLevelRotation.empty())
+	{
+		ConsoleLog::LogError("[ERROR] No Level Rotation found cannot load the next level!");
+		return;
+	}
 	
-	//Find the level file
-	const std::string sLevelFileName = s_szLevelLoadPath + a_sLevelName + ".txt";
+	//Find our next level file, if the level index is over the bounds of the vector
+	//then reset to the start of our rotation
+	++m_iCurrentLevelIndex;
+	if(m_iCurrentLevelIndex >= m_vsLevelRotation.size() || m_iCurrentLevelIndex < 0)
+	{
+		m_iCurrentLevelIndex = 0;
+	}
+
+	//Get file name from level name
+	std::string sCurrentLevelName =  m_vsLevelRotation[m_iCurrentLevelIndex];
+	const std::string sLevelFileName = s_szLevelLoadPath + sCurrentLevelName + ".txt";
 
 	//Attempt to open the level files, if fail then exit out and present error
 	std::fstream sLevelFile = std::fstream(sLevelFileName, std::ios_base::in);

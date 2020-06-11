@@ -128,7 +128,7 @@ bool ConnectionUI::DrawServerSettingsUI(int& a_iMaxPlayerCount, int& a_iMinReady
 		ImGui::SliderInt("Player Count", &a_iMaxPlayerCount, 2, 6);
 		
 		ImGui::TextWrapped("Select the number of players that must ready up before the game starts");
-		ImGui::SliderInt("Ready Player Count", &a_iMinReadyPlayers, 1, a_iMaxPlayerCount);
+		ImGui::SliderInt("Ready Player Count", &a_iMinReadyPlayers, 2, a_iMaxPlayerCount);
 	}
 
 	//Level Settings

@@ -13,10 +13,12 @@ class LevelManager
 {
 public:
 	//Constructor / Destructor
-	LevelManager() = default;
+	LevelManager();
 	~LevelManager();
 
-	void LoadLevel(const std::string& a_sLevelName);
+	void SetLevelRotation(std::vector<std::string> a_vsLevelRotationVector);
+	
+	void LoadNextLevel();
 	void UnloadLevel();
 
 	//Get the currently loaded level
@@ -51,8 +53,9 @@ private:
 	glm::vec4 m_v4DestructableColor = glm::vec4(0.75f, 0.75f, 0.75f, 1.0f);
 	glm::vec4 m_v4SolidColor = glm::vec4(0.f, 0.f, 0.f, 1.0f);
 	
-	//Level Settings
-	
+	//The selected level rotation maps and index
+	std::vector<std::string> m_vsLevelRotation;
+	int m_iCurrentLevelIndex;
 };
 
 #endif //!__LEVEL_LOADER_H__

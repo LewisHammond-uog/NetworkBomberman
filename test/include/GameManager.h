@@ -51,6 +51,9 @@ public:
 	void StartGame();
 	void EndGame();
 
+	//Function to set the level map rotation
+	void SetLevelRotation(std::vector<std::string> a_vsMapRotation) const;
+
 	//Function to get the game state
 	GAME_STATE GetGameState() const;
 	

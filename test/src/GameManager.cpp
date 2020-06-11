@@ -68,7 +68,7 @@ void GameManager::WarmupGame()
 {
 	//Create the level
 	if (m_pLevelManager) {
-		m_pLevelManager->LoadLevel("level");
+		m_pLevelManager->LoadNextLevel();
 	}
 
 	//Create Players and disable players
@@ -118,6 +118,18 @@ void GameManager::EndGame()
 	if(m_pPlayerManager)
 	{
 		m_pPlayerManager->DestroyAllPlayers();
+	}
+}
+
+/// <summary>
+/// Set the map rotation on the level manager
+/// </summary>
+/// <param name="a_vsMapRotation"></param>
+void GameManager::SetLevelRotation(const std::vector<std::string> a_vsMapRotation) const
+{
+	if(m_pLevelManager)
+	{
+		m_pLevelManager->SetLevelRotation(a_vsMapRotation);
 	}
 }
 

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "NetworkServer.h"
 
+#include <utility>
+
 //Raknet Includes
 #include  "RakPeerInterface.h"
 #include "BitStream.h"
@@ -50,6 +52,7 @@ void NetworkServer::Init(int a_iMaxPlayerCount, int a_iMinReadyPlayers, float a_
 	//Set Server Settings
 	m_iMinReadyPlayers = a_iMinReadyPlayers;
 	m_fWarmupDuration = a_fWarmupTime;
+	GameManager::GetInstance()->SetLevelRotation(std::move(a_vsSelectedLevels));
 
 	//Attach the network replicator to our Rak Peer
 	//so that it runs automatically
@@ -69,7 +72,7 @@ void NetworkServer::Update()
 		//inputted values
 		//todo remove magic numbers
 		static int iMaxPlayers = 6;
-		static int iMinReadyPlayers = 1;
+		static int iMinReadyPlayers = 2;
 		static float fWarmupTime = 10;
 		static std::vector<std::string> vsLevelRotation;
 

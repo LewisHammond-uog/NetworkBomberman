@@ -27,7 +27,7 @@ void ConnectionUI::DrawWaitingUI(const char* a_szWaitingMessage)
 	messageStr.append("... %c"); //Append ... and waiting icon
 
 	//Draw Text
-	ImGui::Text(messageStr.c_str(), "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
+	ImGui::TextWrapped(messageStr.c_str(), "|/-\\"[(int)(Utility::getTotalTime() / 0.05f) & 3]);
 
 	//End UI
 	ImGui::End();
@@ -47,7 +47,7 @@ bool ConnectionUI::DrawAcknowledgeUI(const char* a_szWindowTitle, const char* a_
 	ImGui::Begin(a_szWindowTitle);
 
 	//Draw the content
-	ImGui::Text(a_szContent);
+	ImGui::TextWrapped(a_szContent);
 
 	//Get the result of the button
 	const bool bAckPressed = ImGui::Button(a_szButtonText);

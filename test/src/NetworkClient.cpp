@@ -62,6 +62,7 @@ void NetworkClient::Update()
 		HandleClientConnectionPackets(pPacket);
 		HandleClientPreGamePackets(pPacket);
 		HandleClientGamePackets(pPacket);
+		HandleDisconnectPackets(pPacket);
 
 		s_pRakPeer->DeallocatePacket(pPacket);
 		pPacket = s_pRakPeer->Receive();
@@ -235,6 +236,14 @@ void NetworkClient::DoClientPreGameEvents()
 	static bool showConnectionWindow = true;
 
 	switch (m_eConnectionState) {
+		case(ClientConnectionState::CLIENT_FIRST_TIME_INFO):{
+			//Show first time playing info for new players, progress to register after we have acknolaged
+			if (ConnectionUI::DrawAcknowledgeUI("First Time Playing!", "Welcome to the game! This is your first time playing! To move the player use WASD to place a bomb press E"))
+			{
+				m_eConnectionState = ClientConnectionState::CLIENT_INIT_PREGAME;
+			}
+			break;
+		}
 		case(ClientConnectionState::CLIENT_INIT_PREGAME): {
 				
 			//Show a Ready UI and if we have pressed then send the ready message
@@ -348,17 +357,22 @@ void NetworkClient::HandleClientConnectionPackets(RakNet::Packet* a_pPacket)
 		{
 			switch (a_pPacket->data[0])
 			{
-				case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS):
+				case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS_REG):
 				{
 					ConsoleLog::LogMessage("CLIENT :: LOGIN SUCCESS");
 
-					//We have successfully connected and logged in to the server,
-					//move on to actually doing game stuff
+					//We have successfully connected and registered for the server
+					//show the player 1st time info
 					m_eClientGameState = ClientLocalState::PRE_GAME;
-					m_eConnectionState = ClientConnectionState::CLIENT_INIT_PREGAME;
+					m_eConnectionState = ClientConnectionState::CLIENT_FIRST_TIME_INFO;
 
 					break;
 				}
+				case(CSNetMessages::SERVER_AUTHENTICATE_SUCCESS_LOGIN):
+					//We have successfully connected and logged in to the server,
+					//move on to actually doing game stuff
+					m_eClientGameState = ClientLocalState::PRE_GAME;
+					m_eConnectionState = ClientConnectionState::CLIENT_WARMUP;
 				case(CSNetMessages::SERVER_AUTHENTICATE_FAIL):
 				{
 					ConsoleLog::LogMessage("CLIENT :: LOGIN FAILED");
@@ -425,6 +439,23 @@ void NetworkClient::HandleClientGamePackets(RakNet::Packet* a_pPacket)
 			//Change Client state
 			m_eClientGameState = ClientLocalState::GAME_OVER;
 		}
+	}
+}
+
+/// <summary>
+/// Handle disconnection packets sent from the server
+/// </summary>
+/// <param name="a_pPacket"></param>
+void NetworkClient::HandleDisconnectPackets(RakNet::Packet* a_pPacket)
+{
+	//Get the a_pPacket type
+	const RakNet::MessageID ePacketType = a_pPacket->data[0];
+
+	//Check if a_pPacket is a disconnection a_pPacket
+	if (ePacketType == ID_CONNECTION_LOST || ePacketType == ID_DISCONNECTION_NOTIFICATION)
+	{
+		//Deal with disconnection
+		DisconnectFromServer();
 	}
 }
 

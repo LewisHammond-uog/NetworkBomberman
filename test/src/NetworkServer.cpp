@@ -167,7 +167,7 @@ void NetworkServer::HandlePreGamePackets(RakNet::Packet* a_pPacket)
 			{
 				//Send Success
 				ConsoleLog::LogMessage("SERVER :: SENDING CLIENT REGISTER SUCCESS INFO");
-				SendMessageToClient(a_pPacket->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
+				SendMessageToClient(a_pPacket->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS_REG, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
 
 				//Add to list of connected clients
 				const ConnectedClientInfo newClientInfo{
@@ -194,7 +194,7 @@ void NetworkServer::HandlePreGamePackets(RakNet::Packet* a_pPacket)
 			{
 				ConsoleLog::LogMessage("SERVER :: SENDING CLIENT LOGIN SUCCESS INFO");
 				//Send success message to client
-				SendMessageToClient(a_pPacket->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
+				SendMessageToClient(a_pPacket->systemAddress, CSNetMessages::SERVER_AUTHENTICATE_SUCCESS_LOGIN, PacketPriority::MEDIUM_PRIORITY, PacketReliability::RELIABLE);
 
 				//Add to list of connected clients
 				const ConnectedClientInfo newClientInfo{

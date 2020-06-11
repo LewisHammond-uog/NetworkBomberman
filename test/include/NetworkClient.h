@@ -33,6 +33,7 @@ public:
 		CLIENT_FAILED_AUTHORISATION,
 
 		//Setup Game
+		CLIENT_FIRST_TIME_INFO,
 		CLIENT_INIT_PREGAME,
 		CLIENT_SEND_READY,
 		CLIENT_WAITING_FOR_READY_PLAYERS,
@@ -68,6 +69,7 @@ private:
 	void HandleClientConnectionPackets(RakNet::Packet* a_pPacket);
 	void HandleClientPreGamePackets(RakNet::Packet* a_pPacket);
 	void HandleClientGamePackets(RakNet::Packet* a_pPacket);
+	void HandleDisconnectPackets(RakNet::Packet* a_pPacket);
 	
 	//Function to connect to the server
 	void ConnectToServer(const char* a_zcIPAddress) const;

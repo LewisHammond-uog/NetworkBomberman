@@ -97,7 +97,7 @@ void TestProject::Update(float a_deltaTime)
 	// clear all gizmos from last frame
 	Gizmos::clear();
 
-	//todo remove
+	//Update the Game
 	GameManager::GetInstance()->Update(a_deltaTime);
 	
 	static bool show_demo_window = true;
@@ -123,7 +123,7 @@ void TestProject::Draw()
 	// get the view matrix from the world-space camera matrix
 	glm::mat4 viewMatrix = glm::inverse(m_cameraMatrix);
 
-	//todo remove
+	//Draw the game
 	GameManager::GetInstance()->Draw();
 
 	// draw the gizmos from this frame

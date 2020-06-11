@@ -27,7 +27,7 @@ public:
 	~ColliderComponent();
 
 	void Update(float a_fDeltaTime) override;
-	void Draw(Shader* a_pShader) override;
+	void Draw(Shader* a_pShader) override {};
 
 	//Functions to add collider shapes
 	void AddBoxCollider(glm::vec3 a_v3BoxSize, glm::vec3 a_v3Offset);

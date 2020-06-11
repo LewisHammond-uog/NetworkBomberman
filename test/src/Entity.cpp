@@ -13,7 +13,6 @@ std::map<const unsigned int, Entity*> Entity::s_xEntityMap;
 
 Entity::Entity()
 {
-	//todo remove? - don't think we need this because we are a replica object and this is pre assigned by s_pReplicaManager->SetNetworkIDManager(GetNetworkIDManager()); in Client Server Base
 	//Set our Network ID Manager
 	NetworkIDObject::SetNetworkIDManager(ServerClientBase::GetNetworkIDManager());
 

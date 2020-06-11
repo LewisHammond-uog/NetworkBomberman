@@ -6,6 +6,8 @@
 //Test Includes
 #include "TestProject.h"
 
+//todo comments here
+
 /// <summary>
 /// Default Constructor
 /// </summary>
@@ -26,21 +28,18 @@ void ServerCreatedObject::WriteAllocationID(RakNet::Connection_RM3* destinationC
 	allocationIdBitstream->Write(GetName());
 }
 
-RakNet::RM3ConstructionState ServerCreatedObject::QueryConstruction(RakNet::Connection_RM3* destinationConnection, RakNet::ReplicaManager3* replicaManager3)
-{
-	//TODO CHANGE SO THAT NETWORK TOPOLIGY IS CORRECT - replace false
+RakNet::RM3ConstructionState ServerCreatedObject::QueryConstruction(RakNet::Connection_RM3* destinationConnection, RakNet::ReplicaManager3* replicaManager3){
+	
 	return QueryConstruction_ServerConstruction(destinationConnection, TestProject::isServer);
 }
 
 bool ServerCreatedObject::QueryRemoteConstruction(RakNet::Connection_RM3* sourceConnection)
 {
-	//TODO CHANGE SO THAT NETWORK TOPOLIGY IS CORRECT - replace false
 	return QueryRemoteConstruction_ServerConstruction(sourceConnection, TestProject::isServer);
 }
 
 RakNet::RM3QuerySerializationResult ServerCreatedObject::QuerySerialization(RakNet::Connection_RM3* destinationConnection)
 {
-	//TODO CHANGE SO THAT NETWORK TOPOLIGY IS CORRECT - replace false
 	return QuerySerialization_ClientSerializable(destinationConnection, TestProject::isServer);
 }
 

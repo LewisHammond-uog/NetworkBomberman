@@ -74,8 +74,6 @@ TransformHistory::ReadResult TransformHistory::Read(glm::mat4& a_pm4TransformMat
 	//are looking for
 	for(int i = historySize - 1; i >= 0; --i)
 	{
-		//bug - potentially should seperate rotation and position for lerp
-		
 		const TransformHistoryItem& currentItem = m_qTransformHistory[i];
 
 		if (a_when >= currentItem.m_timeReceived) {

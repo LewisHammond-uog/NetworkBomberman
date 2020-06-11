@@ -96,13 +96,13 @@ void NetworkClient::Update()
 /// </summary>
 void NetworkClient::DeInit()
 {
-	//Shut down the rakpeer
-	s_pRakPeer->Shutdown(0);
+	if (s_pRakPeer) {
+		//Shut down the rakpeer
+		s_pRakPeer->Shutdown(0);
+	}
 	
 	//Disconnect from the server
 	DisconnectFromServer();
-
-
 }
 
 
@@ -452,8 +452,11 @@ void NetworkClient::ConnectToServer(const char* a_zcIPAddress) const
 void NetworkClient::DisconnectFromServer()
 {
 	//Send message to server that we are disconnecting
-	s_pRakPeer->CloseConnection(m_serverAddress, true, ORDERING_CHANNEL_CONNECTIONS, LOW_PRIORITY);
-	m_serverAddress = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
+	if (s_pRakPeer) {
+		s_pRakPeer->CloseConnection(m_serverAddress, true, ORDERING_CHANNEL_CONNECTIONS, LOW_PRIORITY);
+	}
+
+		m_serverAddress = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 }
 
 /// <summary>

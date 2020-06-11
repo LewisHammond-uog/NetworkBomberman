@@ -142,10 +142,10 @@ void NetworkServer::DeInit()
 		}
 	}
 
-
-	//Shut down the rakpeer
-	s_pRakPeer->Shutdown(0);
-
+	if (s_pRakPeer) {
+		//Shut down the rakpeer
+		s_pRakPeer->Shutdown(0);
+	}
 	ConsoleLog::LogMessage("SERVER :: SHUTTING DOWN");
 }
 

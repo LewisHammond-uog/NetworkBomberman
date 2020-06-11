@@ -33,8 +33,9 @@ private:
 
 	void ExplodeBomb() const;
 
-	//Function for getting collision rays
-	std::vector<rp3d::Ray*> GetCollisionRays() const;
+	//Function for getting collision rays,
+	//Don't allow discard because we need to delete the rays after
+	[[nodiscard]] std::vector<rp3d::Ray*> GetCollisionRays() const;
 
 	//Time from creation to bomb explosion
 	const float mc_fBombExplosionTime = 5.0f;

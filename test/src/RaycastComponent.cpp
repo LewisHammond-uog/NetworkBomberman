@@ -96,7 +96,7 @@ rp3d::decimal RayCastHitsInfo::notifyRaycastHit(const rp3d::RaycastInfo& a_pRayc
 	hit->m_v3HitPoint = glm::vec3(a_pRaycastInfo.worldPoint.x, a_pRaycastInfo.worldPoint.y, a_pRaycastInfo.worldPoint.z);
 	hit->m_v3HitNormal = glm::vec3(a_pRaycastInfo.worldNormal.x, a_pRaycastInfo.worldNormal.y, a_pRaycastInfo.worldNormal.z);
 	hit->m_fHitFraction = a_pRaycastInfo.hitFraction;
-
+	
 	//Add to hits list
 	m_vRayCastHits.push_back(hit);
 

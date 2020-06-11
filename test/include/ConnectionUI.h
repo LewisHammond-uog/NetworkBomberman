@@ -29,7 +29,11 @@ private:
 	//Functions to init window types
 	static void InitConnectionWindow();
 	static void InitServerSettingsWindow();
-	
+
+	//Settings for UI
+	static const int sc_iMaxPlayers;
+	static const int sc_iMinPlayers;
+	static const int mc_iMinReadyPlayers;
 	
 };
 

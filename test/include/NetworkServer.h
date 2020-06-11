@@ -82,8 +82,13 @@ private:
 	std::vector<ConnectedClientInfo> m_vConnectedClients;
 
 	//Server Settings
-	int m_iMinReadyPlayers = 1;
+	int m_iMinReadyPlayers = 2;
 	float m_fWarmupDuration = 1.0f;
+
+	//Default server settings
+	const int mc_iDefaultMaxPlayers = 6;
+	const int mc_iDefaultMinReadyPlayers = 2;
+	const float mc_fDefaultWarmupTime = 5.0f;
 };
 
 #endif // !__NETWORK_SERVER_H__

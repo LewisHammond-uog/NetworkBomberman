@@ -1,11 +1,16 @@
 ﻿#include "stdafx.h"
 #include "ConnectionUI.h"
 
-//Project Includes
+//C++ Includes
 #include <vector>
 
+//Project Includes
 #include "Authenticator.h"
 #include "LevelManager.h"
+
+//Static Initalistations
+const int ConnectionUI::sc_iMinPlayers = 2;
+const int ConnectionUI::sc_iMaxPlayers = 6;
 
 /// <summary>
 /// Draws UI for waiting 
@@ -109,8 +114,7 @@ void ConnectionUI::DrawGameOverUI(bool& a_bContinue, bool& a_bDisconnect)
 /// <returns>If the Start Server button is pressed</returns>
 bool ConnectionUI::DrawServerSettingsUI(int& a_iMaxPlayerCount, int& a_iMinReadyPlayers, float& a_iWarmupTime, std::vector<std::string>& a_vsSelectedLevels)
 {
-
-	static std::vector<std::string> vsAvailableLevels = LevelManager::GetLoadableLevelNames(); //List of levels that can be
+	static std::vector<std::string> vsAvailableLevels = LevelManager::GetLoadableLevelNames(); //List of levels that can be loaded
 
 	//Bool for if the start server UI
 	bool bStartPressed = false;
@@ -125,10 +129,10 @@ bool ConnectionUI::DrawServerSettingsUI(int& a_iMaxPlayerCount, int& a_iMinReady
 	if (ImGui::CollapsingHeader("Player Count Settings")) {
 		
 		ImGui::TextWrapped("Select the Maximum number of players that connect to the server");
-		ImGui::SliderInt("Player Count", &a_iMaxPlayerCount, 2, 6);
+		ImGui::SliderInt("Player Count", &a_iMaxPlayerCount, sc_iMinPlayers, sc_iMaxPlayers);
 		
 		ImGui::TextWrapped("Select the number of players that must ready up before the game starts");
-		ImGui::SliderInt("Ready Player Count", &a_iMinReadyPlayers, 2, a_iMaxPlayerCount);
+		ImGui::SliderInt("Ready Player Count", &a_iMinReadyPlayers, sc_iMinPlayers, a_iMaxPlayerCount);
 	}
 
 	//Level Settings

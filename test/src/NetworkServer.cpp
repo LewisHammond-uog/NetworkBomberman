@@ -70,10 +70,9 @@ void NetworkServer::Update()
 		
 		//Statics to pass to server settings UI so we can receive the user
 		//inputted values
-		//todo remove magic numbers
-		static int iMaxPlayers = 6;
-		static int iMinReadyPlayers = 2;
-		static float fWarmupTime = 10;
+		static int iMaxPlayers = mc_iDefaultMaxPlayers;
+		static int iMinReadyPlayers = mc_iDefaultMinReadyPlayers;
+		static float fWarmupTime = mc_fDefaultWarmupTime;
 		static std::vector<std::string> vsLevelRotation;
 
 		//Wait for the user to press the server start button

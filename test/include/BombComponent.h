@@ -40,7 +40,7 @@ private:
 	const float mc_fBombExplosionTime = 5.0f;
 
 	//Range of the bomb
-	const float mc_fBombRange = 5.0f;
+	const float mc_fBombRange = 2.5f;
 
 	float m_fTimeSinceCreation;
 	

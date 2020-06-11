@@ -241,10 +241,7 @@ void NetworkServer::HandlePreGamePackets(RakNet::Packet* a_pPacket)
 		}
 		default:
 		{
-			//Log out unknown data and it's message ID
-			char errorBuffer[ERROR_BUFFER_SIZE];
-			sprintf(errorBuffer, "SERVER :: Unknown Data Received in Get Connections Stage. ID: %i", a_pPacket->data[0]);
-			ConsoleLog::LogMessage(errorBuffer);
+			//Do Nothing
 			break;
 		}
 	}
@@ -323,10 +320,8 @@ void NetworkServer::HandelPlayingGamePackets(RakNet::Packet* a_pPacket)
 		}
 	default:
 		{
-			//Log out unknown data and it's message ID
-			char errorBuffer[ERROR_BUFFER_SIZE];
-			sprintf(errorBuffer, "SERVER :: Unknown Data Received in Play Stage. ID: %i", a_pPacket->data[0]);
-			ConsoleLog::LogMessage(errorBuffer);
+			//Do Nothing
+			break;
 		}
 	}
 }
@@ -401,6 +396,14 @@ bool NetworkServer::HandleDisconnectPackets(RakNet::Packet* a_pPacket)
 	{
 		//Deal with disconnection
 		DisconnectClient(a_pPacket->guid);
+
+		//Reduce the number of players that are ready incase we are in
+		//waiting stage
+		if(m_iReadyClients > 0)
+		{
+			--m_iReadyClients;
+		}
+		
 		return true;
 	}
 

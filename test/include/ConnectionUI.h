@@ -25,10 +25,14 @@ public:
 	static bool DrawServerSettingsUI(int& a_iMaxPlayerCount, int& a_iMinReadyPlayers, float& a_iWarmupTime, std::
 	                                 vector<std::string>& a_vsSelectedLevels);
 
+	//Draw the client disconnect UI
+	static bool DrawClientDisconnectUI();
+	
 private:
 	//Functions to init window types
 	static void InitConnectionWindow();
 	static void InitServerSettingsWindow();
+	static void InitDisconnectWindow();
 
 	//Settings for UI
 	static const int sc_iMaxPlayers;

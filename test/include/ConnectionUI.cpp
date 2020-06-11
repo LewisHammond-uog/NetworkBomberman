@@ -7,6 +7,8 @@
 //Project Includes
 #include "Authenticator.h"
 #include "LevelManager.h"
+#include "NetworkClient.h"
+#include "NetworkServer.h"
 
 //Static Initalistations
 const int ConnectionUI::sc_iMinPlayers = 2;
@@ -206,6 +208,24 @@ bool ConnectionUI::DrawServerSettingsUI(int& a_iMaxPlayerCount, int& a_iMinReady
 }
 
 /// <summary>
+/// Draws the client Disconnect UI
+/// </summary>
+/// <returns>If the disconnect button has been pressed</returns>
+bool ConnectionUI::DrawClientDisconnectUI()
+{
+	//Bool for if we have pressed disconnect
+	bool bDisconnectPressed = false;
+	
+	InitDisconnectWindow();
+
+	ImGui::Begin("Disconnect from Server");
+	bDisconnectPressed = ImGui::Button("Disconnect from Server");
+	ImGui::End();
+
+	return bDisconnectPressed;
+}
+
+/// <summary>
 /// Intalises the ImGUI window for client connection
 /// </summary>
 void ConnectionUI::InitConnectionWindow()
@@ -213,6 +233,18 @@ void ConnectionUI::InitConnectionWindow()
 	ImGuiIO& io = ImGui::GetIO();
 	const ImVec2 windowSize = ImVec2(400.f, 250.f);
 	const ImVec2 windowPos = ImVec2(io.DisplaySize.x * 0.5f - windowSize.x * 0.5f, io.DisplaySize.y * 0.5f - windowSize.y * 0.5f);
+	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Once);
+	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Once);
+}
+
+/// <summary>
+/// Intalises the ImGUI window for client connection
+/// </summary>
+void ConnectionUI::InitDisconnectWindow()
+{
+	ImGuiIO& io = ImGui::GetIO();
+	const ImVec2 windowSize = ImVec2(180.f, 60.f);
+	const ImVec2 windowPos = ImVec2(0,0);
 	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Once);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Once);
 }

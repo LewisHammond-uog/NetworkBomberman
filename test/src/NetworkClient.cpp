@@ -276,6 +276,12 @@ void NetworkClient::DoClientPreGameEvents()
 			break;
 	}
 
+
+	//Show Disconnect UI so we can disconnect in this process
+	if(ConnectionUI::DrawClientDisconnectUI())
+	{
+		DisconnectFromServer();
+	}
 }
 
 /// <summary>
@@ -372,7 +378,8 @@ void NetworkClient::HandleClientConnectionPackets(RakNet::Packet* a_pPacket)
 					//We have successfully connected and logged in to the server,
 					//move on to actually doing game stuff
 					m_eClientGameState = ClientLocalState::PRE_GAME;
-					m_eConnectionState = ClientConnectionState::CLIENT_WARMUP;
+					m_eConnectionState = ClientConnectionState::CLIENT_INIT_PREGAME;
+					break;
 				case(CSNetMessages::SERVER_AUTHENTICATE_FAIL):
 				{
 					ConsoleLog::LogMessage("CLIENT :: LOGIN FAILED");
@@ -487,6 +494,10 @@ void NetworkClient::DisconnectFromServer()
 		s_pRakPeer->CloseConnection(m_serverAddress, true, ORDERING_CHANNEL_CONNECTIONS, LOW_PRIORITY);
 	}
 
+	//Set state
+	m_eConnectionState = ClientConnectionState::CLIENT_START_CONNECTION;
+	m_eClientGameState = ClientLocalState::NOT_CONNECTED;
+	
 	m_serverAddress = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 }
 

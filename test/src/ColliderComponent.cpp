@@ -87,54 +87,6 @@ void ColliderComponent::Update(float a_fDeltaTime)
 	}
 }
 
-/// <summary>
-/// Draw the collider shapes of this component
-/// Only drawn when the tickbox is selected in the debug UI
-/// </summary>
-/// <param name="a_pShader"></param>
-void ColliderComponent::Draw(Shader* a_pShader)
-{
-	//todo remove
-	/*
-		
-		//Get the current position of the object - all colliders positions are relative
-		//to this
-		TransformComponent* pLocalTransform = dynamic_cast<TransformComponent*>(m_pOwnerEntity->GetComponent(COMPONENT_TYPE::TRANSFORM));
-		if (pLocalTransform == nullptr)
-		{
-			return;
-		}
-		const glm::vec3 v3CurrentPosition = pLocalTransform->GetCurrentPosition();
-
-		//Draw all of the sub-colliders that are part of this collider
-		for (unsigned int i = 0; i < m_apCollisionShapes.size(); ++i)
-		{
-			switch (m_apCollisionShapes[i]->getName())
-			{
-			case reactphysics3d::CollisionShapeName::BOX: {
-				//Draw a box at the collider point
-				rp3d::BoxShape* pBox = dynamic_cast<reactphysics3d::BoxShape*>(m_apCollisionShapes[i]);
-				glm::vec3 v3BoxCenter = glm::vec3(pBox->getCentroid().x, pBox->getCentroid().y, pBox->getCentroid().z);
-				glm::vec3 v3BoxDimensions = glm::vec3(pBox->getExtent().x, pBox->getExtent().y, pBox->getExtent().z);
-				Gizmos::addBox(v3CurrentPosition + v3BoxCenter, v3BoxDimensions, true, mc_v4ColliderDrawCol);
-				break;
-			}
-
-			case reactphysics3d::CollisionShapeName::SPHERE: {
-				//Draw a sphere at the collider point
-				rp3d::SphereShape* pSphere = dynamic_cast<reactphysics3d::SphereShape*>(m_apCollisionShapes[i]);
-				const float fSphereRadius = pSphere->getRadius();
-				Gizmos::addSphere(v3CurrentPosition, mc_iColliderDrawRes, mc_iColliderDrawRes, fSphereRadius, mc_v4ColliderDrawCol);
-				break;
-			}
-			default:
-				//Default do nothing as we don't have a shape to draw
-				break;
-			}
-		}
-	*/
-	
-}
 
 
 /// <summary>

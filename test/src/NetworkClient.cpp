@@ -456,7 +456,7 @@ void NetworkClient::DisconnectFromServer()
 		s_pRakPeer->CloseConnection(m_serverAddress, true, ORDERING_CHANNEL_CONNECTIONS, LOW_PRIORITY);
 	}
 
-		m_serverAddress = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
+	m_serverAddress = RakNet::UNASSIGNED_SYSTEM_ADDRESS;
 }
 
 /// <summary>

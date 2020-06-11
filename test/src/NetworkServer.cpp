@@ -416,8 +416,9 @@ bool NetworkServer::HandleDisconnectPackets(RakNet::Packet* a_pPacket)
 void NetworkServer::DisconnectClient(const RakNet::RakNetGUID a_clientGUID)
 {
 	//Close the connection
-	s_pRakPeer->CloseConnection(a_clientGUID, true, ORDERING_CHANNEL_CONNECTIONS);
-	
+	if (s_pRakPeer) {
+		s_pRakPeer->CloseConnection(a_clientGUID, true, ORDERING_CHANNEL_CONNECTIONS);
+	}
 	//Destroy the Player Object
 	GameManager::GetInstance()->ProcessDisconnection(a_clientGUID);
 

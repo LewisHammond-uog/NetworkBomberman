@@ -10,7 +10,6 @@
 
 Component::Component(Entity* a_pOwner) : m_pOwnerEntity(a_pOwner)
 {
-	//todo remove? - don't think we need this because we are a replica object and this is pre assigned by s_pReplicaManager->SetNetworkIDManager(GetNetworkIDManager()); in Client Server Base
 	//Set our network manager
 	NetworkIDObject::SetNetworkIDManager(ServerClientBase::GetNetworkIDManager());
 }

@@ -386,3 +386,4 @@ MigrationBackup/
 #Project Specific Files
 *.docx
 DemoVideo/
+*.mp4
